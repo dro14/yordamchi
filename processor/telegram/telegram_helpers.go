@@ -1,0 +1,123 @@
+package telegram
+
+import (
+	"context"
+	"strings"
+	"sync"
+	"time"
+	"unicode/utf8"
+
+	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/gotd/td/tg"
+)
+
+var blockedUsers sync.Map
+
+func isBlocked(userID int64) bool {
+	_, ok := blockedUsers.Load(userID)
+	if ok {
+		return true
+	} else {
+		blockedUsers.Store(userID, true)
+		return false
+	}
+}
+
+func messageUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateNewMessage) (context.Context, *tg.Message, *tg.User) {
+
+	start := time.Now()
+	ctx = context.WithValue(ctx, "start", start)
+
+	message, ok := update.Message.(*tg.Message)
+	if !ok || message.Out || len(strings.TrimSpace(message.Message)) == 0 {
+		return ctx, nil, nil
+	}
+
+	peerUser, ok := message.PeerID.(*tg.PeerUser)
+	if !ok {
+		return ctx, nil, nil
+	}
+
+	user := entities.Users[peerUser.UserID]
+	if user.Bot || isBlocked(user.ID) {
+		return ctx, nil, nil
+	}
+
+	ctx = context.WithValue(ctx, "date", message.Date)
+	ctx = context.WithValue(ctx, "user_id", user.ID)
+	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
+	return ctx, message, user
+}
+
+func callbackUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) (context.Context, string, *tg.User) {
+	user := entities.Users[update.UserID]
+	ctx = context.WithValue(ctx, "message_id", update.MsgID)
+	ctx = context.WithValue(ctx, "user_id", user.ID)
+	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
+	return ctx, string(update.Data), user
+}
+
+func botStoppedUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotStopped) (context.Context, *tg.User) {
+	user := entities.Users[update.UserID]
+	ctx = context.WithValue(ctx, "date", update.Date)
+	ctx = context.WithValue(ctx, "user_id", user.ID)
+	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
+	return ctx, user
+}
+
+func command(message *tg.Message) string {
+
+	entities := message.Entities
+	if len(entities) == 0 {
+		return ""
+	}
+
+	entity, ok := entities[0].(*tg.MessageEntityBotCommand)
+	if !ok || entity.Offset != 0 || entity.Length == 0 {
+		return ""
+	}
+
+	botCommand := message.Message[1:entity.Length]
+	if i := strings.Index(botCommand, "@"); i != -1 {
+		botCommand = botCommand[:i]
+	}
+
+	return botCommand
+}
+
+func lang(ctx context.Context) string {
+	return ctx.Value("language_code").(string)
+}
+
+func format(timestamp string) string {
+	timestamp = strings.Replace(timestamp, "T", " ", 1)
+	timestamp = strings.Replace(timestamp, "Z", "", 1)
+	return timestamp
+}
+
+func slice(completion string) []string {
+
+	var completions []string
+
+	for len(completion) > 4096 {
+		index := 0
+		cutIndex := 0
+		for {
+			r, size := utf8.DecodeRuneInString(completion[index:])
+			if r == utf8.RuneError && size == 1 {
+				index++
+			} else {
+				index += size
+				if index <= 4096 {
+					cutIndex = index
+				} else {
+					break
+				}
+			}
+		}
+		completions = append(completions, completion[:cutIndex])
+		completion = completion[cutIndex:]
+	}
+
+	return append(completions, completion)
+}
