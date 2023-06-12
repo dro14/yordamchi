@@ -2,7 +2,6 @@ package openai
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/lib/functions"
 	"log"
 	"strconv"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
+	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/processor/telegram/text"
 )
@@ -30,15 +30,17 @@ func (p *Processor) Process(ctx context.Context, messages []types.Message, stats
 	maxTokens := 4096 - bobdev.Tokens("gpt-3.5-turbo", messages)
 	retryDelay := constants.RetryDelay
 	var errMsg string
-	var found bool
 Retry:
 	stats.Attempts++
 	response, err := p.aiClient.Completion(ctx, messages, maxTokens, channel)
 	if err != nil {
 		errMsg = err.Error()
 
-		if errMsg, found = strings.CutPrefix(errMsg, e.InvalidRequest); found {
-			if errMsg, found = strings.CutPrefix(errMsg, e.ContextLengthExceeded); found {
+		switch {
+		case strings.HasPrefix(errMsg, e.InvalidRequest):
+			errMsg = strings.TrimPrefix(errMsg, e.InvalidRequest)
+			if strings.HasPrefix(errMsg, e.ContextLengthExceeded) {
+				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceeded)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				tokens, _ := strconv.Atoi(errMsg)
 				diff := tokens - 4096
@@ -51,12 +53,13 @@ Retry:
 				channel <- text.TooLong[lang(ctx)]
 				return
 			}
-		} else if strings.HasPrefix(errMsg, e.EmptyCompletion) {
+		case strings.HasPrefix(errMsg, e.EmptyCompletion):
 			channel <- text.RequestFailed[lang(ctx)]
 			return
-		} else if strings.HasPrefix(errMsg, e.StreamError) {
+		case strings.HasPrefix(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
-		} else if strings.HasPrefix(errMsg, e.ServiceUnavailable) {
+		case strings.HasPrefix(errMsg, e.ServiceUnavailable),
+			strings.HasPrefix(errMsg, e.InternalServerError):
 			functions.Sleep(&retryDelay)
 		}
 

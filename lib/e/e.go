@@ -26,6 +26,7 @@ const (
 	StreamError           = "stream error"
 	EmptyCompletion       = "empty completion"
 	ServiceUnavailable    = "503 Service Unavailable"
+	InternalServerError   = "500 Internal Server Error"
 )
 
 // Redis errors
