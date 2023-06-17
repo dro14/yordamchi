@@ -52,6 +52,8 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.OpenAIResponse,
 		userID   = resp.Request.Context().Value("user_id").(int64)
 	)
 
+	response.Choices = append(response.Choices, types.Choice{})
+
 	for {
 		bts, err = reader.ReadBytes('\n')
 		if err != nil {
