@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 const NumOfFreeRequests = 10
@@ -187,7 +188,7 @@ func (c *Cache) StoreContext(ctx context.Context, prompt, completion string) {
 		return
 	}
 
-	err = c.Redis.Set(ctx, "context:"+id, string(data), 0).Err()
+	err = c.Redis.Set(ctx, "context:"+id, string(data), 24*time.Hour).Err()
 	if err != nil {
 		log.Printf("can't store context: %v", err)
 	}
