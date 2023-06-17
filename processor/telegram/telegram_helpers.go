@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"unicode/utf8"
 
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/gotd/td/tg"
@@ -100,19 +99,11 @@ func slice(completion string) []string {
 	var completions []string
 
 	for len(completion) > 4096 {
-		index := 0
 		cutIndex := 0
-		for {
-			r, size := utf8.DecodeRuneInString(completion[index:])
-			if r == utf8.RuneError && size == 1 {
-				index++
-			} else {
-				index += size
-				if index <= 4096 {
-					cutIndex = index
-				} else {
-					break
-				}
+		for i := 4096; i >= 0; i-- {
+			if completion[i] == ' ' || completion[i] == '\n' || completion[i] == '\t' || completion[i] == '\r' {
+				cutIndex = i
+				break
 			}
 		}
 		completions = append(completions, completion[:cutIndex])
