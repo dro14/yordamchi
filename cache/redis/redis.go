@@ -188,7 +188,7 @@ func (c *Cache) StoreContext(ctx context.Context, prompt, completion string) {
 		return
 	}
 
-	err = c.Redis.Set(ctx, "context:"+id, string(data), 24*time.Hour).Err()
+	err = c.Redis.Set(ctx, "context:"+id, string(data), 72*time.Hour).Err()
 	if err != nil {
 		log.Printf("can't store context: %v", err)
 	}
