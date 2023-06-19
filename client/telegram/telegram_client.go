@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -71,7 +72,7 @@ Retry:
 	response, ok := resp.(*tg.UpdateShortSentMessage)
 	if !ok {
 		log.Printf("can't decode response for %d: %v", userID, err)
-		return 0, e.ResponseDecodeError
+		return 0, fmt.Errorf("can't decode response for %d", userID)
 	}
 
 	if attempts > 1 {
