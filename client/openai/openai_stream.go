@@ -66,6 +66,11 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.OpenAIResponse,
 		}
 
 		bts = bytes.TrimPrefix(bts, prefix)
+		if string(bts) == "[DONE]" {
+			response.Choices[0].FinishReason = "[DONE]"
+			break
+		}
+
 		err = json.Unmarshal(bts, &response)
 		if err != nil {
 			log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
