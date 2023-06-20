@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/processor/telegram/info"
 	"github.com/dro14/yordamchi/processor/telegram/text"
@@ -29,10 +30,10 @@ func (p *Processor) exhausted(ctx context.Context) {
 
 func (p *Processor) deactivated(ctx context.Context, user *tg.User) {
 
-	p.Database.DeactivateUser(ctx, user)
-	joinedAt := format(p.Database.JoinedAt(ctx, user))
-	deactivatedAt := format(p.Database.DeactivatedAt(ctx, user))
-	rejoinedAt := format(p.Database.RejoinedAt(ctx, user))
+	postgres.DeactivateUser(ctx, user)
+	joinedAt := format(postgres.JoinedAt(ctx, user))
+	deactivatedAt := format(postgres.DeactivatedAt(ctx, user))
+	rejoinedAt := format(postgres.RejoinedAt(ctx, user))
 
 	if len(user.Username) > 0 {
 		user.Username = "@" + user.Username
@@ -54,10 +55,10 @@ rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.Username, u
 
 func (p *Processor) rejoined(ctx context.Context, user *tg.User) {
 
-	p.Database.RejoinUser(ctx, user)
-	joinedAt := format(p.Database.JoinedAt(ctx, user))
-	deactivatedAt := format(p.Database.DeactivatedAt(ctx, user))
-	rejoinedAt := format(p.Database.RejoinedAt(ctx, user))
+	postgres.RejoinUser(ctx, user)
+	joinedAt := format(postgres.JoinedAt(ctx, user))
+	deactivatedAt := format(postgres.DeactivatedAt(ctx, user))
+	rejoinedAt := format(postgres.RejoinedAt(ctx, user))
 
 	if len(user.Username) > 0 {
 		user.Username = "@" + user.Username

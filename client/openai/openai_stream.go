@@ -66,7 +66,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.OpenAIResponse,
 		}
 
 		bts = bytes.TrimPrefix(bts, prefix)
-		if string(bts) == "[DONE]" {
+		if string(bts) == "[DONE]\n" {
 			response.Choices[0].FinishReason = "[DONE]"
 			break
 		}

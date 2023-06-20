@@ -14,9 +14,8 @@ const (
 )
 
 var (
-	ResponseDecodeError = errors.New("can't decode response")
-	UserDeletedMessage  = errors.New(MessageNotFound)
-	UserBlockedError    = errors.New(UserBlocked)
+	UserDeletedMessage = errors.New(MessageNotFound)
+	UserBlockedError   = errors.New(UserBlocked)
 )
 
 // OpenAI errors

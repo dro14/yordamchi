@@ -2,13 +2,14 @@ package telegram
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/lib/types"
 	"log"
 	"sync/atomic"
 	"time"
 
+	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
-	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/processor/telegram/text"
 	"github.com/gotd/td/tg"
@@ -100,5 +101,5 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 	}
 
 	p.Cache.StoreContext(ctx, message.Message, completion)
-	p.Database.SaveMessage(ctx, stats, user)
+	postgres.SaveMessage(ctx, stats, user)
 }

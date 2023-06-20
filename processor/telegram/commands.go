@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/processor/telegram/text"
@@ -43,7 +44,7 @@ func (p *Processor) start(ctx context.Context, message *tg.Message, user *tg.Use
 
 	str, _ := strings.CutPrefix(message.Message, "/start ")
 	joinedBy, _ := strconv.Atoi(str)
-	p.Database.JoinUser(ctx, user, int64(joinedBy))
+	postgres.JoinUser(ctx, user, int64(joinedBy))
 }
 
 func (p *Processor) help(ctx context.Context) {

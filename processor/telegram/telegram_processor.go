@@ -15,15 +15,14 @@ import (
 type Processor struct {
 	Client    *telegram.Client
 	Processor *openai.Processor
-	Database  *postgres.Database
 	Cache     *redis.Cache
 }
 
 func New(bot *tg.Client, cache *redis.Cache) *Processor {
+	postgres.Init()
 	return &Processor{
 		Client:    telegram.New(bot),
 		Processor: openai.New(),
-		Database:  postgres.New(),
 		Cache:     cache,
 	}
 }
