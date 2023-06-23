@@ -47,7 +47,7 @@ func Premium(lang string) *tg.ReplyInlineMarkup {
 		"ru": "🚀 Подтверждать 🚀",
 		"en": "🚀 Confirm 🚀",
 	}
-	return DataButton(text[lang], "10000:200")
+	return DataButton(text[lang], "1000000")
 }
 
 func Exhausted(lang string) *tg.ReplyInlineMarkup {

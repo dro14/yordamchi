@@ -7,9 +7,9 @@ import (
 	"github.com/dro14/yordamchi/lib/e"
 )
 
-func (c *Cache) isBlocked(ctx context.Context, id string) (bool, error) {
+func isBlocked(ctx context.Context, id string) (bool, error) {
 
-	requests, err := c.Redis.Get(ctx, "blocked:"+id).Int()
+	requests, err := Client.Get(ctx, "blocked:"+id).Int()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
 			return false, nil
@@ -25,9 +25,9 @@ func (c *Cache) isBlocked(ctx context.Context, id string) (bool, error) {
 	}
 }
 
-func (c *Cache) isPremium(ctx context.Context, id string) (bool, error) {
+func isPremium(ctx context.Context, id string) (bool, error) {
 
-	requests, err := c.Redis.Get(ctx, "premium:"+id).Int()
+	requests, err := Client.Get(ctx, "premium:"+id).Int()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
 			return false, nil
@@ -43,12 +43,12 @@ func (c *Cache) isPremium(ctx context.Context, id string) (bool, error) {
 	}
 }
 
-func (c *Cache) isFree(ctx context.Context, id string) (bool, error) {
+func isFree(ctx context.Context, id string) (bool, error) {
 
-	requests, err := c.Redis.Get(ctx, "free:"+id).Int()
+	requests, err := Client.Get(ctx, "free:"+id).Int()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
-			c.Redis.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight())
+			Client.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight())
 			return true, nil
 		} else {
 			return false, err

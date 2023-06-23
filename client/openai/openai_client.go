@@ -35,9 +35,9 @@ func New() *Client {
 	return client
 }
 
-func (c *Client) Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.OpenAIResponse, error) {
+func (c *Client) Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
-	request := &types.OpenAIRequest{
+	request := &types.Request{
 		Model:     "gpt-3.5-turbo-0613",
 		Messages:  messages,
 		MaxTokens: maxTokens,

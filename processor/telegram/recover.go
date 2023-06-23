@@ -2,17 +2,18 @@ package telegram
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/processor/telegram/text"
 	"log"
 	"time"
 
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
 	"github.com/gotd/td/tg"
 )
 
 func (p *Processor) Recover() {
 
-	activities := p.Cache.LoadActivity(context.Background())
+	activities := redis.LoadActivity(context.Background())
 
 	for _, activity := range activities {
 

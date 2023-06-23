@@ -12,7 +12,7 @@ import (
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/processor/telegram/text"
+	"github.com/dro14/yordamchi/text"
 )
 
 type Processor struct {

@@ -40,13 +40,13 @@ func streamOut(buffer *atomic.Value, isStreaming *atomic.Int64, channel chan<- s
 	}
 }
 
-func streamIn(resp *http.Response, buffer *atomic.Value) (*types.OpenAIResponse, error) {
+func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error) {
 
 	var (
 		err      error
 		bts      []byte
 		builder  strings.Builder
-		response = &types.OpenAIResponse{}
+		response = &types.Response{}
 		reader   = bufio.NewReader(resp.Body)
 		prefix   = []byte{'d', 'a', 't', 'a', ':', ' '}
 		userID   = resp.Request.Context().Value("user_id").(int64)

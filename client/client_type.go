@@ -15,5 +15,5 @@ type TelegramClient interface {
 }
 
 type OpenAIClient interface {
-	Completion(context.Context, []types.Message, int, chan<- string) (*types.OpenAIResponse, error)
+	Completion(context.Context, []types.Message, int, chan<- string) (*types.Response, error)
 }

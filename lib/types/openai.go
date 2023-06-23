@@ -1,16 +1,22 @@
 package types
 
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-type OpenAIRequest struct {
+type Request struct {
 	Model     string    `json:"model,omitempty"`
 	Messages  []Message `json:"messages"`
 	MaxTokens int       `json:"max_tokens,omitempty"`
 	Stream    bool      `json:"stream,omitempty"`
 	User      string    `json:"user,omitempty"`
+}
+
+type Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type Response struct {
+	Choices []Choice `json:"choices"`
+	Usage   Usage    `json:"usage"`
+	Error   Error    `json:"error"`
 }
 
 type Choice struct {
@@ -27,10 +33,4 @@ type Usage struct {
 type Error struct {
 	Message string `json:"message"`
 	Type    string `json:"type"`
-}
-
-type OpenAIResponse struct {
-	Choices []Choice `json:"choices"`
-	Usage   Usage    `json:"usage"`
-	Error   Error    `json:"error"`
 }

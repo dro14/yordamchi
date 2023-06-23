@@ -4,26 +4,22 @@ import (
 	"context"
 	"log"
 
-	"github.com/dro14/yordamchi/cache/redis"
 	"github.com/dro14/yordamchi/client/telegram"
-	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/processor/openai"
+	"github.com/dro14/yordamchi/redis"
 	"github.com/gotd/td/tg"
 )
 
 type Processor struct {
 	Client    *telegram.Client
 	Processor *openai.Processor
-	Cache     *redis.Cache
 }
 
-func New(bot *tg.Client, cache *redis.Cache) *Processor {
-	postgres.Init()
+func New(bot *tg.Client) *Processor {
 	return &Processor{
 		Client:    telegram.New(bot),
 		Processor: openai.New(),
-		Cache:     cache,
 	}
 }
 
@@ -40,7 +36,7 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 		return nil
 	}
 
-	userStatus, err := p.Cache.Status(ctx)
+	userStatus, err := redis.Status(ctx)
 
 	switch userStatus {
 	case types.UnknownStatus:
@@ -60,7 +56,7 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 
 func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) error {
 
-	ctx, data, user := callbackUpdate(ctx, entities, update)
+	ctx, data := callbackUpdate(ctx, entities, update)
 
 	switch data {
 	case "new_chat":
@@ -72,7 +68,7 @@ func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entiti
 	case "premium":
 		p.premiumCallback(ctx, update.MsgID)
 	default:
-		p.confirmCallback(ctx, data, user)
+		p.confirmCallback(ctx, update.MsgID, data)
 	}
 
 	return nil

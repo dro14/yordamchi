@@ -15,7 +15,7 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
-func (c *Client) send(ctx context.Context, request *types.OpenAIRequest) (*http.Response, error) {
+func (c *Client) send(ctx context.Context, request *types.Request) (*http.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -34,7 +34,7 @@ func (c *Client) send(ctx context.Context, request *types.OpenAIRequest) (*http.
 		return nil, fmt.Errorf("%s for %d", resp.Status, userID)
 	default:
 		bts, _ := io.ReadAll(resp.Body)
-		var response types.OpenAIResponse
+		var response types.Response
 		_ = resp.Body.Close()
 
 		err = json.Unmarshal(bts, &response)
@@ -53,7 +53,7 @@ func (c *Client) send(ctx context.Context, request *types.OpenAIRequest) (*http.
 	}
 }
 
-func (c *Client) request(ctx context.Context, request *types.OpenAIRequest) (*http.Response, error) {
+func (c *Client) request(ctx context.Context, request *types.Request) (*http.Response, error) {
 
 	var buffer bytes.Buffer
 	err := json.NewEncoder(&buffer).Encode(request)

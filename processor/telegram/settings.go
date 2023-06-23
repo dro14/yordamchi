@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/dro14/yordamchi/cache/redis"
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/processor/telegram/text"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
 )
 
-func settingsMessage(ctx context.Context, cache *redis.Cache, lang string) string {
+func settingsMessage(ctx context.Context, lang string) string {
 
-	balance, userStatus := settings(ctx, cache)
+	balance, userStatus := settings(ctx)
 
 	switch userStatus {
 	case types.PremiumStatus:
@@ -37,13 +37,13 @@ func settingsMessage(ctx context.Context, cache *redis.Cache, lang string) strin
 	return ""
 }
 
-func settings(ctx context.Context, cache *redis.Cache) (int, types.UserStatus) {
+func settings(ctx context.Context) (int, types.UserStatus) {
 
-	userStatus, _ := cache.Status(ctx)
+	userStatus, _ := redis.Status(ctx)
 
 	switch userStatus {
 	case types.PremiumStatus, types.FreeStatus, types.ExhaustedStatus:
-		requests, err := cache.Balance(ctx)
+		requests, err := redis.Balance(ctx)
 		if err != nil {
 			return -1, types.UnknownStatus
 		}

@@ -2,28 +2,29 @@ package telegram
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/lib/types"
 	"log"
 	"sync/atomic"
 	"time"
 
-	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
+	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
-	"github.com/dro14/yordamchi/processor/telegram/text"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
 	"github.com/gotd/td/tg"
 )
 
 func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.User, isPremium bool) {
 
-	messages := p.Cache.LoadContext(ctx, message.Message)
+	messages := redis.LoadContext(ctx, message.Message)
 	stats := &types.Stats{IsPremium: isPremium}
 	channel := make(chan string)
 	go p.Processor.Process(ctx, messages, stats, channel)
 
-	stats.Activity = p.Cache.IncrementActivity(ctx, message, user, isPremium)
-	defer p.Cache.DecrementActivity(ctx)
+	stats.Activity = redis.IncrementActivity(ctx, message, user, isPremium)
+	defer redis.DecrementActivity(ctx)
 
 	stats.Requests++
 	messageID, err := p.Client.SendMessage(ctx, text.Loading[lang(ctx)], message.ID, nil)
@@ -95,11 +96,11 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 	stats.LastEdit = time.Since(start).Milliseconds()
 	stats.CompletedAt = time.Now().Unix()
 
-	err = p.Cache.Decrement(ctx)
+	err = redis.Decrement(ctx)
 	if err != nil {
 		log.Printf("can't decrement balance")
 	}
 
-	p.Cache.StoreContext(ctx, message.Message, completion)
+	redis.StoreContext(ctx, message.Message, completion)
 	postgres.SaveMessage(ctx, stats, user)
 }

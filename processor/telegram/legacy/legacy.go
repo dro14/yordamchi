@@ -7,16 +7,16 @@ import (
 	"time"
 
 	"github.com/dro14/yordamchi/lib/functions"
-	"github.com/dro14/yordamchi/processor/telegram/text"
-	redisClient "github.com/go-redis/redis/v8"
-	"github.com/gotd/contrib/redis"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
+	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
 
 var legacyBot *tg.Client
 
-func ConnectLegacyBot(cacheClient *redisClient.Client) {
+func Run() {
 
 	token, ok := os.LookupEnv("LEGACY_BOT_TOKEN")
 	if !ok {
@@ -24,12 +24,10 @@ func ConnectLegacyBot(cacheClient *redisClient.Client) {
 	}
 
 	dispatcher := tg.NewUpdateDispatcher()
-	session := redis.NewSessionStorage(cacheClient, "legacy_bot_session")
-
 	client, err := telegram.ClientFromEnvironment(
 		telegram.Options{
 			UpdateHandler:  dispatcher,
-			SessionStorage: session,
+			SessionStorage: cache.NewSessionStorage(redis.Client, "legacy_bot_session"),
 		},
 	)
 	if err != nil {

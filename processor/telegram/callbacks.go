@@ -2,20 +2,18 @@ package telegram
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/payme"
 	"log"
 	"strconv"
-	"strings"
 
-	"github.com/dro14/yordamchi/client/bobdev"
-	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/processor/telegram/button"
-	"github.com/dro14/yordamchi/processor/telegram/text"
-	"github.com/gotd/td/tg"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
 )
 
 func (p *Processor) newChatCallback(ctx context.Context) {
 
-	p.Cache.DeleteContext(ctx)
+	redis.DeleteContext(ctx)
 
 	_, err := p.Client.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
@@ -47,27 +45,16 @@ func (p *Processor) premiumCallback(ctx context.Context, messageID int) {
 	}
 }
 
-func (p *Processor) confirmCallback(ctx context.Context, data string, user *tg.User) {
+func (p *Processor) confirmCallback(ctx context.Context, messageID int, data string) {
 
-	before, after, found := strings.Cut(data, ":")
-	if !found {
-		log.Printf("can't parse callback data: %q", data)
+	amount, err := strconv.Atoi(data)
+	if err != nil || amount < 1 {
+		log.Printf("invalid amount: %q", data)
 		return
 	}
-	price, _ := strconv.Atoi(before)
-	requests, _ := strconv.Atoi(after)
+	url := payme.CheckoutURL(ctx, amount)
 
-	request := &types.Request{
-		ID:           user.ID,
-		FirstName:    user.FirstName,
-		LastName:     user.LastName,
-		Username:     user.Username,
-		LanguageCode: lang(ctx),
-		Price:        price,
-		Requests:     requests,
-	}
-
-	err := p.Client.EditMessage(ctx, text.Confirm[lang(ctx)], ctx.Value("message_id").(int), button.URLButton("Payme", bobdev.Payme(request)))
+	err = p.Client.EditMessage(ctx, text.Confirm[lang(ctx)], messageID, button.URLButton("Payme", url))
 	if err != nil {
 		log.Printf("can't edit confirm callback")
 	}

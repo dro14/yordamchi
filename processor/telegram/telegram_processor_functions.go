@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/dro14/yordamchi/database/postgres"
+	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/processor/telegram/info"
-	"github.com/dro14/yordamchi/processor/telegram/text"
+	"github.com/dro14/yordamchi/text"
 	"github.com/gotd/td/tg"
 )
 

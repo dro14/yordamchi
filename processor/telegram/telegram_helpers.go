@@ -48,12 +48,12 @@ func messageUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateN
 	return ctx, message, user
 }
 
-func callbackUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) (context.Context, string, *tg.User) {
+func callbackUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) (context.Context, string) {
 	user := entities.Users[update.UserID]
 	ctx = context.WithValue(ctx, "message_id", update.MsgID)
 	ctx = context.WithValue(ctx, "user_id", user.ID)
 	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
-	return ctx, string(update.Data), user
+	return ctx, string(update.Data)
 }
 
 func botStoppedUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotStopped) (context.Context, *tg.User) {
@@ -89,9 +89,11 @@ func lang(ctx context.Context) string {
 }
 
 func format(timestamp string) string {
-	timestamp = strings.Replace(timestamp, "T", " ", 1)
-	timestamp = strings.Replace(timestamp, "Z", "", 1)
-	return timestamp
+	t, err := time.Parse(time.RFC3339, timestamp)
+	if err != nil {
+		return timestamp
+	}
+	return t.Format("2006-01-02 15:04:05")
 }
 
 func slice(completion string) []string {

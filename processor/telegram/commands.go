@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dro14/yordamchi/database/postgres"
 	"github.com/dro14/yordamchi/lib/constants"
+	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
-	"github.com/dro14/yordamchi/processor/telegram/text"
+	"github.com/dro14/yordamchi/text"
 	"github.com/gotd/td/tg"
 )
 
@@ -57,7 +57,7 @@ func (p *Processor) help(ctx context.Context) {
 
 func (p *Processor) settings(ctx context.Context) {
 
-	message := settingsMessage(ctx, p.Cache, lang(ctx))
+	message := settingsMessage(ctx, lang(ctx))
 	if len(message) == 0 {
 		log.Printf("can't get user settings")
 		return

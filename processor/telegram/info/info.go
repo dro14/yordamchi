@@ -6,26 +6,24 @@ import (
 	"os"
 	"time"
 
-	redisClient "github.com/go-redis/redis/v8"
-	"github.com/gotd/contrib/redis"
+	"github.com/dro14/yordamchi/redis"
+	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
 
 var infoBot *tg.Client
 
-func ConnectInfoBot(cacheClient *redisClient.Client) {
+func Run() {
 
 	token, ok := os.LookupEnv("INFO_BOT_TOKEN")
 	if !ok {
 		log.Fatalf("info bot token is not specified")
 	}
 
-	session := redis.NewSessionStorage(cacheClient, "info_bot_session")
-
 	client, err := telegram.ClientFromEnvironment(
 		telegram.Options{
-			SessionStorage: session,
+			SessionStorage: cache.NewSessionStorage(redis.Client, "info_bot_session"),
 		},
 	)
 	if err != nil {
