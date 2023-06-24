@@ -6,9 +6,12 @@ import (
 	"time"
 
 	"github.com/dro14/yordamchi/payme"
+	"github.com/dro14/yordamchi/postgres"
 	tgProcessor "github.com/dro14/yordamchi/processor/telegram"
 	"github.com/dro14/yordamchi/processor/telegram/info"
 	"github.com/dro14/yordamchi/processor/telegram/legacy"
+	"github.com/dro14/yordamchi/redis"
+	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 	_ "github.com/heroku/x/hmetrics/onload"
@@ -18,11 +21,16 @@ func main() {
 
 	time.Local, _ = time.LoadLocation("Asia/Tashkent")
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	postgres.Init()
+	redis.Init()
 
 	dispatcher := tg.NewUpdateDispatcher()
 	if err := telegram.BotFromEnvironment(
 		context.Background(),
-		telegram.Options{UpdateHandler: dispatcher},
+		telegram.Options{
+			UpdateHandler:  dispatcher,
+			SessionStorage: cache.NewSessionStorage(redis.Client, "main_bot_session"),
+		},
 		func(ctx context.Context, client *telegram.Client) error {
 
 			processor := tgProcessor.New(client.API())

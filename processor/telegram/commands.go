@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/text"
@@ -57,13 +56,7 @@ func (p *Processor) help(ctx context.Context) {
 
 func (p *Processor) settings(ctx context.Context) {
 
-	message := settingsMessage(ctx, lang(ctx))
-	if len(message) == 0 {
-		log.Printf("can't get user settings")
-		return
-	}
-
-	_, err := p.Client.SendMessage(ctx, message, 0, button.Settings(lang(ctx)))
+	_, err := p.Client.SendMessage(ctx, msg(ctx, lang(ctx)), 0, button.Settings(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send settings command")
 	}
@@ -79,7 +72,7 @@ func (p *Processor) examples(ctx context.Context) {
 
 func (p *Processor) premium(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, text.Premium[lang(ctx)], 0, button.Premium(lang(ctx)))
+	_, err := p.Client.SendMessage(ctx, text.Premium[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send premium command")
 	}
@@ -87,7 +80,7 @@ func (p *Processor) premium(ctx context.Context) {
 
 func (p *Processor) donate(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, text.Donate[lang(ctx)], 0, button.URLButton("Payme", constants.DonationURL))
+	_, err := p.Client.SendMessage(ctx, text.Donate[lang(ctx)], 0, button.Donate(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send donate command")
 	}

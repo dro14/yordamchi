@@ -3,12 +3,13 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/lib/e"
-	"github.com/dro14/yordamchi/lib/types"
-	"github.com/go-redis/redis/v8"
 	"log"
 	"os"
 	"strconv"
+	"time"
+
+	"github.com/dro14/yordamchi/lib/types"
+	"github.com/go-redis/redis/v8"
 )
 
 const NumOfFreeRequests = 10
@@ -36,122 +37,106 @@ func Init() {
 	)
 }
 
-func Status(ctx context.Context) (types.UserStatus, error) {
+func UserStatus(ctx context.Context) types.UserStatus {
 
 	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
 
 	result, err := isBlocked(ctx, id)
 	if err != nil {
 		log.Printf("can't check whether user %s is blocked: %v", id, err)
-		return types.UnknownStatus, err
+		return types.UnknownStatus
 	} else if result {
-		return types.BlockedStatus, nil
+		return types.BlockedStatus
 	}
 
 	result, err = isPremium(ctx, id)
 	if err != nil {
 		log.Printf("can't check whether user %s is premium: %v", id, err)
-		return types.UnknownStatus, err
+		return types.UnknownStatus
 	} else if result {
-		return types.PremiumStatus, nil
+		return types.PremiumStatus
 	}
 
 	result, err = isFree(ctx, id)
 	if err != nil {
 		log.Printf("can't check whether user %s is free: %v", id, err)
-		return types.UnknownStatus, err
+		return types.UnknownStatus
 	} else if result {
-		return types.FreeStatus, nil
+		return types.FreeStatus
 	}
 
-	return types.ExhaustedStatus, nil
+	return types.ExhaustedStatus
 }
 
-func Balance(ctx context.Context) (int, error) {
+func Expiration(ctx context.Context) string {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
 
-	requests, err := Client.Get(ctx, "premium:"+id).Int()
-	if err == nil {
-		return requests, nil
-	} else if err.Error() != e.KeyNotFound {
-		log.Printf("can't get \"premium:%s\": %v", id, err)
-		return -1, err
+	value, err := Client.Get(ctx, key).Result()
+	if err != nil {
+		return midnight()
 	}
 
-	requests, err = Client.Get(ctx, "free:"+id).Int()
-	if err == nil {
-		return requests, nil
-	} else if err.Error() != e.KeyNotFound {
-		log.Printf("can't get \"free:%s\": %v", id, err)
-		return -1, err
-	}
-
-	log.Printf(e.UserNotDefined)
-	return -1, e.UserNotDefinedError
+	return value
 }
 
-func Decrement(ctx context.Context) error {
+func Requests(ctx context.Context) string {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
 
-	requests, err := Client.Get(ctx, "premium:"+id).Int()
+	requests, err := Client.Get(ctx, key).Int()
+	if err != nil {
+		log.Printf("can't get %q: %v", key, err)
+		return ""
+	}
+
+	return fmt.Sprintf("%d/%d", requests, NumOfFreeRequests)
+}
+
+func Decrement(ctx context.Context) {
+
+	key := fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
+
+	_, err := Client.Get(ctx, key).Result()
 	if err == nil {
-		if requests > 0 {
-			if requests == 1 {
-				Client.Del(ctx, "premium:"+id)
-			} else {
-				Client.Set(ctx, "premium:"+id, requests-1, 0)
-			}
-			return nil
-		} else {
-			log.Printf("invalid value: %d", requests)
-			return fmt.Errorf("invalid value: %d", requests)
+		return
+	}
+
+	key = fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
+
+	requests, err := Client.Get(ctx, key).Int()
+	if err != nil {
+		log.Printf("can't get %q: %v", key, err)
+		return
+	}
+
+	if requests > 0 && requests <= NumOfFreeRequests {
+		err = Client.Set(ctx, key, requests-1, untilMidnight()).Err()
+		if err != nil {
+			log.Printf("can't decrement %q: %v", key, err)
 		}
-	} else if err.Error() != e.KeyNotFound {
-		log.Printf("can't get \"premium:%s\": %v", id, err)
-		return err
+	} else {
+		log.Printf("invalid number of requests: %d", requests)
 	}
-
-	requests, err = Client.Get(ctx, "free:"+id).Int()
-	if err == nil {
-		if requests > 0 && requests <= NumOfFreeRequests {
-			Client.Set(ctx, "free:"+id, requests-1, untilMidnight())
-			return nil
-		} else if requests == -1 {
-			return nil
-		} else {
-			log.Printf("invalid value: %d", requests)
-			return fmt.Errorf("invalid value: %d", requests)
-		}
-	} else if err.Error() != e.KeyNotFound {
-		log.Printf("can't get \"free:%s\": %v", id, err)
-		return err
-	}
-
-	log.Printf(e.UserNotDefined)
-	return e.UserNotDefinedError
 }
 
-func SetPremium(userID int64) error {
+func SetPremium(userID int64, amount int, Type string) error {
 
 	key := fmt.Sprintf("premium:%d", userID)
 
-	requests, err := Client.Get(context.Background(), key).Int()
-	if err == nil {
-		err = Client.Set(context.Background(), key, requests+200, 0).Err()
-		if err != nil {
-			log.Printf("can't set premium: %v", err)
-			return err
-		}
-	} else if err.Error() == e.KeyNotFound {
-		err = Client.Set(context.Background(), key, 200, 0).Err()
-		if err != nil {
-			log.Printf("can't set premium: %v", err)
-			return err
-		}
-	} else {
-		log.Printf("can't get premium: %v", err)
+	var expiration time.Time
+	switch Type {
+	case "weekly", "requests":
+		expiration = time.Now().AddDate(0, 0, 7)
+	case "monthly":
+		expiration = time.Now().AddDate(0, 1, 0)
+	default:
+		return fmt.Errorf("invalid type: %s", Type)
+	}
+
+	err := Client.Set(context.Background(), key, expiration.Format("15:04:05 02.01.2006"), time.Until(expiration)).Err()
+	if err != nil {
+		log.Printf("can't set premium: %v", err)
 		return err
 	}
 

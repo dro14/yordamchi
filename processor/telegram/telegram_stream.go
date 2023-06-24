@@ -96,11 +96,7 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 	stats.LastEdit = time.Since(start).Milliseconds()
 	stats.CompletedAt = time.Now().Unix()
 
-	err = redis.Decrement(ctx)
-	if err != nil {
-		log.Printf("can't decrement balance")
-	}
-
+	redis.Decrement(ctx)
 	redis.StoreContext(ctx, message.Message, completion)
 	postgres.SaveMessage(ctx, stats, user)
 }

@@ -22,7 +22,7 @@ func (p *Processor) blocked(ctx context.Context) {
 
 func (p *Processor) exhausted(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Exhausted(lang(ctx)))
+	_, err := p.Client.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send exhausted message")
 	}

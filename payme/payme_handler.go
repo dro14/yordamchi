@@ -114,11 +114,11 @@ func Handler(c *gin.Context) {
 
 var merchantID string
 
-func CheckoutURL(ctx context.Context, amount int) string {
+func CheckoutURL(ctx context.Context, amount int, Type string) string {
 
 	userID := ctx.Value("user_id").(int64)
 
-	orderID, err := postgres.NewOrder(userID, amount, "requests")
+	orderID, err := postgres.NewOrder(userID, amount, Type)
 	if err != nil {
 		return ""
 	}

@@ -59,7 +59,7 @@ func Authorized(c *gin.Context) bool {
 
 	header = string(bts[:n])
 	if header != "Paycom:"+MerchantKey {
-		log.Printf("unauthorized: %s", header)
+		log.Printf("unauthorized header: %s != %s", header, "Paycom:"+MerchantKey)
 		c.JSON(200, gin.H{
 			"error": gin.H{
 				"code":    -32504,

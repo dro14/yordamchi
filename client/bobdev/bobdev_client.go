@@ -6,13 +6,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/types"
 )
 
+type Request struct {
+	Model    string          `json:"model"`
+	Messages []types.Message `json:"messages"`
+}
+
 func Tokens(model string, messages []types.Message) int {
 
-	request := types.TikToken{
+	request := &Request{
 		Model:    model,
 		Messages: messages,
 	}
@@ -24,7 +28,7 @@ func Tokens(model string, messages []types.Message) int {
 		return 0
 	}
 
-	resp, err := http.Post(constants.TokensURL, "application/json", &buffer)
+	resp, err := http.Post("https://chatgpt-payment.herokuapp.com/tiktoken", "application/json", &buffer)
 	if err != nil {
 		log.Printf("can't send request: %v", err)
 		return 0

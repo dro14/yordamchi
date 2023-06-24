@@ -9,38 +9,32 @@ import (
 
 func isBlocked(ctx context.Context, id string) (bool, error) {
 
-	requests, err := Client.Get(ctx, "blocked:"+id).Int()
+	value, err := Client.Get(ctx, "blocked:"+id).Int()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
 			return false, nil
-		} else {
-			return false, err
 		}
+		return false, err
 	}
 
-	if requests == -14 {
+	if value == -14 {
 		return true, nil
 	} else {
-		return false, fmt.Errorf("invalid value: %d", requests)
+		return false, fmt.Errorf("invalid value: %d", value)
 	}
 }
 
 func isPremium(ctx context.Context, id string) (bool, error) {
 
-	requests, err := Client.Get(ctx, "premium:"+id).Int()
+	_, err := Client.Get(ctx, "premium:"+id).Result()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
 			return false, nil
-		} else {
-			return false, err
 		}
+		return false, err
 	}
 
-	if requests > 0 {
-		return true, nil
-	} else {
-		return false, fmt.Errorf("invalid value: %d", requests)
-	}
+	return true, nil
 }
 
 func isFree(ctx context.Context, id string) (bool, error) {
@@ -48,20 +42,20 @@ func isFree(ctx context.Context, id string) (bool, error) {
 	requests, err := Client.Get(ctx, "free:"+id).Int()
 	if err != nil {
 		if err.Error() == e.KeyNotFound {
-			Client.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight())
+			err = Client.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight()).Err()
+			if err != nil {
+				return false, err
+			}
 			return true, nil
-		} else {
-			return false, err
 		}
+		return false, err
 	}
 
 	if requests > 0 && requests <= NumOfFreeRequests {
 		return true, nil
-	} else if requests == -1 {
-		return true, nil
 	} else if requests == 0 {
 		return false, nil
 	} else {
-		return false, fmt.Errorf("invalid value: %d", requests)
+		return false, fmt.Errorf("invalid number of requests: %d", requests)
 	}
 }

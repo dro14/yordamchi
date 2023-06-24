@@ -22,7 +22,7 @@ func NewOrder(userID int64, amount int, Type string) (int, error) {
     	(user_id, amount, type, created_at)
 		VALUES
 		($1, $2, $3, $4) RETURNING id;`,
-		userID, amount, Type, time.Now().Format("2006-01-02 15:04:05")).
+		userID, amount, Type, time.Now().Format(time.DateTime)).
 		Scan(&id)
 	if err != nil {
 		log.Printf("can't create order: %v", err)
@@ -119,14 +119,19 @@ func PerformTransaction(params *types.Params) (gin.H, int) {
 		return nil, -32400
 	}
 
-	var userID int64
-	err = db.QueryRow(`UPDATE orders_test SET updated_at = $1 WHERE id = $2 RETURNING user_id;`, time.Now().Format("2006-01-02 15:04:05"), orderID).Scan(&userID)
+	var (
+		userID int64
+		amount int
+		Type   string
+	)
+
+	err = db.QueryRow(`UPDATE orders_test SET updated_at = $1 WHERE id = $2 RETURNING user_id, amount, type;`, time.Now().Format("2006-01-02 15:04:05"), orderID).Scan(&userID, &amount, &Type)
 	if err != nil {
 		log.Printf("can't update order: %v", err)
 		return nil, -32400
 	}
 
-	err = redis.SetPremium(userID)
+	err = redis.SetPremium(userID, amount, Type)
 	if err != nil {
 		return nil, -32400
 	}

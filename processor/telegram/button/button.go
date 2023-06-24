@@ -1,7 +1,9 @@
 package button
 
 import (
-	"github.com/dro14/yordamchi/lib/constants"
+	"context"
+
+	"github.com/dro14/yordamchi/payme"
 	"github.com/gotd/td/tg"
 )
 
@@ -11,7 +13,7 @@ func NewChat(lang string) *tg.ReplyInlineMarkup {
 		"ru": "💬 Новый разговор 💬",
 		"en": "💬 New chat 💬",
 	}
-	return DataButton(text[lang], "new_chat")
+	return data(text[lang], "new_chat")
 }
 
 func Start(lang string) *tg.ReplyInlineMarkup {
@@ -20,7 +22,7 @@ func Start(lang string) *tg.ReplyInlineMarkup {
 		"ru": "❔ Как пользоваться ❔",
 		"en": "❔ How to use ❔",
 	}
-	return DataButton(text[lang], "examples")
+	return data(text[lang], "examples")
 }
 
 func Examples(lang string) *tg.ReplyInlineMarkup {
@@ -29,34 +31,62 @@ func Examples(lang string) *tg.ReplyInlineMarkup {
 		"ru": "📝 Информация о боте 📝",
 		"en": "📝 Information about the bot 📝",
 	}
-	return DataButton(text[lang], "help")
+	return data(text[lang], "help")
 }
 
 func Settings(lang string) *tg.ReplyInlineMarkup {
 	text := map[string]string{
-		"uz": "💎 So'rovlar sotib olish 💎",
-		"ru": "💎 Купить запросы 💎",
-		"en": "💎 Buy requests 💎",
+		"uz": "💎 Premium bo'lish 💎",
+		"ru": "💎 Стать премиумом 💎",
+		"en": "💎 Become premium 💎",
 	}
-	return DataButton(text[lang], "premium")
+	return data(text[lang], "premium")
 }
 
-func Premium(lang string) *tg.ReplyInlineMarkup {
-	text := map[string]string{
-		"uz": "🚀 Tasdiqlash 🚀",
-		"ru": "🚀 Подтверждать 🚀",
-		"en": "🚀 Confirm 🚀",
+func Premium(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
+
+	keyboard := &tg.ReplyInlineMarkup{}
+
+	var weekly = map[string]string{
+		"uz": "⭐ Haftalik ⭐",
+		"ru": "⭐ Недельный ⭐",
+		"en": "⭐ Weekly ⭐",
 	}
-	return DataButton(text[lang], "1000000")
+
+	row := tg.KeyboardButtonRow{}
+	row.Buttons = append(row.Buttons,
+		&tg.KeyboardButtonURL{
+			Text: weekly[lang],
+			URL:  payme.CheckoutURL(ctx, 1000000, "weekly"),
+		},
+	)
+	keyboard.Rows = append(keyboard.Rows, row)
+
+	var monthly = map[string]string{
+		"uz": "🔥 Oylik 🔥",
+		"ru": "🔥 Месячный 🔥",
+		"en": "🔥 Monthly 🔥",
+	}
+
+	row = tg.KeyboardButtonRow{}
+	row.Buttons = append(row.Buttons,
+		&tg.KeyboardButtonURL{
+			Text: monthly[lang],
+			URL:  payme.CheckoutURL(ctx, 3000000, "monthly"),
+		},
+	)
+
+	keyboard.Rows = append(keyboard.Rows, row)
+	return keyboard
 }
 
-func Exhausted(lang string) *tg.ReplyInlineMarkup {
+func Donate(lang string) *tg.ReplyInlineMarkup {
 	text := map[string]string{
-		"uz": "⭐ Premium bo'lish ⭐",
-		"ru": "⭐ Стать премиумом ⭐",
-		"en": "⭐ Become premium ⭐",
+		"uz": "😇 Xayriya 😇",
+		"ru": "😇 Донат 😇",
+		"en": "😇 Donate 😇",
 	}
-	return DataButton(text[lang], "premium")
+	return url(text[lang], "https://payme.uz/60d6dbeb3632e1ceb8664de3")
 }
 
 func Blocked(lang string) *tg.ReplyInlineMarkup {
@@ -65,10 +95,10 @@ func Blocked(lang string) *tg.ReplyInlineMarkup {
 		"ru": "👤 Админ 👤",
 		"en": "👤 Admin 👤",
 	}
-	return URLButton(text[lang], constants.AdminURL)
+	return url(text[lang], "https://t.me/yordamchiga_yordam")
 }
 
-func URLButton(text, url string) *tg.ReplyInlineMarkup {
+func url(text, url string) *tg.ReplyInlineMarkup {
 
 	row := tg.KeyboardButtonRow{}
 	row.Buttons = append(row.Buttons,
@@ -84,7 +114,7 @@ func URLButton(text, url string) *tg.ReplyInlineMarkup {
 	return keyboard
 }
 
-func DataButton(text, data string) *tg.ReplyInlineMarkup {
+func data(text, data string) *tg.ReplyInlineMarkup {
 
 	row := tg.KeyboardButtonRow{}
 	row.Buttons = append(row.Buttons,

@@ -2,11 +2,15 @@ package telegram
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/redis"
+	"github.com/dro14/yordamchi/text"
 	"github.com/gotd/td/tg"
 )
 
@@ -113,4 +117,13 @@ func slice(completion string) []string {
 	}
 
 	return append(completions, completion)
+}
+
+func msg(ctx context.Context, lang string) string {
+
+	if redis.UserStatus(ctx) == types.PremiumStatus {
+		return fmt.Sprintf(text.Settings[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
+	}
+
+	return fmt.Sprintf(text.Settings[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
 }

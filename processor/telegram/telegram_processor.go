@@ -6,7 +6,6 @@ import (
 
 	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/gotd/td/tg"
@@ -18,8 +17,6 @@ type Processor struct {
 }
 
 func New(bot *tg.Client) *Processor {
-	redis.Init()
-	postgres.Init()
 	return &Processor{
 		Client:    telegram.New(bot),
 		Processor: openai.New(),
@@ -39,11 +36,9 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 		return nil
 	}
 
-	userStatus, err := redis.Status(ctx)
-
-	switch userStatus {
+	switch redis.UserStatus(ctx) {
 	case types.UnknownStatus:
-		log.Printf("unknown user status: %v", err)
+		log.Printf("unknown user status: %d", user.ID)
 	case types.BlockedStatus:
 		p.blocked(ctx)
 	case types.PremiumStatus:
@@ -71,7 +66,7 @@ func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entiti
 	case "premium":
 		p.premiumCallback(ctx, update.MsgID)
 	default:
-		p.confirmCallback(ctx, update.MsgID, data)
+		log.Printf("unknown callback data: %v", data)
 	}
 
 	return nil

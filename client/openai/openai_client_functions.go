@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/types"
 )
@@ -62,7 +61,7 @@ func (c *Client) request(ctx context.Context, request *types.Request) (*http.Res
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, constants.ChatGPTURL, &buffer)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.openai.com/v1/chat/completions", &buffer)
 	if err != nil {
 		log.Printf("can't create request: %v", err)
 		return nil, err
