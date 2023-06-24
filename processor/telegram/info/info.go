@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/dro14/yordamchi/redis"
-	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
@@ -21,11 +19,7 @@ func Run() {
 		log.Fatalf("info bot token is not specified")
 	}
 
-	client, err := telegram.ClientFromEnvironment(
-		telegram.Options{
-			SessionStorage: cache.NewSessionStorage(redis.Client, "info_bot_session"),
-		},
-	)
+	client, err := telegram.ClientFromEnvironment(telegram.Options{})
 	if err != nil {
 		log.Fatalf("can't create client: %v", err)
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/gotd/td/tg"
@@ -17,6 +18,8 @@ type Processor struct {
 }
 
 func New(bot *tg.Client) *Processor {
+	redis.Init()
+	postgres.Init()
 	return &Processor{
 		Client:    telegram.New(bot),
 		Processor: openai.New(),

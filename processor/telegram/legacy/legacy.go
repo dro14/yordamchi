@@ -7,9 +7,7 @@ import (
 	"time"
 
 	"github.com/dro14/yordamchi/lib/functions"
-	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
-	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
@@ -24,12 +22,7 @@ func Run() {
 	}
 
 	dispatcher := tg.NewUpdateDispatcher()
-	client, err := telegram.ClientFromEnvironment(
-		telegram.Options{
-			UpdateHandler:  dispatcher,
-			SessionStorage: cache.NewSessionStorage(redis.Client, "legacy_bot_session"),
-		},
-	)
+	client, err := telegram.ClientFromEnvironment(telegram.Options{UpdateHandler: dispatcher})
 	if err != nil {
 		log.Fatalf("can't create client: %v", err)
 	}

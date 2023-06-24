@@ -67,7 +67,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 
 		bts = bytes.TrimPrefix(bts, prefix)
 		if string(bts) == "[DONE]\n" {
-			response.Choices[0].FinishReason = "[DONE]"
+			response.Choices[0].FinishReason = "done"
 			break
 		}
 
