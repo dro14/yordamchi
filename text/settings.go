@@ -45,17 +45,17 @@ var Settings2 = map[string]string{
 
 GPT-4 tokenlari kerakmi? Ularni quyidagi komanda orqali sotib olishingiz mumkin:
 
-👉 /GPT4 👈`,
+👉 /gpt4 👈`,
 
 	"ru": `Доступно токенов: %d
 
 Нужны токены GPT-4? Их можно купить с помощью следующей команды:
 
-👉 /GPT4 👈`,
+👉 /gpt4 👈`,
 
 	"en": `Available tokens: %d
 
 Need GPT-4 tokens? You can buy them using the following command:
 
-👉 /GPT4 👈`,
+👉 /gpt4 👈`,
 }

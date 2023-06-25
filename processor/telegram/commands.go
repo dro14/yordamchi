@@ -25,7 +25,7 @@ func (p *Processor) doCommand(ctx context.Context, message *tg.Message, user *tg
 		p.examples(ctx)
 	case "premium":
 		p.premium(ctx)
-	case "GPT4":
+	case "gpt4":
 		p.gpt4(ctx)
 	case "donate":
 		p.donate(ctx)
