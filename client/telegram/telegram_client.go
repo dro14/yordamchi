@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/constants"
 	"log"
 	"strconv"
 	"strings"
@@ -40,7 +41,8 @@ func (c *Client) SendMessage(ctx context.Context, message string, replyToMsgID i
 		request.ReplyMarkup = keyboard
 	}
 
-	var attempts int
+	retryDelay := constants.RetryDelay
+	attempts := 0
 Retry:
 	attempts++
 	resp, err := c.bot.MessagesSendMessage(ctx, request)
@@ -53,19 +55,21 @@ Retry:
 			log.Fatalf("fatal error: restarting bot")
 		case strings.Contains(err.Error(), e.UserBlocked):
 			return 0, e.UserBlockedError
+		case strings.Contains(err.Error(), e.MessageEmpty),
+			strings.Contains(err.Error(), e.MessageTooLong):
+			log.Printf("%q", request.Message)
+			return 0, err
 		case strings.Contains(err.Error(), e.TooManyRequests):
 			_, str, _ := strings.Cut(err.Error(), e.TooManyRequests)
 			str = str[1 : len(str)-1]
 			seconds, _ := strconv.Atoi(str)
-			retryDelay := time.Duration(seconds) * time.Second
-			functions.Sleep(&retryDelay)
-			goto Retry
-		case strings.Contains(err.Error(), e.MessageEmpty):
-			log.Printf("%q", request.Message)
-		case strings.Contains(err.Error(), e.MessageTooLong):
-			log.Printf("%q", request.Message)
+			retryDelay = time.Duration(seconds) * time.Second
 		}
 
+		if attempts < constants.RetryAttempts {
+			functions.Sleep(&retryDelay)
+			goto Retry
+		}
 		return 0, err
 	}
 
@@ -100,7 +104,8 @@ func (c *Client) EditMessage(ctx context.Context, message string, messageID int,
 		request.ReplyMarkup = keyboard
 	}
 
-	var attempts int
+	retryDelay := constants.RetryDelay
+	attempts := 0
 Retry:
 	attempts++
 	_, err := c.bot.MessagesEditMessage(ctx, request)
@@ -115,21 +120,22 @@ Retry:
 			return e.UserBlockedError
 		case strings.Contains(err.Error(), e.MessageNotFound):
 			return e.UserDeletedMessage
+		case strings.Contains(err.Error(), e.MessageEmpty),
+			strings.Contains(err.Error(), e.MessageTooLong),
+			strings.Contains(err.Error(), e.MessageNotModified):
+			log.Printf("%q", request.Message)
+			return err
 		case strings.Contains(err.Error(), e.TooManyRequests):
 			_, str, _ := strings.Cut(err.Error(), e.TooManyRequests)
 			str = str[1 : len(str)-1]
 			seconds, _ := strconv.Atoi(str)
-			retryDelay := time.Duration(seconds) * time.Second
-			functions.Sleep(&retryDelay)
-			goto Retry
-		case strings.Contains(err.Error(), e.MessageEmpty):
-			log.Printf("%q", request.Message)
-		case strings.Contains(err.Error(), e.MessageNotModified):
-			log.Printf("%q", request.Message)
-		case strings.Contains(err.Error(), e.MessageTooLong):
-			log.Printf("%q", request.Message)
+			retryDelay = time.Duration(seconds) * time.Second
 		}
 
+		if attempts < constants.RetryAttempts {
+			functions.Sleep(&retryDelay)
+			goto Retry
+		}
 		return err
 	}
 

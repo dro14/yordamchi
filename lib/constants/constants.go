@@ -7,6 +7,6 @@ const (
 )
 
 const (
-	RetryDelay      = 10 * time.Second
+	RetryDelay      = 1 * time.Second
 	RequestInterval = 2 * time.Second
 )

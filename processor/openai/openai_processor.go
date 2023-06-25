@@ -28,7 +28,7 @@ func New() *Processor {
 func (p *Processor) Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
 	maxTokens := 4096 - bobdev.Tokens("gpt-3.5-turbo", messages)
-	retryDelay := constants.RetryDelay
+	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:
 	stats.Attempts++
