@@ -40,3 +40,22 @@ func (p *Processor) premiumCallback(ctx context.Context, messageID int) {
 		log.Printf("can't edit premium callback")
 	}
 }
+
+func (p *Processor) modelCallback(ctx context.Context, messageID int, model string) {
+
+	var err error
+	if model == "gpt-4" {
+		err = redis.GPT4(ctx)
+	} else {
+		err = redis.GPT3(ctx)
+	}
+	if err != nil {
+		log.Printf("can't set model callback: %v", err)
+		return
+	}
+
+	err = p.Client.EditMessage(ctx, msg(ctx, lang(ctx)), messageID, button.Settings(ctx))
+	if err != nil {
+		log.Printf("can't edit model callback")
+	}
+}

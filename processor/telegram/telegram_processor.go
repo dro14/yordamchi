@@ -41,10 +41,16 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 		log.Printf("unknown user status: %d", user.ID)
 	case types.BlockedStatus:
 		p.blocked(ctx)
+	case types.GPT4Status:
+		if redis.GPT4Tokens(ctx) > 0 {
+			p.Stream(ctx, message, user, "gpt-4")
+		} else {
+			p.gpt4(ctx)
+		}
 	case types.PremiumStatus:
-		p.Stream(ctx, message, user, true)
+		p.Stream(ctx, message, user, "true")
 	case types.FreeStatus:
-		p.Stream(ctx, message, user, false)
+		p.Stream(ctx, message, user, "false")
 	case types.ExhaustedStatus:
 		p.exhausted(ctx)
 	}
@@ -65,6 +71,8 @@ func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entiti
 		p.helpCallback(ctx, update.MsgID)
 	case "premium":
 		p.premiumCallback(ctx, update.MsgID)
+	case "gpt-3.5-turbo", "gpt-4":
+		p.modelCallback(ctx, update.MsgID, data)
 	default:
 		log.Printf("unknown callback data: %v", data)
 	}

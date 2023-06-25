@@ -1,6 +1,6 @@
 package text
 
-var Settings = map[string]string{
+var Settings1 = map[string]string{
 
 	"uz": `Tarif: %s
 So'rovlar soni: %s
@@ -28,13 +28,34 @@ var FreeTariff = map[string]string{
 }
 
 var PremiumTariff = map[string]string{
-	"uz": "premium 💎",
-	"ru": "премиум 💎",
-	"en": "premium 💎",
+	"uz": "premium",
+	"ru": "премиум",
+	"en": "premium",
 }
 
 var Unlimited = map[string]string{
 	"uz": "cheklanmagan",
 	"ru": "не ограничено",
 	"en": "unlimited",
+}
+
+var Settings2 = map[string]string{
+
+	"uz": `Mavjud tokenlar: %d
+
+GPT-4 tokenlari kerakmi? Ularni quyidagi komanda orqali sotib olishingiz mumkin:
+
+👉 /GPT4 👈`,
+
+	"ru": `Доступно токенов: %d
+
+Нужны токены GPT-4? Их можно купить с помощью следующей команды:
+
+👉 /GPT4 👈`,
+
+	"en": `Available tokens: %d
+
+Need GPT-4 tokens? You can buy them using the following command:
+
+👉 /GPT4 👈`,
 }

@@ -2,6 +2,7 @@ package bobdev
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -14,10 +15,10 @@ type Request struct {
 	Messages []types.Message `json:"messages"`
 }
 
-func Tokens(model string, messages []types.Message) int {
+func Tokens(ctx context.Context, messages []types.Message) int {
 
 	request := &Request{
-		Model:    model,
+		Model:    ctx.Value("model").(string),
 		Messages: messages,
 	}
 

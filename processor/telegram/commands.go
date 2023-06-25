@@ -25,6 +25,8 @@ func (p *Processor) doCommand(ctx context.Context, message *tg.Message, user *tg
 		p.examples(ctx)
 	case "premium":
 		p.premium(ctx)
+	case "GPT4":
+		p.gpt4(ctx)
 	case "donate":
 		p.donate(ctx)
 	default:
@@ -56,7 +58,7 @@ func (p *Processor) help(ctx context.Context) {
 
 func (p *Processor) settings(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, msg(ctx, lang(ctx)), 0, button.Settings(lang(ctx)))
+	_, err := p.Client.SendMessage(ctx, msg(ctx, lang(ctx)), 0, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't send settings command")
 	}
@@ -75,6 +77,14 @@ func (p *Processor) premium(ctx context.Context) {
 	_, err := p.Client.SendMessage(ctx, text.Premium[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send premium command")
+	}
+}
+
+func (p *Processor) gpt4(ctx context.Context) {
+
+	_, err := p.Client.SendMessage(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
+	if err != nil {
+		log.Printf("can't send gpt4 command")
 	}
 }
 

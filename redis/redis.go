@@ -49,6 +49,14 @@ func UserStatus(ctx context.Context) types.UserStatus {
 		return types.BlockedStatus
 	}
 
+	result, err = isGPT4(ctx, id)
+	if err != nil {
+		log.Printf("can't check whether user %s is gpt-4: %v", id, err)
+		return types.UnknownStatus
+	} else if result {
+		return types.GPT4Status
+	}
+
 	result, err = isPremium(ctx, id)
 	if err != nil {
 		log.Printf("can't check whether user %s is premium: %v", id, err)
@@ -93,9 +101,31 @@ func Requests(ctx context.Context) string {
 	return fmt.Sprintf("%d/%d", requests, NumOfFreeRequests)
 }
 
-func Decrement(ctx context.Context) {
+func Decrement(ctx context.Context, used int) {
 
-	key := fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
+	key := fmt.Sprintf("gpt-4:%d", ctx.Value("user_id").(int64))
+
+	if ctx.Value("model") == "gpt-4" {
+		available, err := Client.Get(ctx, key).Int()
+		if err != nil {
+			log.Printf("can't get %q: %v", key, err)
+			return
+		}
+
+		if available <= used {
+			err = Client.Del(ctx, key).Err()
+			if err != nil {
+				log.Printf("can't delete %q: %v", key, err)
+			}
+		} else {
+			err = Client.Set(ctx, key, available-used, 0).Err()
+			if err != nil {
+				log.Printf("can't decrement %q: %v", key, err)
+			}
+		}
+	}
+
+	key = fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
 
 	_, err := Client.Get(ctx, key).Result()
 	if err == nil {
@@ -120,9 +150,20 @@ func Decrement(ctx context.Context) {
 	}
 }
 
-func SetPremium(userID int64, amount int, Type string) error {
+func PerformTransaction(userID int64, amount int, Type string) error {
 
-	key := fmt.Sprintf("premium:%d", userID)
+	key := fmt.Sprintf("gpt-4:%d", userID)
+
+	if Type == "gpt-4" {
+		err := Client.Set(context.Background(), key, amount/100, 0).Err()
+		if err != nil {
+			log.Printf("can't set %q: %v", key, err)
+			return err
+		}
+		return nil
+	}
+
+	key = fmt.Sprintf("premium:%d", userID)
 
 	var expiration time.Time
 	switch Type {
@@ -136,9 +177,8 @@ func SetPremium(userID int64, amount int, Type string) error {
 
 	err := Client.Set(context.Background(), key, expiration.Format("15:04:05 02.01.2006"), time.Until(expiration)).Err()
 	if err != nil {
-		log.Printf("can't set premium: %v", err)
+		log.Printf("can't set %q: %v", key, err)
 		return err
 	}
-
 	return nil
 }

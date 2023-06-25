@@ -3,13 +3,13 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/lib/constants"
 	"log"
 	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
 
+	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/gotd/td/tg"

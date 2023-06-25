@@ -5,6 +5,7 @@ type UserStatus int
 const (
 	UnknownStatus UserStatus = iota
 	BlockedStatus
+	GPT4Status
 	PremiumStatus
 	FreeStatus
 	ExhaustedStatus
@@ -19,5 +20,5 @@ type Activity struct {
 	LastName     string `json:"last_name"`
 	Username     string `json:"username"`
 	LanguageCode string `json:"language_code"`
-	IsPremium    bool   `json:"is_premium"`
+	IsPremium    string `json:"is_premium"`
 }

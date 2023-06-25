@@ -1,7 +1,7 @@
 package types
 
 type Stats struct {
-	IsPremium                          bool
+	IsPremium                          string
 	CompletedAt                        int64
 	FirstSend, LastEdit                int64
 	PromptTokens, PromptLength         int

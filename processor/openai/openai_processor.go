@@ -27,7 +27,14 @@ func New() *Processor {
 
 func (p *Processor) Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
-	maxTokens := 4096 - bobdev.Tokens("gpt-3.5-turbo", messages)
+	tokenLimit := 0
+	if ctx.Value("model") == "gpt-4" {
+		tokenLimit = 8191
+	} else {
+		tokenLimit = 4096
+	}
+
+	maxTokens := tokens(ctx, messages)
 	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:
@@ -42,13 +49,13 @@ Retry:
 			if strings.HasPrefix(errMsg, e.ContextLengthExceeded) {
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceeded)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
-				tokens, _ := strconv.Atoi(errMsg)
-				diff := tokens - 4096
+				totalTokens, _ := strconv.Atoi(errMsg)
+				diff := totalTokens - tokenLimit
 				log.Printf("max tokens %d was deacreased by %d", maxTokens, diff)
 				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
-				maxTokens = 4096 - bobdev.Tokens("gpt-3.5-turbo", messages)
+				maxTokens = tokens(ctx, messages)
 			} else {
 				channel <- text.TooLong[lang(ctx)]
 				return
@@ -75,10 +82,10 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = 4096 - maxTokens
+	stats.PromptTokens = tokenLimit - maxTokens
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}
-	stats.CompletionTokens = bobdev.Tokens("gpt-3.5-turbo", messages) - 8
+	stats.CompletionTokens = bobdev.Tokens(ctx, completions) - 8
 	stats.CompletionLength = len(completions[0].Content)
 }

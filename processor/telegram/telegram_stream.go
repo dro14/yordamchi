@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync/atomic"
 	"time"
@@ -16,7 +17,7 @@ import (
 	"github.com/gotd/td/tg"
 )
 
-func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.User, isPremium bool) {
+func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.User, isPremium string) {
 
 	messages := redis.LoadContext(ctx, message.Message)
 	stats := &types.Stats{IsPremium: isPremium}
@@ -42,9 +43,10 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 
 	index := 0
 	completion := ""
+	var completions []string
 	for completion = range channel {
 
-		completions := slice(completion)
+		completions = slice(completion)
 		if index >= len(completions) {
 			index = len(completions) - 1
 		}
@@ -88,15 +90,21 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 		time.Sleep(constants.RequestInterval)
 	}
 
+	endMessage := ""
+	tokensUsed := stats.PromptTokens + stats.CompletionTokens
+	if ctx.Value("model") == "gpt-4" {
+		endMessage = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
+	}
+
 	stats.Requests++
-	err = p.Client.EditMessage(ctx, "", messageID, button.NewChat(lang(ctx)))
+	err = p.Client.EditMessage(ctx, endMessage, messageID, button.NewChat(lang(ctx)))
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}
 	stats.LastEdit = time.Since(start).Milliseconds()
 	stats.CompletedAt = time.Now().Unix()
 
-	redis.Decrement(ctx)
+	redis.Decrement(ctx, tokensUsed)
 	redis.StoreContext(ctx, message.Message, completion)
 	postgres.SaveMessage(ctx, stats, user)
 }

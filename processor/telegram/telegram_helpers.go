@@ -49,12 +49,12 @@ func messageUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateN
 	ctx = context.WithValue(ctx, "date", message.Date)
 	ctx = context.WithValue(ctx, "user_id", user.ID)
 	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
+	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
 	return ctx, message, user
 }
 
 func callbackUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) (context.Context, string) {
 	user := entities.Users[update.UserID]
-	ctx = context.WithValue(ctx, "message_id", update.MsgID)
 	ctx = context.WithValue(ctx, "user_id", user.ID)
 	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
 	return ctx, string(update.Data)
@@ -121,9 +121,12 @@ func slice(completion string) []string {
 
 func msg(ctx context.Context, lang string) string {
 
-	if redis.UserStatus(ctx) == types.PremiumStatus {
-		return fmt.Sprintf(text.Settings[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
+	switch redis.UserStatus(ctx) {
+	case types.GPT4Status:
+		return fmt.Sprintf(text.Settings2[lang], redis.GPT4Tokens(ctx))
+	case types.PremiumStatus:
+		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
+	default:
+		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
 	}
-
-	return fmt.Sprintf(text.Settings[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
 }

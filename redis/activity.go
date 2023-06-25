@@ -10,7 +10,7 @@ import (
 	"github.com/gotd/td/tg"
 )
 
-func IncrementActivity(ctx context.Context, message *tg.Message, user *tg.User, isPremium bool) int {
+func IncrementActivity(ctx context.Context, message *tg.Message, user *tg.User, isPremium string) int {
 
 	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
 

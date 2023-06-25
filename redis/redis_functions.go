@@ -24,6 +24,19 @@ func isBlocked(ctx context.Context, id string) (bool, error) {
 	}
 }
 
+func isGPT4(ctx context.Context, id string) (bool, error) {
+
+	_, err := Client.Get(ctx, "model:"+id).Result()
+	if err != nil {
+		if err.Error() == e.KeyNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
 func isPremium(ctx context.Context, id string) (bool, error) {
 
 	_, err := Client.Get(ctx, "premium:"+id).Result()

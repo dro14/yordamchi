@@ -131,7 +131,7 @@ func PerformTransaction(params *types.Params) (gin.H, int) {
 		return nil, -32400
 	}
 
-	err = redis.SetPremium(userID, amount, Type)
+	err = redis.PerformTransaction(userID, amount, Type)
 	if err != nil {
 		return nil, -32400
 	}

@@ -38,7 +38,7 @@ func New() *Client {
 func (c *Client) Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
 	request := &types.Request{
-		Model:     "gpt-3.5-turbo-0613",
+		Model:     ctx.Value("model").(string) + "-0613",
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    true,
