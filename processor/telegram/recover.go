@@ -23,6 +23,7 @@ func (p *Processor) Recover() {
 		ctx = context.WithValue(ctx, "date", activity.Date)
 		ctx = context.WithValue(ctx, "user_id", activity.UserID)
 		ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(activity.LanguageCode))
+		ctx = context.WithValue(ctx, "model", redis.Model(ctx))
 
 		message := &tg.Message{
 			ID:      activity.MessageID,

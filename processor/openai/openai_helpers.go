@@ -23,7 +23,7 @@ func lang(ctx context.Context) string {
 
 func tokens(ctx context.Context, messages []types.Message) int {
 
-	if ctx.Value("model").(string) == "gpt-3.5-turbo" {
+	if ctx.Value("model") == "gpt-3.5-turbo" {
 		return 4096 - bobdev.Tokens(ctx, messages)
 	}
 
