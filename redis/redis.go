@@ -12,7 +12,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-const NumOfFreeRequests = 10
+const NumOfFreeRequests = 5
 
 var Client *redis.Client
 

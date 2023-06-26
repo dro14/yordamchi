@@ -17,13 +17,20 @@ import (
 var blockedUsers sync.Map
 
 func isBlocked(userID int64) bool {
+
 	_, ok := blockedUsers.Load(userID)
 	if ok {
 		return true
-	} else {
-		blockedUsers.Store(userID, true)
-		return false
 	}
+
+	blockedUsers.Store(userID, true)
+	go unblockUser(userID)
+	return false
+}
+
+func unblockUser(userID int64) {
+	time.Sleep(1 * time.Minute)
+	blockedUsers.Delete(userID)
 }
 
 func messageUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateNewMessage) (context.Context, *tg.Message, *tg.User) {
