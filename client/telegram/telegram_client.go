@@ -92,12 +92,9 @@ func (c *Client) EditMessage(ctx context.Context, message string, messageID int,
 
 	request := &tg.MessagesEditMessageRequest{
 		Peer:      &tg.InputPeerUser{UserID: userID},
+		Message:   message,
 		ID:        messageID,
 		NoWebpage: true,
-	}
-
-	if len(message) > 0 {
-		request.Message = message
 	}
 
 	if keyboard != nil {

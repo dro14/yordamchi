@@ -54,7 +54,6 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 		stats.Requests++
 		err = p.Client.EditMessage(ctx, completions[index], messageID, nil)
 		if err == e.UserBlockedError {
-			log.Printf("user blocked bot")
 			return
 		} else if err == e.UserDeletedMessage {
 			log.Printf("user deleted completion")
@@ -64,12 +63,10 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 		switch completion {
 		case text.TooLong[lang(ctx)]:
 			log.Printf("prompt was too long")
-			return
+			fallthrough
 		case text.RequestFailed[lang(ctx)]:
-			log.Printf("request failed")
 			return
 		case text.Error[lang(ctx)]:
-			log.Printf("stream error")
 			index--
 		}
 
@@ -79,7 +76,6 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 			stats.Requests++
 			messageID, err = p.Client.SendMessage(ctx, completions[index], 0, nil)
 			if err == e.UserBlockedError {
-				log.Printf("user blocked bot")
 				return
 			} else if err != nil {
 				log.Printf("can't send next message")
@@ -90,14 +86,13 @@ func (p *Processor) Stream(ctx context.Context, message *tg.Message, user *tg.Us
 		time.Sleep(constants.RequestInterval)
 	}
 
-	endMessage := ""
 	tokensUsed := stats.PromptTokens + stats.CompletionTokens
 	if ctx.Value("model") == "gpt-4" {
-		endMessage = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
+		completions[index] = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
 	}
 
 	stats.Requests++
-	err = p.Client.EditMessage(ctx, endMessage, messageID, button.NewChat(lang(ctx)))
+	err = p.Client.EditMessage(ctx, completions[index], messageID, button.NewChat(lang(ctx)))
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}
