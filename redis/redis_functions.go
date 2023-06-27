@@ -53,7 +53,7 @@ func isFree(ctx context.Context, id string) (bool, error) {
 	requests, err := Client.Get(ctx, "free:"+id).Int()
 	if err != nil {
 		if err.Error() == KeyNotFound {
-			err = Client.Set(ctx, "free:"+id, 5, untilMidnight()).Err()
+			err = Client.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight()).Err()
 			if err != nil {
 				return false, err
 			}

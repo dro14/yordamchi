@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	NumOfFreeRequests = 10
+	NumOfFreeRequests = 5
 	KeyNotFound       = "redis: nil"
 )
 
