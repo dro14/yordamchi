@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/dro14/yordamchi/recovery"
 	"log"
 	"os"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"github.com/dro14/yordamchi/processor/telegram"
 	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/processor/telegram/legacy_bot"
+	"github.com/dro14/yordamchi/recovery"
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
 )

@@ -106,9 +106,9 @@ func Requests(ctx context.Context) string {
 
 func Decrement(ctx context.Context, used int) {
 
-	key := fmt.Sprintf("gpt-4:%d", ctx.Value("user_id").(int64))
-
 	if ctx.Value("model") == "gpt-4" {
+		key := fmt.Sprintf("gpt-4:%d", ctx.Value("user_id").(int64))
+
 		available, err := Client.Get(ctx, key).Int()
 		if err != nil {
 			log.Printf("can't get %q: %v", key, err)
@@ -126,30 +126,30 @@ func Decrement(ctx context.Context, used int) {
 				log.Printf("can't decrement %q: %v", key, err)
 			}
 		}
-	}
-
-	key = fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
-
-	_, err := Client.Get(ctx, key).Result()
-	if err == nil {
-		return
-	}
-
-	key = fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
-
-	requests, err := Client.Get(ctx, key).Int()
-	if err != nil {
-		log.Printf("can't get %q: %v", key, err)
-		return
-	}
-
-	if requests > 0 && requests <= NumOfFreeRequests {
-		err = Client.Set(ctx, key, requests-1, untilMidnight()).Err()
-		if err != nil {
-			log.Printf("can't decrement %q: %v", key, err)
-		}
 	} else {
-		log.Printf("invalid number of requests: %d", requests)
+		key := fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
+
+		_, err := Client.Get(ctx, key).Result()
+		if err == nil {
+			return
+		}
+
+		key = fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
+
+		requests, err := Client.Get(ctx, key).Int()
+		if err != nil {
+			log.Printf("can't get %q: %v", key, err)
+			return
+		}
+
+		if requests > 0 && requests <= NumOfFreeRequests {
+			err = Client.Set(ctx, key, requests-1, untilMidnight()).Err()
+			if err != nil {
+				log.Printf("can't decrement %q: %v", key, err)
+			}
+		} else {
+			log.Printf("invalid number of requests: %d", requests)
+		}
 	}
 }
 

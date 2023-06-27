@@ -15,14 +15,12 @@ import (
 	"github.com/dro14/yordamchi/text"
 )
 
-func Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
+var tokenLimit = map[any]int{
+	"gpt-3.5-turbo": 4096,
+	"gpt-4":         8191,
+}
 
-	tokenLimit := 0
-	if ctx.Value("model") == "gpt-4" {
-		tokenLimit = 8191
-	} else {
-		tokenLimit = 4096
-	}
+func Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
 	maxTokens := tokens(ctx, messages)
 	retryDelay := 10 * constants.RetryDelay
@@ -40,7 +38,7 @@ Retry:
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceeded)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				totalTokens, _ := strconv.Atoi(errMsg)
-				diff := totalTokens - tokenLimit
+				diff := totalTokens - tokenLimit[ctx.Value("model")]
 				log.Printf("max tokens %d was deacreased by %d", maxTokens, diff)
 				maxTokens -= diff
 			} else if len(messages) > 2 {
@@ -70,7 +68,7 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = tokenLimit - maxTokens
+	stats.PromptTokens = tokenLimit[ctx.Value("model")] - maxTokens
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}
