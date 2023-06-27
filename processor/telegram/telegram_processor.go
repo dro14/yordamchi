@@ -35,18 +35,19 @@ func ProcessUpdate(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"ok": true})
 
 	switch {
 	case update.Message != nil:
-		ProcessMessage(context.Background(), update.Message)
+		go ProcessMessage(context.Background(), update.Message)
 	case update.CallbackQuery != nil:
-		ProcessCallbackQuery(context.Background(), update.CallbackQuery)
+		go ProcessCallbackQuery(context.Background(), update.CallbackQuery)
 	case update.MyChatMember != nil:
-		ProcessMyChatMember(context.Background(), update.MyChatMember)
+		go ProcessMyChatMember(context.Background(), update.MyChatMember)
 	default:
 		log.Printf("unknown update type:\n%+v", update)
 	}
+
+	c.JSON(200, gin.H{"ok": true})
 }
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
