@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type ComputerVisionRequest struct {
@@ -79,13 +80,13 @@ func Handler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"ok": true})
+
 	if update.Message == nil || update.Message.Photo == nil {
 		return
 	}
 
-	photo := *update.Message.Photo
+	photo := update.Message.Photo
 	photoFileID := photo[len(photo)-1].FileID
 
 	fmt.Println(photoFileID)

@@ -12,7 +12,10 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-const NumOfFreeRequests = 10
+const (
+	NumOfFreeRequests = 10
+	KeyNotFound       = "redis: nil"
+)
 
 var Client *redis.Client
 

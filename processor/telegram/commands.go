@@ -10,14 +10,14 @@ import (
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/text"
-	"github.com/gotd/td/tg"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func doCommand(ctx context.Context, message *tg.Message, user *tg.User) bool {
+func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 
-	switch command(message) {
+	switch message.Command() {
 	case "start":
-		start(ctx, message, user)
+		start(ctx, message)
 	case "help":
 		help(ctx)
 	case "settings":
@@ -37,16 +37,16 @@ func doCommand(ctx context.Context, message *tg.Message, user *tg.User) bool {
 	return true
 }
 
-func start(ctx context.Context, message *tg.Message, user *tg.User) {
+func start(ctx context.Context, message *tgbotapi.Message) {
 
 	_, err := telegram.SendMessage(ctx, text.Start[lang(ctx)], 0, button.Start(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send start command")
 	}
 
-	str, _ := strings.CutPrefix(message.Message, "/start ")
+	str, _ := strings.CutPrefix(message.Text, "/start ")
 	joinedBy, _ := strconv.Atoi(str)
-	postgres.JoinUser(ctx, user, int64(joinedBy))
+	postgres.JoinUser(ctx, message.From, int64(joinedBy))
 }
 
 func help(ctx context.Context) {

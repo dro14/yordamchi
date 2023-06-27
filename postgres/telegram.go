@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/lib/types"
 	"log"
 	"strings"
 	"time"
@@ -10,17 +9,18 @@ import (
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
-	"github.com/gotd/td/tg"
+	"github.com/dro14/yordamchi/lib/types"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func JoinUser(ctx context.Context, user *tg.User, joinedBy int64) {
+func JoinUser(ctx context.Context, user *tgbotapi.User, joinedBy int64) {
 
 	var (
 		attempts   int
 		retryDelay = constants.RetryDelay
 		lang       = ctx.Value("language_code").(string)
 		date       = int64(ctx.Value("date").(int))
-		joinedAt   = time.Unix(date, 0).Format("2006-01-02 15:04:05")
+		joinedAt   = time.Unix(date, 0).Format(time.DateTime)
 	)
 
 Retry:
@@ -31,7 +31,7 @@ Retry:
 		VALUES
 			($1, $2, $3, $4, $5)
 		ON CONFLICT DO NOTHING;`,
-		user.ID, user.FirstName, user.LastName, user.Username, lang)
+		user.ID, user.FirstName, user.LastName, user.UserName, lang)
 
 	_, err := db.ExecContext(ctx, `
 		INSERT INTO user_configs
@@ -57,16 +57,16 @@ Retry:
 	}
 }
 
-func SaveMessage(ctx context.Context, stats *types.Stats, user *tg.User) {
+func SaveMessage(ctx context.Context, stats *types.Stats, user *tgbotapi.User) {
 
 	var (
 		attempts    int
 		retryDelay  = constants.RetryDelay
 		lang        = ctx.Value("language_code").(string)
 		date        = int64(ctx.Value("date").(int))
-		createdOn   = time.Unix(date, 0).Format("2006-01-02")
-		promptedAt  = time.Unix(date, 0).Format("15:04:05")
-		completedAt = time.Unix(stats.CompletedAt, 0).Format("15:04:05")
+		createdOn   = time.Unix(date, 0).Format(time.DateOnly)
+		promptedAt  = time.Unix(date, 0).Format(time.TimeOnly)
+		completedAt = time.Unix(stats.CompletedAt, 0).Format(time.TimeOnly)
 	)
 
 	if !IsActive(ctx, user) {
@@ -98,13 +98,13 @@ Retry:
 	}
 }
 
-func DeactivateUser(ctx context.Context, user *tg.User) {
+func DeactivateUser(ctx context.Context, user *tgbotapi.User) {
 
 	var (
 		attempts      int
 		retryDelay    = constants.RetryDelay
 		date          = int64(ctx.Value("date").(int))
-		deactivatedAt = time.Unix(date, 0).Format("2006-01-02 15:04:05")
+		deactivatedAt = time.Unix(date, 0).Format(time.DateTime)
 	)
 
 Retry:
@@ -119,23 +119,28 @@ Retry:
 		false, deactivatedAt, user.ID)
 
 	if err != nil {
-		log.Printf("can't deactivate user: %v", err)
-		if attempts < constants.RetryAttempts {
-			functions.Sleep(&retryDelay)
+		if strings.Contains(err.Error(), e.NotFound) {
+			JoinUser(ctx, user, 0)
 			goto Retry
 		} else {
-			log.Printf("deactivating user failed after %d attempts", attempts)
+			log.Printf("can't deactivate user: %v", err)
+			if attempts < constants.RetryAttempts {
+				functions.Sleep(&retryDelay)
+				goto Retry
+			} else {
+				log.Printf("deactivating user failed after %d attempts", attempts)
+			}
 		}
 	}
 }
 
-func RejoinUser(ctx context.Context, user *tg.User) {
+func RejoinUser(ctx context.Context, user *tgbotapi.User) {
 
 	var (
 		attempts   int
 		retryDelay = constants.RetryDelay
 		date       = int64(ctx.Value("date").(int))
-		rejoinedAt = time.Unix(date, 0).Format("2006-01-02 15:04:05")
+		rejoinedAt = time.Unix(date, 0).Format(time.DateTime)
 	)
 
 Retry:
@@ -150,17 +155,22 @@ Retry:
 		true, rejoinedAt, user.ID)
 
 	if err != nil {
-		log.Printf("can't rejoin user: %v", err)
-		if attempts < constants.RetryAttempts {
-			functions.Sleep(&retryDelay)
+		if strings.Contains(err.Error(), e.NotFound) {
+			JoinUser(ctx, user, 0)
 			goto Retry
 		} else {
-			log.Printf("rejoining user failed after %d attempts", attempts)
+			log.Printf("can't rejoin user: %v", err)
+			if attempts < constants.RetryAttempts {
+				functions.Sleep(&retryDelay)
+				goto Retry
+			} else {
+				log.Printf("rejoining user failed after %d attempts", attempts)
+			}
 		}
 	}
 }
 
-func IsActive(ctx context.Context, user *tg.User) bool {
+func IsActive(ctx context.Context, user *tgbotapi.User) bool {
 
 	var (
 		attempts   int
@@ -194,7 +204,7 @@ Retry:
 	return isActive
 }
 
-func JoinedAt(ctx context.Context, user *tg.User) string {
+func JoinedAt(ctx context.Context, user *tgbotapi.User) string {
 
 	var (
 		attempts   int
@@ -228,7 +238,7 @@ Retry:
 	return joinedAt
 }
 
-func DeactivatedAt(ctx context.Context, user *tg.User) string {
+func DeactivatedAt(ctx context.Context, user *tgbotapi.User) string {
 
 	var (
 		attempts      int
@@ -264,7 +274,7 @@ Retry:
 	return deactivatedAt
 }
 
-func RejoinedAt(ctx context.Context, user *tg.User) string {
+func RejoinedAt(ctx context.Context, user *tgbotapi.User) string {
 
 	var (
 		attempts   int

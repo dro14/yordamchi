@@ -3,15 +3,13 @@ package redis
 import (
 	"context"
 	"fmt"
-
-	"github.com/dro14/yordamchi/lib/e"
 )
 
 func isBlocked(ctx context.Context, id string) (bool, error) {
 
 	value, err := Client.Get(ctx, "blocked:"+id).Int()
 	if err != nil {
-		if err.Error() == e.KeyNotFound {
+		if err.Error() == KeyNotFound {
 			return false, nil
 		}
 		return false, err
@@ -28,7 +26,7 @@ func isGPT4(ctx context.Context, id string) (bool, error) {
 
 	_, err := Client.Get(ctx, "model:"+id).Result()
 	if err != nil {
-		if err.Error() == e.KeyNotFound {
+		if err.Error() == KeyNotFound {
 			return false, nil
 		}
 		return false, err
@@ -41,7 +39,7 @@ func isPremium(ctx context.Context, id string) (bool, error) {
 
 	_, err := Client.Get(ctx, "premium:"+id).Result()
 	if err != nil {
-		if err.Error() == e.KeyNotFound {
+		if err.Error() == KeyNotFound {
 			return false, nil
 		}
 		return false, err
@@ -54,7 +52,7 @@ func isFree(ctx context.Context, id string) (bool, error) {
 
 	requests, err := Client.Get(ctx, "free:"+id).Int()
 	if err != nil {
-		if err.Error() == e.KeyNotFound {
+		if err.Error() == KeyNotFound {
 			err = Client.Set(ctx, "free:"+id, NumOfFreeRequests, untilMidnight()).Err()
 			if err != nil {
 				return false, err

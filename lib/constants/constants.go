@@ -10,3 +10,9 @@ const (
 	RetryDelay      = 1 * time.Second
 	RequestInterval = 2 * time.Second
 )
+
+var (
+	MerchantID string
+	TestKey    string
+	RealKey    string
+)

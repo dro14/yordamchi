@@ -3,7 +3,6 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"sync/atomic"
 	"time"
@@ -17,6 +16,7 @@ import (
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
@@ -26,17 +26,17 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	channel := make(chan string)
 	go openai.Process(ctx, messages, stats, channel)
 
-	stats.Activity = redis.IncrementActivity(ctx, message, user, isPremium)
+	stats.Activity = redis.IncrementActivity(ctx, message, isPremium)
 	defer redis.DecrementActivity(ctx)
 
 	stats.Requests++
-	messageID, err := telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.ID, nil)
+	messageID, err := telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Printf("can't send loading message")
 		return
 	}
-	start := ctx.Value("start").(time.Time)
-	stats.FirstSend = time.Since(start).Milliseconds()
+	beginning := ctx.Value("beginning").(time.Time)
+	stats.FirstSend = time.Since(beginning).Milliseconds()
 
 	isTyping := &atomic.Bool{}
 	isTyping.Store(true)
@@ -98,10 +98,10 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}
-	stats.LastEdit = time.Since(start).Milliseconds()
+	stats.LastEdit = time.Since(beginning).Milliseconds()
 	stats.CompletedAt = time.Now().Unix()
 
 	redis.Decrement(ctx, tokensUsed)
-	redis.StoreContext(ctx, message.Message, completion)
-	postgres.SaveMessage(ctx, stats, user)
+	redis.StoreContext(ctx, message.Text, completion)
+	postgres.SaveMessage(ctx, stats, message.From)
 }

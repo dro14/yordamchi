@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/gin-gonic/gin"
 )
@@ -36,8 +37,6 @@ func Transaction(params *types.Params) string {
 	return hex.EncodeToString(hashValue)
 }
 
-var MerchantKey string
-
 func Authorized(c *gin.Context) bool {
 
 	header := c.GetHeader("Authorization")
@@ -58,8 +57,8 @@ func Authorized(c *gin.Context) bool {
 	}
 
 	header = string(bts[:n])
-	if header != "Paycom:"+MerchantKey {
-		log.Printf("unauthorized header: %s != %s", header, "Paycom:"+MerchantKey)
+	if header != "Paycom:"+constants.TestKey && header != "Paycom:"+constants.RealKey {
+		log.Printf("unauthorized header: %s", header)
 		c.JSON(200, gin.H{
 			"error": gin.H{
 				"code":    -32504,

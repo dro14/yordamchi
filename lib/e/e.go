@@ -28,16 +28,6 @@ const (
 	InternalServerError   = "500 Internal Server Error"
 )
 
-// Redis errors
-const (
-	KeyNotFound    = "redis: nil"
-	UserNotDefined = "user is neither premium nor free"
-)
-
-var (
-	UserNotDefinedError = errors.New(UserNotDefined)
-)
-
 // Postgres errors
 const (
 	UniqueConstraint      = "violates unique constraint"

@@ -8,25 +8,32 @@ import (
 	"log"
 	"os"
 
+	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/gin-gonic/gin"
 )
 
-func Run() {
+func Init() {
 
-	merchantID = os.Getenv("MERCHANT_ID")
-	if merchantID == "" {
+	merchantID, ok := os.LookupEnv("MERCHANT_ID")
+	if !ok {
 		log.Fatalf("merchant id is not specified")
 	}
+	constants.MerchantID = merchantID
 
-	merchantKey, ok := os.LookupEnv("MERCHANT_KEY")
+	testKey, ok := os.LookupEnv("TEST_KEY")
 	if !ok {
-		log.Fatalf("merchant key is not specified")
+		log.Fatalf("test key is not specified")
 	}
-	functions.MerchantKey = merchantKey
+	constants.TestKey = testKey
 
+	realKey, ok := os.LookupEnv("REAL_KEY")
+	if !ok {
+		log.Fatalf("real key is not specified")
+	}
+	constants.RealKey = realKey
 }
 
 func Handler(c *gin.Context) {
@@ -100,8 +107,6 @@ func Handler(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-var merchantID string
-
 func CheckoutURL(ctx context.Context, amount int, Type string) string {
 
 	userID := ctx.Value("user_id").(int64)
@@ -111,7 +116,7 @@ func CheckoutURL(ctx context.Context, amount int, Type string) string {
 		return ""
 	}
 
-	str := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d", merchantID, orderID, amount)
+	str := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d", constants.MerchantID, orderID, amount)
 	buffer := bytes.NewBuffer([]byte{})
 	writer := base64.NewEncoder(base64.StdEncoding, buffer)
 	_, err = writer.Write([]byte(str))

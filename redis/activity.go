@@ -3,26 +3,26 @@ package redis
 import (
 	"context"
 	"encoding/json"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium string) int {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("activity:%d", ctx.Value("user_id").(int64))
 
 	activity := &types.Activity{
 		MessageID:    message.MessageID,
 		Message:      message.Text,
 		Date:         message.Date,
 		UserID:       message.From.ID,
-		FirstName:    ,
-		LastName:     user.LastName,
-		Username:     user.Username,
-		LanguageCode: user.LangCode,
+		FirstName:    message.From.FirstName,
+		LastName:     message.From.LastName,
+		Username:     message.From.UserName,
+		LanguageCode: ctx.Value("language_code").(string),
 		IsPremium:    isPremium,
 	}
 
@@ -32,7 +32,7 @@ func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium
 		return 0
 	}
 
-	err = Client.Set(ctx, "activity:"+id, string(data), 0).Err()
+	err = Client.Set(ctx, key, string(data), 0).Err()
 	if err != nil {
 		log.Printf("can't store activity: %v", err)
 	}
@@ -48,9 +48,9 @@ func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium
 
 func DecrementActivity(ctx context.Context) {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("activity:%d", ctx.Value("user_id").(int64))
 
-	err := Client.Del(ctx, "activity:"+id).Err()
+	err := Client.Del(ctx, key).Err()
 	if err != nil {
 		log.Printf("can't delete activity: %v", err)
 	}

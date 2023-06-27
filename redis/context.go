@@ -3,17 +3,16 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
-	"strconv"
 	"time"
 
-	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/types"
 )
 
 func LoadContext(ctx context.Context, prompt string) []types.Message {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
 
 	messages := make([]types.Message, 0, 3)
 	message := types.Message{
@@ -21,17 +20,17 @@ func LoadContext(ctx context.Context, prompt string) []types.Message {
 		Role:    "user",
 	}
 
-	result, err := Client.Get(ctx, "context:"+id).Result()
+	result, err := Client.Get(ctx, key).Result()
 	if err != nil {
-		if err.Error() != e.KeyNotFound {
-			log.Printf("can't get \"context:%s\": %v", id, err)
+		if err.Error() != KeyNotFound {
+			log.Printf("can't get %q: %v", key, err)
 		}
 		return append(messages, message)
 	}
 
 	err = json.Unmarshal([]byte(result), &messages)
 	if err != nil {
-		log.Printf("can't decode context: %v", err)
+		log.Printf("can't decode %q: %v", key, err)
 		return append(messages, message)
 	}
 
@@ -40,7 +39,7 @@ func LoadContext(ctx context.Context, prompt string) []types.Message {
 
 func StoreContext(ctx context.Context, prompt, completion string) {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
 
 	messages := []types.Message{
 		{
@@ -55,22 +54,22 @@ func StoreContext(ctx context.Context, prompt, completion string) {
 
 	data, err := json.Marshal(messages)
 	if err != nil {
-		log.Printf("can't encode context: %v", err)
+		log.Printf("can't encode %q: %v", key, err)
 		return
 	}
 
-	err = Client.Set(ctx, "context:"+id, string(data), 72*time.Hour).Err()
+	err = Client.Set(ctx, key, string(data), 72*time.Hour).Err()
 	if err != nil {
-		log.Printf("can't store context: %v", err)
+		log.Printf("can't set %q: %v", key, err)
 	}
 }
 
 func DeleteContext(ctx context.Context) {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
 
-	err := Client.Del(ctx, "context:"+id).Err()
+	err := Client.Del(ctx, key).Err()
 	if err != nil {
-		log.Printf("can't delete context: %v", err)
+		log.Printf("can't delete %q: %v", key, err)
 	}
 }

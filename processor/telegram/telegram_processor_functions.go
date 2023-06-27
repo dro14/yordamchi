@@ -3,14 +3,14 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/client/telegram"
 	"log"
 
+	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/button"
-	"github.com/dro14/yordamchi/processor/telegram/info"
+	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/text"
-	"github.com/gotd/td/tg"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func blocked(ctx context.Context) {
@@ -29,18 +29,18 @@ func exhausted(ctx context.Context) {
 	}
 }
 
-func deactivated(ctx context.Context, user *tg.User) {
+func deactivated(ctx context.Context, user *tgbotapi.User) {
 
 	postgres.DeactivateUser(ctx, user)
 	joinedAt := format(postgres.JoinedAt(ctx, user))
 	deactivatedAt := format(postgres.DeactivatedAt(ctx, user))
 	rejoinedAt := format(postgres.RejoinedAt(ctx, user))
 
-	if len(user.Username) > 0 {
-		user.Username = "@" + user.Username
+	if len(user.UserName) > 0 {
+		user.UserName = "@" + user.UserName
 	}
 
-	info.SendInfoMessage(ctx, fmt.Sprintf(
+	info_bot.Send(fmt.Sprintf(
 		`is_active: 🚫
 
 id: %d
@@ -51,21 +51,21 @@ language_code: %s
 
 joined_at:           %s
 deactivated_at: %s
-rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.Username, user.LangCode, joinedAt, deactivatedAt, rejoinedAt))
+rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.UserName, user.LanguageCode, joinedAt, deactivatedAt, rejoinedAt))
 }
 
-func rejoined(ctx context.Context, user *tg.User) {
+func rejoined(ctx context.Context, user *tgbotapi.User) {
 
 	postgres.RejoinUser(ctx, user)
 	joinedAt := format(postgres.JoinedAt(ctx, user))
 	deactivatedAt := format(postgres.DeactivatedAt(ctx, user))
 	rejoinedAt := format(postgres.RejoinedAt(ctx, user))
 
-	if len(user.Username) > 0 {
-		user.Username = "@" + user.Username
+	if len(user.UserName) > 0 {
+		user.UserName = "@" + user.UserName
 	}
 
-	info.SendInfoMessage(ctx, fmt.Sprintf(
+	info_bot.Send(fmt.Sprintf(
 		`is_active: ✅
 
 id: %d
@@ -76,5 +76,5 @@ language_code: %s
 
 joined_at:           %s
 deactivated_at: %s
-rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.Username, user.LangCode, joinedAt, deactivatedAt, rejoinedAt))
+rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.UserName, user.LanguageCode, joinedAt, deactivatedAt, rejoinedAt))
 }

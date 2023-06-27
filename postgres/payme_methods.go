@@ -34,8 +34,12 @@ func NewOrder(userID int64, amount int, Type string) (int, error) {
 
 func CheckPerformTransaction(params *types.Params) (gin.H, int) {
 
-	var amount int
-	err := db.QueryRow(`SELECT amount FROM orders_test WHERE id = $1;`, params.Account.OrderID).Scan(&amount)
+	var (
+		amount int
+		Type   string
+	)
+
+	err := db.QueryRow(`SELECT amount, type FROM orders_test WHERE id = $1;`, params.Account.OrderID).Scan(&amount, &Type)
 	if err != nil {
 		log.Printf("can't get order: %v", err)
 		return nil, -31050
@@ -46,8 +50,42 @@ func CheckPerformTransaction(params *types.Params) (gin.H, int) {
 		return nil, -31001
 	}
 
+	var (
+		title string
+		price int
+		count int
+	)
+
+	switch Type {
+	case "weekly":
+		title = "Weekly tariff for ChatGPT"
+		price = amount
+		count = 1
+	case "monthly":
+		title = "Monthly tariff for ChatGPT"
+		price = amount
+		count = 1
+	case "gpt-4":
+		title = "Tokens for GPT-4"
+		price = 100
+		count = amount / 100
+	}
+
 	result := gin.H{
 		"allow": true,
+		"details": gin.H{
+			"receipt_type": 0,
+			"items": []gin.H{
+				{
+					"title":        title,
+					"price":        price,
+					"count":        count,
+					"code":         10318001001000000,
+					"package_code": 1501319,
+					"vat_percent":  0,
+				},
+			},
+		},
 	}
 
 	return result, 0

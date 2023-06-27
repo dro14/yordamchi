@@ -3,7 +3,6 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"strings"
 	"sync"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
-	"github.com/gotd/td/tg"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 var blockedUsers sync.Map
@@ -33,66 +32,22 @@ func unblockUser(userID int64) {
 	blockedUsers.Delete(userID)
 }
 
-func messageUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateNewMessage) (context.Context, *tg.Message, *tg.User) {
+func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool) {
 
-	start := time.Now()
-	ctx = context.WithValue(ctx, "start", start)
-
-	message, ok := update.Message.(*tg.Message)
-	if !ok || message.Out || len(strings.TrimSpace(message.Message)) == 0 {
-		return ctx, nil, nil
+	switch {
+	case message.From.IsBot,
+		len(message.Text) == 0,
+		message.Chat.Type != "private",
+		isBlocked(message.From.ID):
+		return ctx, false
 	}
 
-	peerUser, ok := message.PeerID.(*tg.PeerUser)
-	if !ok {
-		return ctx, nil, nil
-	}
-
-	user := entities.Users[peerUser.UserID]
-	if user.Bot || isBlocked(user.ID) {
-		return ctx, nil, nil
-	}
-
+	ctx = context.WithValue(ctx, "beginning", time.Now())
 	ctx = context.WithValue(ctx, "date", message.Date)
-	ctx = context.WithValue(ctx, "user_id", user.ID)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
+	ctx = context.WithValue(ctx, "user_id", message.From.ID)
+	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(message.From.LanguageCode))
 	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
-	return ctx, message, user
-}
-
-func callbackUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) (context.Context, string) {
-	user := entities.Users[update.UserID]
-	ctx = context.WithValue(ctx, "user_id", user.ID)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
-	return ctx, string(update.Data)
-}
-
-func botStoppedUpdate(ctx context.Context, entities tg.Entities, update *tg.UpdateBotStopped) (context.Context, *tg.User) {
-	user := entities.Users[update.UserID]
-	ctx = context.WithValue(ctx, "date", update.Date)
-	ctx = context.WithValue(ctx, "user_id", user.ID)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(user.LangCode))
-	return ctx, user
-}
-
-func command(message *tg.Message) string {
-
-	entities := message.Entities
-	if len(entities) == 0 {
-		return ""
-	}
-
-	entity, ok := entities[0].(*tg.MessageEntityBotCommand)
-	if !ok || entity.Offset != 0 || entity.Length == 0 {
-		return ""
-	}
-
-	botCommand := message.Message[1:entity.Length]
-	if i := strings.Index(botCommand, "@"); i != -1 {
-		botCommand = botCommand[:i]
-	}
-
-	return botCommand
+	return ctx, true
 }
 
 func lang(ctx context.Context) string {
@@ -104,7 +59,7 @@ func format(timestamp string) string {
 	if err != nil {
 		return timestamp
 	}
-	return t.Format("2006-01-02 15:04:05")
+	return t.Format(time.DateTime)
 }
 
 func slice(completion string) []string {
@@ -113,10 +68,12 @@ func slice(completion string) []string {
 
 	for len(completion) > 4096 {
 		cutIndex := 0
+	Loop:
 		for i := 4096; i >= 0; i-- {
-			if completion[i] == ' ' || completion[i] == '\n' || completion[i] == '\t' || completion[i] == '\r' {
+			switch completion[i] {
+			case ' ', '\n', '\t', '\r':
 				cutIndex = i
-				break
+				break Loop
 			}
 		}
 		completions = append(completions, completion[:cutIndex])
