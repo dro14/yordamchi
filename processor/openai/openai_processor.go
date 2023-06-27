@@ -50,13 +50,11 @@ Retry:
 				channel <- text.TooLong[lang(ctx)]
 				return
 			}
-		case strings.HasPrefix(errMsg, e.EmptyCompletion):
-			channel <- text.RequestFailed[lang(ctx)]
-			return
 		case strings.HasPrefix(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
 		case strings.HasPrefix(errMsg, e.ServiceUnavailable),
-			strings.HasPrefix(errMsg, e.InternalServerError):
+			strings.HasPrefix(errMsg, e.InternalServerError),
+			strings.HasPrefix(errMsg, e.EmptyCompletion):
 			functions.Sleep(&retryDelay)
 		}
 
