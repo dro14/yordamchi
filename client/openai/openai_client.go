@@ -10,14 +10,10 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
-type Client struct {
-	tokens []string
-	index  int
-}
+var keys []string
+var index int
 
-func New() *Client {
-
-	client := &Client{}
+func Init() {
 
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("OPENAI_TOKEN_%d", i)
@@ -25,17 +21,15 @@ func New() *Client {
 		if !ok {
 			break
 		}
-		client.tokens = append(client.tokens, "Bearer "+token)
+		keys = append(keys, "Bearer "+token)
 	}
 
-	if len(client.tokens) == 0 {
+	if len(keys) == 0 {
 		log.Fatalf("openai token is not specified")
 	}
-
-	return client
 }
 
-func (c *Client) Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
+func Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
 	request := &types.Request{
 		Model:     ctx.Value("model").(string) + "-0613",
@@ -45,7 +39,7 @@ func (c *Client) Completion(ctx context.Context, messages []types.Message, maxTo
 		User:      fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
 
-	resp, err := c.send(ctx, request)
+	resp, err := send(ctx, request)
 	if err != nil {
 		return nil, err
 	}

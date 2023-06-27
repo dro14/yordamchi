@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/client/telegram"
 	"log"
 
 	"github.com/dro14/yordamchi/postgres"
@@ -12,23 +13,23 @@ import (
 	"github.com/gotd/td/tg"
 )
 
-func (p *Processor) blocked(ctx context.Context) {
+func blocked(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, text.Blocked[lang(ctx)], 0, button.Blocked(lang(ctx)))
+	_, err := telegram.SendMessage(ctx, text.Blocked[lang(ctx)], 0, button.Blocked(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send blocked message")
 	}
 }
 
-func (p *Processor) exhausted(ctx context.Context) {
+func exhausted(ctx context.Context) {
 
-	_, err := p.Client.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
+	_, err := telegram.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send exhausted message")
 	}
 }
 
-func (p *Processor) deactivated(ctx context.Context, user *tg.User) {
+func deactivated(ctx context.Context, user *tg.User) {
 
 	postgres.DeactivateUser(ctx, user)
 	joinedAt := format(postgres.JoinedAt(ctx, user))
@@ -53,7 +54,7 @@ deactivated_at: %s
 rejoined_at:       %s`, user.ID, user.FirstName, user.LastName, user.Username, user.LangCode, joinedAt, deactivatedAt, rejoinedAt))
 }
 
-func (p *Processor) rejoined(ctx context.Context, user *tg.User) {
+func rejoined(ctx context.Context, user *tg.User) {
 
 	postgres.RejoinUser(ctx, user)
 	joinedAt := format(postgres.JoinedAt(ctx, user))

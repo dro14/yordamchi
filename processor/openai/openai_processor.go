@@ -15,17 +15,7 @@ import (
 	"github.com/dro14/yordamchi/text"
 )
 
-type Processor struct {
-	aiClient *openai.Client
-}
-
-func New() *Processor {
-	return &Processor{
-		aiClient: openai.New(),
-	}
-}
-
-func (p *Processor) Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
+func Process(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
 	tokenLimit := 0
 	if ctx.Value("model") == "gpt-4" {
@@ -39,7 +29,7 @@ func (p *Processor) Process(ctx context.Context, messages []types.Message, stats
 	var errMsg string
 Retry:
 	stats.Attempts++
-	response, err := p.aiClient.Completion(ctx, messages, maxTokens, channel)
+	response, err := openai.Completion(ctx, messages, maxTokens, channel)
 	if err != nil {
 		errMsg = err.Error()
 

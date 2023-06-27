@@ -57,6 +57,9 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 	for {
 		bts, err = reader.ReadBytes('\n')
 		if err != nil {
+			if strings.HasPrefix(err.Error(), "stream error") {
+				return nil, fmt.Errorf("stream error for %d", userID)
+			}
 			log.Printf("%v", err)
 			return nil, err
 		}

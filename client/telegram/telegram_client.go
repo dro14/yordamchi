@@ -12,20 +12,38 @@ import (
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/redis"
+	cache "github.com/gotd/contrib/redis"
+	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
 
-type Client struct {
-	bot *tg.Client
+var bot *tg.Client
+
+func Init() {
+
+	sessionStorage := cache.NewSessionStorage(redis.Client, "main_bot_session")
+	done := make(chan bool)
+
+	go func() {
+		if err := telegram.BotFromEnvironment(
+			context.Background(),
+			telegram.Options{SessionStorage: sessionStorage},
+			func(ctx context.Context, client *telegram.Client) error {
+				bot = client.API()
+				done <- true
+				return nil
+			},
+			telegram.RunUntilCanceled,
+		); err != nil {
+			log.Fatalf("can't connect client: %v", err)
+		}
+	}()
+
+	<-done
 }
 
-func New(bot *tg.Client) *Client {
-	return &Client{
-		bot: bot,
-	}
-}
-
-func (c *Client) SendMessage(ctx context.Context, message string, replyToMsgID int, keyboard *tg.ReplyInlineMarkup) (int, error) {
+func SendMessage(ctx context.Context, message string, replyToMsgID int, keyboard *tg.ReplyInlineMarkup) (int, error) {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -45,7 +63,7 @@ func (c *Client) SendMessage(ctx context.Context, message string, replyToMsgID i
 	attempts := 0
 Retry:
 	attempts++
-	resp, err := c.bot.MessagesSendMessage(ctx, request)
+	resp, err := bot.MessagesSendMessage(ctx, request)
 	if err != nil {
 
 		log.Printf("can't send message to %d: %v", userID, err)
@@ -86,7 +104,7 @@ Retry:
 	return response.ID, nil
 }
 
-func (c *Client) EditMessage(ctx context.Context, message string, messageID int, keyboard *tg.ReplyInlineMarkup) error {
+func EditMessage(ctx context.Context, message string, messageID int, keyboard *tg.ReplyInlineMarkup) error {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -105,7 +123,7 @@ func (c *Client) EditMessage(ctx context.Context, message string, messageID int,
 	attempts := 0
 Retry:
 	attempts++
-	_, err := c.bot.MessagesEditMessage(ctx, request)
+	_, err := bot.MessagesEditMessage(ctx, request)
 	if err != nil {
 
 		log.Printf("can't edit message for %d: %v", userID, err)
@@ -143,7 +161,7 @@ Retry:
 	return nil
 }
 
-func (c *Client) SetTyping(ctx context.Context, isTyping *atomic.Bool) {
+func SetTyping(ctx context.Context, isTyping *atomic.Bool) {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -154,7 +172,7 @@ func (c *Client) SetTyping(ctx context.Context, isTyping *atomic.Bool) {
 
 Loop:
 	for isTyping.Load() {
-		_, err := c.bot.MessagesSetTyping(ctx, request)
+		_, err := bot.MessagesSetTyping(ctx, request)
 		if err != nil {
 
 			log.Printf("can't set typing for %d: %v", userID, err)

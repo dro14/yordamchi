@@ -2,46 +2,48 @@ package telegram
 
 import (
 	"context"
+	"log"
+
+	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
-	"log"
 )
 
-func (p *Processor) newChatCallback(ctx context.Context) {
+func newChatCallback(ctx context.Context) {
 
 	redis.DeleteContext(ctx)
-	_, err := p.Client.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
+	_, err := telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
 		log.Printf("can't send new chat callback")
 	}
 }
 
-func (p *Processor) examplesCallback(ctx context.Context, messageID int) {
+func examplesCallback(ctx context.Context, messageID int) {
 
-	err := p.Client.EditMessage(ctx, text.Examples[lang(ctx)], messageID, button.Examples(lang(ctx)))
+	err := telegram.EditMessage(ctx, text.Examples[lang(ctx)], messageID, button.Examples(lang(ctx)))
 	if err != nil {
 		log.Printf("can't edit examples callback")
 	}
 }
 
-func (p *Processor) helpCallback(ctx context.Context, messageID int) {
+func helpCallback(ctx context.Context, messageID int) {
 
-	err := p.Client.EditMessage(ctx, text.Help[lang(ctx)], messageID, nil)
+	err := telegram.EditMessage(ctx, text.Help[lang(ctx)], messageID, nil)
 	if err != nil {
 		log.Printf("can't edit help callback")
 	}
 }
 
-func (p *Processor) premiumCallback(ctx context.Context, messageID int) {
+func premiumCallback(ctx context.Context, messageID int) {
 
-	err := p.Client.EditMessage(ctx, text.Premium[lang(ctx)], messageID, button.Premium(ctx, lang(ctx)))
+	err := telegram.EditMessage(ctx, text.Premium[lang(ctx)], messageID, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't edit premium callback")
 	}
 }
 
-func (p *Processor) modelCallback(ctx context.Context, messageID int, model string) {
+func modelCallback(ctx context.Context, messageID int, model string) {
 
 	var err error
 	if model == "gpt-4" {
@@ -54,7 +56,7 @@ func (p *Processor) modelCallback(ctx context.Context, messageID int, model stri
 		return
 	}
 
-	err = p.Client.EditMessage(ctx, msg(ctx, lang(ctx)), messageID, button.Settings(ctx))
+	err = telegram.EditMessage(ctx, msg(ctx, lang(ctx)), messageID, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't edit model callback")
 	}

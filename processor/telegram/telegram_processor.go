@@ -2,28 +2,56 @@ package telegram
 
 import (
 	"context"
-	"log"
-
+	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/client/telegram"
+	"github.com/dro14/yordamchi/payme"
+	"github.com/dro14/yordamchi/postgres"
+	"github.com/dro14/yordamchi/processor/telegram/legacy_bot"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/redis"
+	"github.com/gin-gonic/gin"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/gotd/td/tg"
 )
 
-type Processor struct {
-	Client    *telegram.Client
-	Processor *openai.Processor
+func Init() {
+
+	time.Local, _ = time.LoadLocation("Asia/Tashkent")
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	telegram.Init()
+	openai.Init()
+	postgres.Init()
+	redis.Init()
+	legacy_bot.Init()
+	payme.Run()
 }
 
-func New(bot *tg.Client) *Processor {
-	return &Processor{
-		Client:    telegram.New(bot),
-		Processor: openai.New(),
+func ProcessUpdate(c *gin.Context) {
+
+	update := &tgbotapi.Update{}
+	if err := c.ShouldBindJSON(update); err != nil {
+		log.Printf("can't bind json: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	switch {
+	case update.Message != nil:
+		ProcessMessage()
+	case update.CallbackQuery != nil:
+		ProcessCallbackQuery()
+	case update.MyChatMember != nil:
+
+	}
+
 }
 
-func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, update *tg.UpdateNewMessage) error {
+func ProcessMessage(ctx context.Context, entities tg.Entities, update *tg.UpdateNewMessage) error {
 
 	ctx, message, user := messageUpdate(ctx, entities, update)
 	if message == nil && user == nil {
@@ -31,7 +59,7 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 	}
 	defer blockedUsers.Delete(user.ID)
 
-	done := p.doCommand(ctx, message, user)
+	done := doCommand(ctx, message, user)
 	if done {
 		return nil
 	}
@@ -40,25 +68,25 @@ func (p *Processor) ProcessMessage(ctx context.Context, entities tg.Entities, up
 	case types.UnknownStatus:
 		log.Printf("unknown user status: %d", user.ID)
 	case types.BlockedStatus:
-		p.blocked(ctx)
+		blocked(ctx)
 	case types.GPT4Status:
 		if redis.GPT4Tokens(ctx) > 0 {
-			p.Stream(ctx, message, user, "gpt-4")
+			Stream(ctx, message, user, "gpt-4")
 		} else {
-			p.gpt4(ctx)
+			gpt4(ctx)
 		}
 	case types.PremiumStatus:
-		p.Stream(ctx, message, user, "true")
+		Stream(ctx, message, user, "true")
 	case types.FreeStatus:
-		p.Stream(ctx, message, user, "false")
+		Stream(ctx, message, user, "false")
 	case types.ExhaustedStatus:
-		p.exhausted(ctx)
+		exhausted(ctx)
 	}
 
 	return nil
 }
 
-func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) error {
+func ProcessCallbackQuery(ctx context.Context, entities tg.Entities, update *tg.UpdateBotCallbackQuery) error {
 
 	ctx, data := callbackUpdate(ctx, entities, update)
 
@@ -80,7 +108,7 @@ func (p *Processor) ProcessCallbackQuery(ctx context.Context, entities tg.Entiti
 	return nil
 }
 
-func (p *Processor) ProcessBotStopped(ctx context.Context, entities tg.Entities, update *tg.UpdateBotStopped) error {
+func ProcessBotStopped(ctx context.Context, entities tg.Entities, update *tg.UpdateBotStopped) error {
 
 	ctx, user := botStoppedUpdate(ctx, entities, update)
 

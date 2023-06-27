@@ -3,23 +3,23 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strconv"
 
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/gotd/td/tg"
 )
 
-func IncrementActivity(ctx context.Context, message *tg.Message, user *tg.User, isPremium string) int {
+func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium string) int {
 
 	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
 
 	activity := &types.Activity{
-		MessageID:    message.ID,
-		Message:      message.Message,
+		MessageID:    message.MessageID,
+		Message:      message.Text,
 		Date:         message.Date,
-		UserID:       user.ID,
-		FirstName:    user.FirstName,
+		UserID:       message.From.ID,
+		FirstName:    ,
 		LastName:     user.LastName,
 		Username:     user.Username,
 		LanguageCode: user.LangCode,

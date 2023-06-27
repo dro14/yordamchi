@@ -14,11 +14,11 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
-func (c *Client) send(ctx context.Context, request *types.Request) (*http.Response, error) {
+func send(ctx context.Context, request *types.Request) (*http.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
 
-	resp, err := c.request(ctx, request)
+	resp, err := makeRequest(ctx, request)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *Client) send(ctx context.Context, request *types.Request) (*http.Respon
 	}
 }
 
-func (c *Client) request(ctx context.Context, request *types.Request) (*http.Response, error) {
+func makeRequest(ctx context.Context, request *types.Request) (*http.Response, error) {
 
 	var buffer bytes.Buffer
 	err := json.NewEncoder(&buffer).Encode(request)
@@ -68,11 +68,11 @@ func (c *Client) request(ctx context.Context, request *types.Request) (*http.Res
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", c.tokens[c.index])
+	req.Header.Set("Authorization", keys[index])
 
-	c.index++
-	if c.index == len(c.tokens) {
-		c.index = 0
+	index++
+	if index == len(keys) {
+		index = 0
 	}
 
 	var client http.Client

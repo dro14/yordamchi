@@ -1,7 +1,8 @@
-package telegram
+package recovery
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/processor/telegram"
 	"log"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/gotd/td/tg"
 )
 
-func (p *Processor) Recover() {
+func Recover() {
 
 	activities := redis.LoadActivity(context.Background())
 
@@ -38,7 +39,7 @@ func (p *Processor) Recover() {
 			LangCode:  activity.LanguageCode,
 		}
 
-		_, err := p.Client.SendMessage(ctx, text.Error[lang(ctx)], 0, nil)
+		_, err := p.Client.SendMessage(ctx, text.Error[telegram.lang(ctx)], 0, nil)
 		if err != nil {
 			log.Printf("can't send error message: %v", err)
 		}

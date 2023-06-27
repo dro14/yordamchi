@@ -1,54 +1,40 @@
 package main
 
 import (
-	"context"
+	"github.com/dro14/yordamchi/processor/telegram/legacy_bot"
 	"log"
-	"time"
+	"os"
 
 	"github.com/dro14/yordamchi/payme"
-	"github.com/dro14/yordamchi/postgres"
-	tgProcessor "github.com/dro14/yordamchi/processor/telegram"
-	"github.com/dro14/yordamchi/processor/telegram/info"
-	"github.com/dro14/yordamchi/processor/telegram/legacy"
-	"github.com/dro14/yordamchi/redis"
-	cache "github.com/gotd/contrib/redis"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
+	"github.com/dro14/yordamchi/processor/telegram"
+	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
 )
 
 func main() {
 
-	time.Local, _ = time.LoadLocation("Asia/Tashkent")
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	postgres.Init()
-	redis.Init()
+	telegram.Init()
 
-	dispatcher := tg.NewUpdateDispatcher()
-	if err := telegram.BotFromEnvironment(
-		context.Background(),
-		telegram.Options{
-			UpdateHandler:  dispatcher,
-			SessionStorage: cache.NewSessionStorage(redis.Client, "main_bot_session"),
-		},
-		func(ctx context.Context, client *telegram.Client) error {
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "8080"
+	}
 
-			processor := tgProcessor.New(client.API())
+	file, err := os.Create("gin.log")
+	if err != nil {
+		log.Fatalf("can't create gin.log: %v", err)
+	}
 
-			dispatcher.OnNewMessage(processor.ProcessMessage)
-			dispatcher.OnBotCallbackQuery(processor.ProcessCallbackQuery)
-			dispatcher.OnBotStopped(processor.ProcessBotStopped)
+	r := gin.Default()
+	gin.DefaultWriter = file
+	gin.SetMode(gin.ReleaseMode)
 
-			go processor.Recover()
-			go legacy.Run()
-			go info.Run()
-			go payme.Run()
+	r.POST("/main", telegram.ProcessUpdate)
+	r.POST("/legacy", legacy_bot.Reply)
+	r.POST("/payme", payme.Handler)
 
-			log.Printf("main bot is connected")
-			return nil
-		},
-		telegram.RunUntilCanceled,
-	); err != nil {
-		log.Fatalf("can't connect client: %v", err)
+	err = r.Run(":" + port)
+	if err != nil {
+		log.Fatalf("can't run server: %v", err)
 	}
 }

@@ -6,13 +6,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/dro14/yordamchi/redis"
-	cache "github.com/gotd/contrib/redis"
-	"github.com/gotd/td/telegram"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/gotd/td/tg"
 )
 
-var infoBot *tg.Client
+var bot *tgbotapi.BotAPI
 
 func Run() {
 
@@ -21,36 +19,10 @@ func Run() {
 		log.Fatalf("info bot token is not specified")
 	}
 
-	client, err := telegram.ClientFromEnvironment(
-		telegram.Options{
-			SessionStorage: cache.NewSessionStorage(redis.Client, "info_bot_session"),
-		},
-	)
+	var err error
+	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
-		log.Fatalf("can't create client: %v", err)
-	}
-
-	if err = client.Run(context.Background(), func(ctx context.Context) error {
-
-		status, err := client.Auth().Status(ctx)
-		if err != nil {
-			log.Fatalf("can't get authorization status: %v", err)
-		}
-
-		if !status.Authorized {
-			_, err = client.Auth().Bot(ctx, token)
-			if err != nil {
-				log.Fatalf("can't authorize bot: %v", err)
-			}
-		}
-
-		infoBot = client.API()
-		SendInfoMessage(ctx, "@yordamchi_ai_bot restarted")
-
-		log.Printf("info bot is connected")
-		return telegram.RunUntilCanceled(ctx, client)
-	}); err != nil {
-		log.Fatalf("can't connect info bot: %v", err)
+		log.Fatalf("can't initialize info bot: %v", err)
 	}
 }
 

@@ -27,18 +27,6 @@ func Run() {
 	}
 	functions.MerchantKey = merchantKey
 
-	gin.SetMode(gin.ReleaseMode)
-	port, ok := os.LookupEnv("PORT")
-	if !ok {
-		port = "8080"
-	}
-
-	r := gin.Default()
-	r.POST("/payme", Handler)
-	err := r.Run(":" + port)
-	if err != nil {
-		log.Fatalf("can't run server: %v", err)
-	}
 }
 
 func Handler(c *gin.Context) {
