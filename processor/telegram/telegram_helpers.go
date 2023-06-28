@@ -36,7 +36,6 @@ func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Cont
 
 	switch {
 	case message.From.IsBot,
-		len(message.Text) == 0,
 		message.Chat.Type != "private",
 		isBlocked(message.From.ID):
 		return ctx, false

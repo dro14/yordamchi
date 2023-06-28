@@ -11,6 +11,7 @@ import (
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/ocr"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/processor/telegram/button"
@@ -21,6 +22,9 @@ import (
 
 func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
+	if message.Photo != nil {
+		message.Text = ocr.Analyze(ctx, message)
+	}
 	messages := redis.LoadContext(ctx, message.Text)
 	stats := &types.Stats{IsPremium: isPremium}
 	channel := make(chan string)

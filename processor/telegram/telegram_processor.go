@@ -8,6 +8,7 @@ import (
 	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/ocr"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/telegram/info_bot"
@@ -25,6 +26,7 @@ func Init() {
 	info_bot.Init()
 	legacy_bot.Init()
 	payme.Init()
+	ocr.Init()
 }
 
 func ProcessUpdate(c *gin.Context) {

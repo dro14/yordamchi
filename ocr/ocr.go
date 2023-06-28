@@ -2,21 +2,24 @@ package ocr
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type ComputerVisionRequest struct {
+var bot *tgbotapi.BotAPI
+
+type Request struct {
 	URL string `json:"url"`
 }
 
-type ComputerVisionResponse struct {
+type Response struct {
 	Regions []struct {
 		Lines []struct {
 			Words []struct {
@@ -26,68 +29,74 @@ type ComputerVisionResponse struct {
 	} `json:"regions"`
 }
 
-func main() {
-	subscriptionKey := "<your-subscription-key>"
-	endpoint := "<your-endpoint>"
+func Init() {
 
-	imageURL := "https://example.com/path/to/your/image.jpg"
-	visionRequest := &ComputerVisionRequest{URL: imageURL}
-	jsonRequest, err := json.Marshal(visionRequest)
-	if err != nil {
-		panic(err)
+	subscriptionKey, ok := os.LookupEnv("SUBSCRIPTION_KEY")
+	if !ok {
+		log.Fatalf("subscription key is not specified")
 	}
+	constants.SubscriptionKey = subscriptionKey
 
-	url := endpoint + "/vision/v3.1/ocr"
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonRequest))
+	var err error
+	bot, err = tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
-		panic(err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Ocp-Apim-Subscription-Key", subscriptionKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	var visionResponse ComputerVisionResponse
-	err = json.Unmarshal(body, &visionResponse)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, region := range visionResponse.Regions {
-		for _, line := range region.Lines {
-			for _, word := range line.Words {
-				fmt.Print(word.Text + " ")
-			}
-			fmt.Println()
-		}
+		log.Fatalf("can't initialize bot: %v", err)
 	}
 }
 
-func Handler(c *gin.Context) {
+func Analyze(ctx context.Context, message *tgbotapi.Message) string {
 
-	update := &tgbotapi.Update{}
-	err := c.ShouldBindJSON(update)
+	photo := message.Photo[len(message.Photo)-1]
+	fileURL, err := bot.GetFileDirectURL(photo.FileID)
 	if err != nil {
-		log.Printf("can't bind json: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"ok": true})
-
-	if update.Message == nil || update.Message.Photo == nil {
-		return
+		log.Printf("can't get file url: %v", err)
+		return message.Caption
 	}
 
-	photo := update.Message.Photo
-	photoFileID := photo[len(photo)-1].FileID
+	request := &Request{fileURL}
+	var buffer bytes.Buffer
+	err = json.NewEncoder(&buffer).Encode(request)
+	if err != nil {
+		log.Printf("can't encode request: %v", err)
+		return message.Caption
+	}
 
-	fmt.Println(photoFileID)
+	req, err := http.NewRequestWithContext(ctx, "POST", "https://yordamchi.cognitiveservices.azure.com/vision/v3.1/ocr", &buffer)
+	if err != nil {
+		log.Printf("can't create request: %v", err)
+		return message.Caption
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Ocp-Apim-Subscription-Key", constants.SubscriptionKey)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Printf("can't do request: %v", err)
+		return message.Caption
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	response := &Response{}
+	err = json.NewDecoder(resp.Body).Decode(response)
+	if err != nil {
+		log.Printf("can't decode response: %v", err)
+		return message.Caption
+	}
+
+	var builder strings.Builder
+	if len(message.Caption) > 0 {
+		builder.WriteString(message.Caption + ":\n\n")
+	}
+
+	for _, region := range response.Regions {
+		for _, line := range region.Lines {
+			for _, word := range line.Words {
+				builder.WriteString(word.Text + " ")
+			}
+			builder.WriteString("\n")
+		}
+	}
+
+	return builder.String()
 }

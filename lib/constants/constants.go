@@ -12,7 +12,8 @@ const (
 )
 
 var (
-	MerchantID string
-	TestKey    string
-	RealKey    string
+	MerchantID      string
+	TestKey         string
+	RealKey         string
+	SubscriptionKey string
 )
