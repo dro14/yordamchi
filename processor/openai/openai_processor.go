@@ -34,8 +34,10 @@ Retry:
 		switch {
 		case strings.HasPrefix(errMsg, e.InvalidRequest):
 			errMsg = strings.TrimPrefix(errMsg, e.InvalidRequest)
-			if strings.HasPrefix(errMsg, e.ContextLengthExceeded) {
-				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceeded)
+			if strings.HasPrefix(errMsg, e.ContextLengthExceededGPT3) ||
+				strings.HasPrefix(errMsg, e.ContextLengthExceededGPT4) {
+				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT3)
+				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				totalTokens, _ := strconv.Atoi(errMsg)
 				diff := totalTokens - tokenLimit[ctx.Value("model")]

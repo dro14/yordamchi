@@ -20,12 +20,10 @@ var (
 
 // OpenAI errors
 const (
-	ContextLengthExceeded = "This model's maximum context length is 4097 tokens. However, you requested "
-	InvalidRequest        = "invalid_request_error"
-	StreamError           = "stream error"
-	EmptyCompletion       = "empty completion"
-	ServiceUnavailable    = "503 Service Unavailable"
-	InternalServerError   = "500 Internal Server Error"
+	ContextLengthExceededGPT3 = "This model's maximum context length is 4097 tokens. However, you requested "
+	ContextLengthExceededGPT4 = "This model's maximum context length is 8192 tokens. However, you requested "
+	InvalidRequest            = "invalid_request_error"
+	StreamError               = "stream error"
 )
 
 // Postgres errors
