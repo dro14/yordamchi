@@ -46,7 +46,9 @@ func premiumCallback(ctx context.Context, messageID int) {
 func modelCallback(ctx context.Context, messageID int, model string) {
 
 	var err error
-	if model == "gpt-4" {
+	if model == redis.Model(ctx) {
+		return
+	} else if model == "gpt-4" {
 		err = redis.GPT4(ctx)
 	} else {
 		err = redis.GPT3(ctx)
