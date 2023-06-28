@@ -48,15 +48,14 @@ Retry:
 				channel <- text.TooLong[lang(ctx)]
 				return
 			}
+			retryDelay = 0
 		case strings.HasPrefix(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
-		case strings.HasPrefix(errMsg, e.ServiceUnavailable),
-			strings.HasPrefix(errMsg, e.InternalServerError),
-			strings.HasPrefix(errMsg, e.EmptyCompletion):
-			functions.Sleep(&retryDelay)
+			retryDelay = 0
 		}
 
 		if stats.Attempts < constants.RetryAttempts {
+			functions.Sleep(&retryDelay)
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, stats.Attempts)
