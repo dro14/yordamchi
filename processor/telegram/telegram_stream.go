@@ -22,17 +22,7 @@ import (
 
 func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
-	if message.Photo != nil {
-		message.Text = ocr.Analyze(ctx, message)
-	}
-	messages := redis.LoadContext(ctx, message.Text)
 	stats := &types.Stats{IsPremium: isPremium}
-	channel := make(chan string)
-	go openai.Process(ctx, messages, stats, channel)
-
-	stats.Activity = redis.IncrementActivity(ctx, message, isPremium)
-	defer redis.DecrementActivity(ctx)
-
 	stats.Requests++
 	messageID, err := telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
@@ -41,6 +31,15 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	}
 	beginning := ctx.Value("beginning").(time.Time)
 	stats.FirstSend = time.Since(beginning).Milliseconds()
+	stats.Activity = redis.IncrementActivity(ctx, message, isPremium)
+	defer redis.DecrementActivity(ctx)
+
+	if message.Photo != nil {
+		message.Text = ocr.Analyze(ctx, message)
+	}
+	messages := redis.LoadContext(ctx, message.Text)
+	channel := make(chan string)
+	go openai.Process(ctx, messages, stats, channel)
 
 	isTyping := &atomic.Bool{}
 	isTyping.Store(true)
