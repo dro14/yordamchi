@@ -26,10 +26,10 @@ func send(ctx context.Context, request *types.Request) (*http.Response, error) {
 	switch resp.StatusCode {
 	case http.StatusOK:
 		return resp, nil
-	case http.StatusServiceUnavailable:
-		log.Printf("%s for %d", resp.Status, userID)
-		fallthrough
-	case http.StatusBadGateway, http.StatusTooManyRequests:
+	case http.StatusBadRequest,
+		http.StatusTooManyRequests,
+		http.StatusBadGateway,
+		http.StatusServiceUnavailable:
 		return nil, fmt.Errorf("%s for %d", resp.Status, userID)
 	default:
 		bts, _ := io.ReadAll(resp.Body)

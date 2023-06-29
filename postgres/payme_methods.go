@@ -1,12 +1,11 @@
 package postgres
 
 import (
-	"fmt"
+	"context"
 	"log"
-	"net/http"
-	"os"
 	"time"
 
+	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/redis"
@@ -181,7 +180,8 @@ func PerformTransaction(params *types.Params) (gin.H, int) {
 		lang = "uz"
 	}
 
-	_, err = http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?chat_id=%d&text=%s", os.Getenv("BOT_TOKEN"), userID, text.Success[lang]))
+	ctx := context.WithValue(context.Background(), "user_id", userID)
+	_, err = telegram.SendMessage(ctx, text.Success[lang], 0, nil)
 	if err != nil {
 		log.Printf("can't send success message: %v", err)
 	}
