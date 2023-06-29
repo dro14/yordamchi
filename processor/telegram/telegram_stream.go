@@ -76,9 +76,9 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		}
 
 		if index < len(completions)-1 {
-			time.Sleep(constants.RequestInterval)
 			index++
 			stats.Requests++
+			time.Sleep(constants.RequestInterval)
 			messageID, err = telegram.SendMessage(ctx, completions[index], 0, nil)
 			if err == e.UserBlockedError {
 				return
