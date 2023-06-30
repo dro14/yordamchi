@@ -96,6 +96,11 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		completions[index] = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
 	}
 
+	if len(completions) == 0 {
+		log.Printf("completions is empty, completion = %q", completion)
+		return
+	}
+
 	stats.Requests++
 	err = telegram.EditMessage(ctx, completions[index], messageID, button.NewChat(lang(ctx)))
 	if err != nil {
