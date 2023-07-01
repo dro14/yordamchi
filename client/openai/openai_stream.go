@@ -92,7 +92,6 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 	}
 
 	if len(builder.String()) == 0 {
-		log.Printf("empty completion for %d", userID)
 		return nil, fmt.Errorf("empty completion for %d", userID)
 	}
 
