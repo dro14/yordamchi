@@ -38,7 +38,6 @@ func Tokens(ctx context.Context, messages []types.Message) int {
 	response := make(map[string]int)
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		log.Printf("can't decode response: %v", err)
 		return 0
 	}
 	_ = resp.Body.Close()

@@ -15,9 +15,7 @@ func LanguageCode(lang string) string {
 }
 
 func Sleep(retryDelay *time.Duration) {
-	if *retryDelay > 0 {
-		log.Printf("retrying request after %v", *retryDelay)
-		time.Sleep(*retryDelay)
-		*retryDelay *= 2
-	}
+	log.Printf("retrying request after %v", *retryDelay)
+	time.Sleep(*retryDelay)
+	*retryDelay *= 2
 }

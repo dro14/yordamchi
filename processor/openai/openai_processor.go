@@ -41,7 +41,6 @@ Retry:
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				totalTokens, _ := strconv.Atoi(errMsg)
 				diff := totalTokens - tokenLimit[ctx.Value("model")]
-				log.Printf("max tokens %d was deacreased by %d", maxTokens, diff)
 				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
@@ -50,10 +49,12 @@ Retry:
 				channel <- text.TooLong[lang(ctx)]
 				return
 			}
-			retryDelay = 0
+			goto Retry
 		case strings.HasPrefix(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
-			retryDelay = 0
+			goto Retry
+		case strings.HasPrefix(errMsg, e.BadGateway):
+			goto Retry
 		}
 
 		if stats.Attempts < constants.RetryAttempts {

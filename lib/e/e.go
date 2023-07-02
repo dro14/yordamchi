@@ -24,6 +24,7 @@ const (
 	ContextLengthExceededGPT4 = "This model's maximum context length is 8192 tokens. However, you requested "
 	InvalidRequest            = "invalid_request_error"
 	StreamError               = "stream error"
+	BadGateway                = "502 Bad Gateway"
 )
 
 // Postgres errors
