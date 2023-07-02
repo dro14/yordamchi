@@ -91,7 +91,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 		buffer.Store(builder.String())
 	}
 
-	if len(builder.String()) == 0 {
+	if len(strings.TrimSpace(builder.String())) == 0 {
 		return nil, fmt.Errorf("empty completion for %d", userID)
 	}
 
