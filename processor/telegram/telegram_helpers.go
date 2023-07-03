@@ -88,8 +88,8 @@ func msg(ctx context.Context, lang string) string {
 	case types.GPT4Status:
 		return fmt.Sprintf(text.Settings2[lang], redis.GPT4Tokens(ctx))
 	case types.PremiumStatus:
-		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], "-")
+		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
 	default:
-		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], text.Unlimited[lang], "-")
+		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
 	}
 }

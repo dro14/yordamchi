@@ -85,7 +85,7 @@ func Expiration(ctx context.Context) string {
 
 	value, err := Client.Get(ctx, key).Result()
 	if err != nil {
-		return midnight()
+		return "-"
 	}
 
 	return value
