@@ -4,21 +4,15 @@ var Settings1 = map[string]string{
 
 	"uz": `Tarif: %s
 So'rovlar soni: %s
-Tugash muddati: %s
-
-Cheksiz so'rovlar kerakmi? Unda premium foydalanuvchi bo'ling!`,
+Tugash muddati: %s`,
 
 	"ru": `Тариф: %s
 Количество запросов: %s
-Срок истечения: %s
-
-Нужны безлимитные запросы? Тогда станьте премиум-пользователем!`,
+Срок истечения: %s`,
 
 	"en": `Tariff: %s
 Number of requests: %s
-Expiration date: %s
-
-Need unlimited requests? Then become a premium user!`,
+Expiration date: %s`,
 }
 
 var FreeTariff = map[string]string{

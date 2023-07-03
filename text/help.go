@@ -8,7 +8,6 @@ var Help = map[string]string{
 /help - Bot haqida ma'lumot
 /settings - Qolgan so'rovlar soni
 /examples - Foydalanish misollari
-/premium - So'rovlar sotib olish
 /gpt4 - Eng kuchlisi
 /donate - Xayriya bilan qo'llab-quvvatlash
 
@@ -20,7 +19,6 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /help - Информация о боте
 /settings - Количество оставшихся запросов
 /examples - Примеры использования
-/premium - Покупка запросов
 /gpt4 - Самый мощный
 /donate - Поддержать благотворительностью
 
@@ -32,7 +30,6 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /help - Information about the bot
 /settings - Number of remaining requests
 /examples - Examples of usage
-/premium - Buying requests
 /gpt4 - The most powerful
 /donate - Supporting by charity
 
