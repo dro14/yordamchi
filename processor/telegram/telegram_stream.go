@@ -75,8 +75,8 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 			index--
 		}
 
-		if index < len(completions)-1 {
-			index++
+		for index < len(completions)-1 {
+			index = len(completions) - 1
 			stats.Requests++
 			time.Sleep(constants.RequestInterval)
 			messageID, err = telegram.SendMessage(ctx, completions[index], 0, nil)
