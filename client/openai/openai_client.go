@@ -46,7 +46,9 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int, ch
 	defer func() { _ = resp.Body.Close() }()
 
 	buffer := &atomic.Value{}
+	buffer.Store("")
 	isStreaming := &atomic.Int64{}
+	isStreaming.Store(1)
 	go streamOut(buffer, isStreaming, channel)
 
 	response, err := streamIn(resp, buffer)

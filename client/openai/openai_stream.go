@@ -19,18 +19,17 @@ func streamOut(buffer *atomic.Value, isStreaming *atomic.Int64, channel chan<- s
 
 	var previous string
 	var completion string
-	buffer.Store(previous)
-	isStreaming.Store(1)
 
 	for isStreaming.Load() == 1 {
+		completion = buffer.Load().(string)
 		if completion != previous {
 			channel <- completion + " ▌"
 			previous = completion
 		}
 		time.Sleep(constants.RequestInterval)
-		completion = buffer.Load().(string)
 	}
 
+	completion = buffer.Load().(string)
 	if len(completion) > 0 {
 		channel <- completion
 	}
