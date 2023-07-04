@@ -34,10 +34,7 @@ var Unlimited = map[string]string{
 }
 
 var Settings2 = map[string]string{
-
 	"uz": `Mavjud tokenlar: %d`,
-
 	"ru": `Доступно токенов: %d`,
-
 	"en": `Available tokens: %d`,
 }

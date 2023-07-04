@@ -71,8 +71,6 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 	case types.GPT4Status:
 		if redis.GPT4Tokens(ctx) > 0 {
 			Stream(ctx, message, "gpt-4")
-		} else {
-			gpt4(ctx)
 		}
 	case types.PremiumStatus:
 		Stream(ctx, message, "true")
