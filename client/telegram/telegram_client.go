@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -13,24 +14,39 @@ import (
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/redis"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	cache "github.com/gotd/contrib/redis"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
 )
 
-var bot *tg.Client
+var (
+	bot *tgbotapi.BotAPI
+	api *tg.Client
+)
 
 func Init() {
+
+	token, ok := os.LookupEnv("BOT_TOKEN")
+	if !ok {
+		log.Fatalf("bot token is not specified")
+	}
+
+	var err error
+	bot, err = tgbotapi.NewBotAPI(token)
+	if err != nil {
+		log.Fatalf("can't initialize bot: %v", err)
+	}
 
 	sessionStorage := cache.NewSessionStorage(redis.Client, "main_bot_session")
 	done := make(chan bool)
 
 	go func() {
-		if err := telegram.BotFromEnvironment(
+		if err = telegram.BotFromEnvironment(
 			context.Background(),
 			telegram.Options{SessionStorage: sessionStorage},
 			func(ctx context.Context, client *telegram.Client) error {
-				bot = client.API()
+				api = client.API()
 				done <- true
 				return nil
 			},
@@ -63,7 +79,7 @@ func SendMessage(ctx context.Context, message string, replyToMsgID int, keyboard
 	attempts := 0
 Retry:
 	attempts++
-	resp, err := bot.MessagesSendMessage(ctx, request)
+	resp, err := api.MessagesSendMessage(ctx, request)
 	if err != nil {
 
 		log.Printf("can't send message to %d: %v", userID, err)
@@ -123,7 +139,7 @@ func EditMessage(ctx context.Context, message string, messageID int, keyboard *t
 	attempts := 0
 Retry:
 	attempts++
-	_, err := bot.MessagesEditMessage(ctx, request)
+	_, err := api.MessagesEditMessage(ctx, request)
 	if err != nil {
 
 		log.Printf("can't edit message for %d: %v", userID, err)
@@ -172,7 +188,7 @@ func SetTyping(ctx context.Context, isTyping *atomic.Bool) {
 
 Loop:
 	for isTyping.Load() {
-		_, err := bot.MessagesSetTyping(ctx, request)
+		_, err := api.MessagesSetTyping(ctx, request)
 		if err != nil {
 
 			log.Printf("can't set typing for %d: %v", userID, err)
@@ -186,4 +202,42 @@ Loop:
 		}
 		time.Sleep(5800 * time.Millisecond)
 	}
+}
+
+func LastEdit(ctx context.Context, message string, messageID int) error {
+
+	userID := ctx.Value("user_id").(int64)
+	lang := ctx.Value("language_code").(string)
+	message = functions.MarkdownV2(message)
+
+	config := tgbotapi.NewEditMessageText(userID, messageID, message)
+	config.ReplyMarkup = newChatButton(lang)
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+
+	_, err := bot.Request(config)
+	if err != nil {
+		log.Printf("can't edit message for %d: %v", userID, err)
+		return err
+	}
+
+	return nil
+}
+
+func newChatButton(lang string) *tgbotapi.InlineKeyboardMarkup {
+
+	text := map[string]string{
+		"uz": "💬 Yangi suhbat 💬",
+		"ru": "💬 Новый разговор 💬",
+		"en": "💬 New chat 💬",
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(
+				text[lang], "new_chat",
+			),
+		),
+	)
+
+	return &keyboard
 }

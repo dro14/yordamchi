@@ -8,15 +8,6 @@ import (
 	"github.com/gotd/td/tg"
 )
 
-func NewChat(lang string) *tg.ReplyInlineMarkup {
-	text := map[string]string{
-		"uz": "💬 Yangi suhbat 💬",
-		"ru": "💬 Новый разговор 💬",
-		"en": "💬 New chat 💬",
-	}
-	return data(text[lang], "new_chat")
-}
-
 func Start(lang string) *tg.ReplyInlineMarkup {
 	text := map[string]string{
 		"uz": "❔ Qanday ishlatish ❔",

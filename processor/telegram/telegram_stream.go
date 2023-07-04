@@ -14,7 +14,6 @@ import (
 	"github.com/dro14/yordamchi/ocr"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
-	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -96,13 +95,8 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		completions[index] = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
 	}
 
-	if len(completions) == 0 {
-		log.Printf("completions is empty, completion = %q", completion)
-		return
-	}
-
 	stats.Requests++
-	err = telegram.EditMessage(ctx, completions[index], messageID, button.NewChat(lang(ctx)))
+	err = telegram.LastEdit(ctx, completions[index], messageID)
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}

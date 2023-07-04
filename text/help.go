@@ -8,7 +8,6 @@ var Help = map[string]string{
 /help - Bot haqida ma'lumot
 /settings - Qolgan so'rovlar soni
 /examples - Foydalanish misollari
-/gpt4 - Eng kuchlisi
 /donate - Xayriya bilan qo'llab-quvvatlash
 
 Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishingiz mumkin.`,
@@ -19,7 +18,6 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /help - Информация о боте
 /settings - Количество оставшихся запросов
 /examples - Примеры использования
-/gpt4 - Самый мощный
 /donate - Поддержать благотворительностью
 
 Команды также можно использовать с помощью синей кнопки меню в нижнем левом углу.`,
@@ -30,7 +28,6 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /help - Information about the bot
 /settings - Number of remaining requests
 /examples - Examples of usage
-/gpt4 - The most powerful
 /donate - Supporting by charity
 
 You can also use these commands with via the blue menu button in the lower left corner.`,

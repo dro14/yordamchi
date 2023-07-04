@@ -30,7 +30,7 @@ func streamOut(buffer *atomic.Value, isStreaming *atomic.Int64, channel chan<- s
 	}
 
 	completion = buffer.Load().(string)
-	if completion != previous {
+	if len(strings.TrimSpace(completion)) > 0 {
 		channel <- completion
 	}
 
