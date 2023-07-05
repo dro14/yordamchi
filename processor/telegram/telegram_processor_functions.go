@@ -21,14 +21,6 @@ func blocked(ctx context.Context) {
 	}
 }
 
-func exhausted(ctx context.Context) {
-
-	_, err := telegram.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
-	if err != nil {
-		log.Printf("can't send exhausted message")
-	}
-}
-
 func deactivated(ctx context.Context, user *tgbotapi.User) {
 
 	postgres.DeactivateUser(ctx, user)

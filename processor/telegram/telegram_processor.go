@@ -71,13 +71,13 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 	case types.GPT4Status:
 		if redis.GPT4Tokens(ctx) > 0 {
 			Stream(ctx, message, "gpt-4")
+		} else {
+			settings(ctx)
 		}
 	case types.PremiumStatus:
 		Stream(ctx, message, "true")
 	case types.FreeStatus:
 		Stream(ctx, message, "false")
-	case types.ExhaustedStatus:
-		exhausted(ctx)
 	default:
 		log.Printf("unknown user status: %d", message.From.ID)
 	}
@@ -95,8 +95,6 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 		examplesCallback(ctx, callbackQuery.Message.MessageID)
 	case "help":
 		helpCallback(ctx, callbackQuery.Message.MessageID)
-	case "premium":
-		premiumCallback(ctx, callbackQuery.Message.MessageID)
 	case "gpt-3.5-turbo", "gpt-4":
 		modelCallback(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
 	default:

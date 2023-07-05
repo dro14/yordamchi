@@ -17,7 +17,7 @@ Lekin mening quyidagi cheklovlarim bor:
 Shunday bo'lsa ham Sizga imkonim boricha yordam beraman.
 
 --------------------
-Biz, shu Telegram botning dasturchilari sifatida, botda bo'ladigan yozishmalaringizni o'qimaymiz, hech qayerda saqlamaymiz va hech qanday ko'irinishda uchinchi shaxslar bilan bo'lishmaymiz. Biz foydalanuvchilarimizning maxfiyligini tushunamiz va hurmat qilamiz. Bizni tanlaganingiz uchun rahmat! 🙃
+Biz, shu Telegram botning dasturchilari sifatida, botda bo'ladigan yozishmalaringizni hech qayerda saqlamaymiz va hech qanday ko'irinishda uchinchi shaxslar bilan bo'lishmaymiz. Biz foydalanuvchilarimizning maxfiyligini tushunamiz va hurmat qilamiz. Bizni tanlaganingiz uchun rahmat! 🙃
 --------------------
 Ma'lumot uchun:
 Chap pastki tomonda ko'k menyu tugmachasi bor, u orqali botning buyruqlaridan foydalanishingiz mumkin.`,
@@ -37,7 +37,7 @@ Chap pastki tomonda ko'k menyu tugmachasi bor, u orqali botning buyruqlaridan fo
 Несмотря на всё это, я готов Вам помочь по мере всех моих возможностей.
 
 --------------------
-Мы, как разработчики этого Телеграм бота, не читаем, нигде не храним и никоим образом не делимся Вашими переписками, ведённые на этом боте, с третьими лицами. Мы понимаем и уважаем конфиденциальность наших пользователей. Спасибо что выбрали нас! 🙃
+Мы, как разработчики этого Телеграм бота, нигде не храним и никоим образом не делимся Вашими переписками, ведённые на этом боте, с третьими лицами. Мы понимаем и уважаем конфиденциальность наших пользователей. Спасибо что выбрали нас! 🙃
 --------------------
 Для информации:
 В левом нижнем углу есть синяя кнопка меню, с помощью которой Вы можете пользоваться командами бота.`,
@@ -56,7 +56,7 @@ But at the same time, I have the following limitations:
 Despite all this, I'm ready to help You as much as I can.
 
 --------------------
-We, as developers of this Telegram bot, don't read, don't store anywhere and don't share in any form your conversations on this bot with third parties. We understand and respect privacy of our users. Thank you for choosing us! 🙃
+We, as developers of this Telegram bot, don't store anywhere and don't share in any form your conversations on this bot with third parties. We understand and respect privacy of our users. Thank you for choosing us! 🙃
 --------------------
 For information:
 There is a blue menu button in the lower left corner, with which you can access the bot's commands.`,

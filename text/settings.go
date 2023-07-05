@@ -34,7 +34,25 @@ var Unlimited = map[string]string{
 }
 
 var Settings2 = map[string]string{
-	"uz": `Mavjud tokenlar: %d`,
-	"ru": `Доступно токенов: %d`,
-	"en": `Available tokens: %d`,
+
+	"uz": `Mavjud tokenlar: %d
+
+GPT-4 tokenlari kerakmi?
+U holda adminga murojaat qiling:
+
+👉 @yordamchiga_yordam 👈`,
+
+	"ru": `Доступно токенов: %d
+
+Нужны токены GPT-4?
+Тогда обратитесь к админу:
+
+👉 @yordamchiga_yordam 👈`,
+
+	"en": `Available tokens: %d
+
+Need GPT-4 tokens?
+Then contact the admin:
+
+👉 @yordamchiga_yordam 👈`,
 }

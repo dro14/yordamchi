@@ -24,10 +24,6 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 		settings(ctx)
 	case "examples":
 		examples(ctx)
-	case "premium":
-		premium(ctx)
-	case "gpt4":
-		gpt4(ctx)
 	case "donate":
 		donate(ctx)
 	default:
@@ -70,22 +66,6 @@ func examples(ctx context.Context) {
 	_, err := telegram.SendMessage(ctx, text.Examples[lang(ctx)], 0, button.Examples(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send examples command")
-	}
-}
-
-func premium(ctx context.Context) {
-
-	_, err := telegram.SendMessage(ctx, text.Premium[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
-	if err != nil {
-		log.Printf("can't send premium command")
-	}
-}
-
-func gpt4(ctx context.Context) {
-
-	_, err := telegram.SendMessage(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
-	if err != nil {
-		log.Printf("can't send gpt4 command")
 	}
 }
 
