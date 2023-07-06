@@ -213,6 +213,7 @@ func LastEdit(ctx context.Context, message string, messageID int) error {
 	config := tgbotapi.NewEditMessageText(userID, messageID, message)
 	config.ReplyMarkup = newChatButton(lang)
 	config.ParseMode = tgbotapi.ModeMarkdownV2
+	config.DisableWebPagePreview = true
 
 	_, err := bot.Request(config)
 	if err != nil {
