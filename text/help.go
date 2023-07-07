@@ -7,6 +7,7 @@ var Help = map[string]string{
 /start - Botni ishga tushirish
 /help - Bot haqida ma'lumot
 /settings - Qolgan so'rovlar soni
+/translate - Tarjimon
 /examples - Foydalanish misollari
 /donate - Xayriya bilan qo'llab-quvvatlash
 
@@ -17,6 +18,7 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /start - Запуск бота
 /help - Информация о боте
 /settings - Количество оставшихся запросов
+/translate - Переводчик
 /examples - Примеры использования
 /donate - Поддержать благотворительностью
 
@@ -27,6 +29,7 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /start - Start the bot
 /help - Information about the bot
 /settings - Number of remaining requests
+/translate - Translator
 /examples - Examples of usage
 /donate - Supporting by charity
 
