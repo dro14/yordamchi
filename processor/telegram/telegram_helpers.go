@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
@@ -32,21 +31,21 @@ func unblockUser(userID int64) {
 	blockedUsers.Delete(userID)
 }
 
-func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool) {
+func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, error) {
 
 	switch {
 	case message.From.IsBot,
 		message.Chat.Type != "private",
 		isBlocked(message.From.ID):
-		return ctx, false
+		return ctx, false, nil
 	}
 
 	ctx = context.WithValue(ctx, "beginning", time.Now())
 	ctx = context.WithValue(ctx, "date", message.Date)
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(message.From.LanguageCode))
 	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
-	return ctx, true
+	ctx, err := redis.Lang(ctx, message.From.LanguageCode)
+	return ctx, true, err
 }
 
 func lang(ctx context.Context) string {
@@ -59,27 +58,6 @@ func format(timestamp string) string {
 		return timestamp
 	}
 	return t.Format(time.DateTime)
-}
-
-func slice(completion string) []string {
-
-	var completions []string
-
-	for len(completion) > 4096 {
-		cutIndex := 0
-	Loop:
-		for i := 4096; i >= 0; i-- {
-			switch completion[i] {
-			case ' ', '\n', '\t', '\r':
-				cutIndex = i
-				break Loop
-			}
-		}
-		completions = append(completions, completion[:cutIndex])
-		completion = completion[cutIndex:]
-	}
-
-	return append(completions, completion)
 }
 
 func msg(ctx context.Context, lang string) string {

@@ -2,9 +2,12 @@ package openai
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 	"sync/atomic"
 
 	"github.com/dro14/yordamchi/lib/types"
@@ -29,7 +32,7 @@ func Init() {
 	}
 }
 
-func Completion(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
+func CompletionWithStream(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
 	request := &types.Request{
 		Model:     ctx.Value("model").(string) + "-0613",
@@ -58,5 +61,47 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int, ch
 	}
 
 	isStreaming.Store(0)
+	return response, nil
+}
+
+func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*types.Response, error) {
+
+	userID := ctx.Value("user_id").(int64)
+
+	request := &types.Request{
+		Model:     ctx.Value("model").(string) + "-0613",
+		Messages:  messages,
+		MaxTokens: maxTokens,
+		Stream:    false,
+		User:      fmt.Sprintf("%d", userID),
+	}
+
+	resp, err := send(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	bts, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("can't read response for %d: %v", userID, err)
+		return nil, fmt.Errorf("can't read response for %d", userID)
+	}
+
+	response := &types.Response{}
+	err = json.Unmarshal(bts, response)
+	if err != nil {
+		log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
+		return nil, fmt.Errorf("can't decode response for %d", userID)
+	}
+
+	if response.Choices[0].FinishReason != "stop" {
+		log.Printf("finish reason for %d isn't \"stop\": %q", userID, response.Choices[0].FinishReason)
+	}
+
+	if len(strings.TrimSpace(response.Choices[0].Message.Content)) == 0 {
+		return nil, fmt.Errorf("empty completion for %d", userID)
+	}
+
 	return response, nil
 }

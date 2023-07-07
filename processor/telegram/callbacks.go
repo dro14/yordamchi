@@ -55,3 +55,31 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 		log.Printf("can't edit model callback")
 	}
 }
+
+func translatorEnabled(ctx context.Context, messageID int) {
+
+	redis.SetLang(ctx, "uz")
+	_, err := telegram.SendMessage(ctx, text.TranslatorEnabled[lang(ctx)], 0, nil)
+	if err != nil {
+		log.Printf("can't send translate callback")
+	}
+
+	err = telegram.EditMessage(ctx, text.Translate[lang(ctx)], messageID, nil)
+	if err != nil {
+		log.Printf("can't edit translate callback")
+	}
+}
+
+func translatorDisabled(ctx context.Context, messageID int) {
+
+	redis.SetLang(ctx, "-")
+	_, err := telegram.SendMessage(ctx, text.TranslatorDisabled[lang(ctx)], 0, nil)
+	if err != nil {
+		log.Printf("can't send translate callback")
+	}
+
+	err = telegram.EditMessage(ctx, text.Translate[lang(ctx)], messageID, nil)
+	if err != nil {
+		log.Printf("can't edit translate callback")
+	}
+}

@@ -8,7 +8,6 @@ const (
 	GPT4Status
 	PremiumStatus
 	FreeStatus
-	ExhaustedStatus
 )
 
 type Activity struct {
@@ -20,5 +19,6 @@ type Activity struct {
 	LastName     string `json:"last_name"`
 	Username     string `json:"username"`
 	LanguageCode string `json:"language_code"`
+	TargetLang   string `json:"target_lang"`
 	IsPremium    string `json:"is_premium"`
 }

@@ -23,6 +23,7 @@ func Init() {
 		ctx = context.WithValue(ctx, "date", activity.Date)
 		ctx = context.WithValue(ctx, "user_id", activity.UserID)
 		ctx = context.WithValue(ctx, "language_code", activity.LanguageCode)
+		ctx = context.WithValue(ctx, "target_lang", activity.TargetLang)
 		ctx = context.WithValue(ctx, "model", redis.Model(ctx))
 
 		message := &tgbotapi.Message{

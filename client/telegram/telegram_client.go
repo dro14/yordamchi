@@ -204,16 +204,40 @@ Loop:
 	}
 }
 
-func LastEdit(ctx context.Context, message string, messageID int) error {
+func Send(ctx context.Context, message string, addButton bool) error {
+
+	userID := ctx.Value("user_id").(int64)
+	lang := ctx.Value("language_code").(string)
+	message = functions.MarkdownV2(message)
+
+	config := tgbotapi.NewMessage(userID, message)
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+	config.DisableWebPagePreview = true
+	if addButton {
+		config.ReplyMarkup = newChatButton(lang)
+	}
+
+	_, err := bot.Request(config)
+	if err != nil {
+		log.Printf("can't send message to %d: %v", userID, err)
+		return err
+	}
+
+	return nil
+}
+
+func Edit(ctx context.Context, message string, messageID int, addButton bool) error {
 
 	userID := ctx.Value("user_id").(int64)
 	lang := ctx.Value("language_code").(string)
 	message = functions.MarkdownV2(message)
 
 	config := tgbotapi.NewEditMessageText(userID, messageID, message)
-	config.ReplyMarkup = newChatButton(lang)
 	config.ParseMode = tgbotapi.ModeMarkdownV2
 	config.DisableWebPagePreview = true
+	if addButton {
+		config.ReplyMarkup = newChatButton(lang)
+	}
 
 	_, err := bot.Request(config)
 	if err != nil {

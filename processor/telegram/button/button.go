@@ -55,6 +55,41 @@ func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
 	return keyboard
 }
 
+func Translate(lang string) *tg.ReplyInlineMarkup {
+
+	keyboard := &tg.ReplyInlineMarkup{}
+
+	text := map[string]string{
+		"uz": "✅ Yoqish ✅",
+		"ru": "✅ Включить ✅",
+		"en": "✅ Enable ✅",
+	}
+	row := tg.KeyboardButtonRow{}
+	row.Buttons = append(row.Buttons,
+		&tg.KeyboardButtonCallback{
+			Text: text[lang],
+			Data: []byte("enable"),
+		},
+	)
+	keyboard.Rows = append(keyboard.Rows, row)
+
+	text = map[string]string{
+		"uz": "🚫 O'chirish 🚫",
+		"ru": "🚫 Выключить 🚫",
+		"en": "🚫 Disable 🚫",
+	}
+	row = tg.KeyboardButtonRow{}
+	row.Buttons = append(row.Buttons,
+		&tg.KeyboardButtonCallback{
+			Text: text[lang],
+			Data: []byte("disable"),
+		},
+	)
+
+	keyboard.Rows = append(keyboard.Rows, row)
+	return keyboard
+}
+
 func Donate(lang string) *tg.ReplyInlineMarkup {
 	text := map[string]string{
 		"uz": "😇 Xayriya 😇",

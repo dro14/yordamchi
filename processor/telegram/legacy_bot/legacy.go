@@ -1,12 +1,12 @@
 package legacy_bot
 
 import (
-	"github.com/dro14/yordamchi/lib/functions"
+	"log"
+	"os"
+
 	"github.com/dro14/yordamchi/text"
 	"github.com/gin-gonic/gin"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
-	"os"
 )
 
 var bot *tgbotapi.BotAPI
@@ -39,7 +39,13 @@ func Reply(c *gin.Context) {
 		return
 	}
 
-	lang := functions.LanguageCode(update.Message.From.LanguageCode)
+	lang := update.Message.From.LanguageCode
+	if lang == "" {
+		lang = "uz"
+	} else if lang != "uz" && lang != "ru" {
+		lang = "en"
+	}
+
 	config := tgbotapi.NewMessage(update.Message.From.ID, text.LegacyMessage[lang])
 	_, err := bot.Send(config)
 	if err != nil {

@@ -6,7 +6,6 @@ import (
 
 	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/client/telegram"
-	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/ocr"
 	"github.com/dro14/yordamchi/payme"
@@ -54,14 +53,17 @@ func ProcessUpdate(c *gin.Context) {
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 
-	ctx, allow := messageUpdate(ctx, message)
+	ctx, allow, err := messageUpdate(ctx, message)
 	if !allow {
 		return
 	}
 	defer blockedUsers.Delete(message.From.ID)
 
 	done := doCommand(ctx, message)
-	if done {
+	if err != nil {
+		translate(ctx)
+		return
+	} else if done {
 		return
 	}
 
@@ -85,8 +87,9 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 
 func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 
+	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(callbackQuery.From.LanguageCode))
+	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
 
 	switch callbackQuery.Data {
 	case "new_chat":
@@ -97,6 +100,10 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 		helpCallback(ctx, callbackQuery.Message.MessageID)
 	case "gpt-3.5-turbo", "gpt-4":
 		modelCallback(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
+	case "enable":
+		translatorEnabled(ctx, callbackQuery.Message.MessageID)
+	case "disable":
+		translatorDisabled(ctx, callbackQuery.Message.MessageID)
 	default:
 		log.Printf("unknown callback data: %v", callbackQuery.Data)
 	}
@@ -105,7 +112,8 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
 
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
-	ctx = context.WithValue(ctx, "language_code", functions.LanguageCode(chatMemberUpdated.From.LanguageCode))
+	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
+	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
 
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
