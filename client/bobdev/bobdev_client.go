@@ -29,7 +29,7 @@ func Tokens(ctx context.Context, messages []types.Message) int {
 		return 0
 	}
 
-	resp, err := http.Post("https://chatgpt-payment.herokuapp.com/tiktoken", "application/json", &buffer)
+	resp, err := http.Post("https://seahorse-app-uejjf.ondigitalocean.app/fastapi-tiktoken2/tiktoken", "application/json", &buffer)
 	if err != nil {
 		log.Printf("can't send request: %v", err)
 		return 0
