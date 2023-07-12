@@ -36,11 +36,26 @@ the project is overall structured:
 - **processor**: This is the core of the project. It contains the main logic of the bot. It is responsible for handling
   messages, processing them, and sending responses.
 
+## About Go
+
+I chose Go as the language for this project because it is fast, easy to learn, and has a lot of libraries. It is also
+very easy to deploy. It is my first big project in Go, and I am amazed by how easy it is to work with it. I am
+definitely going to use it in my future projects.
+
+## About OpenAI API
+
+OpenAI API is a very powerful tool. It is very easy to use, and it is very fast. It is also very easy to integrate it
+into your project. I am very happy that I could use it in my project.
+
+## About Telegram Bot API
+
+Telegram Bot API is also very easy to use. It is very well documented, and it is very easy to integrate it into your
+project. I am very happy that I could use it in my project.
+
+
 ## Contact Information
 
 - **Email**: doniyorbek752@gmail.com
 - **Telegram**: https://t.me/dro_14
 - **LinkedIn**: https://linkedin.com/in/dro14
 - **Github**: https://github.com/dro14
-
-
