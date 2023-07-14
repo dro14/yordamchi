@@ -3,11 +3,11 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/client/ocr"
 	"log"
 	"sync/atomic"
 	"time"
 
+	"github.com/dro14/yordamchi/client/ocr"
 	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
@@ -15,12 +15,17 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
+	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
+
+	if message.From.ID == 1792604195 {
+		info_bot.Send(message.Text)
+	}
 
 	stats := &types.Stats{IsPremium: isPremium}
 	stats.Requests++
@@ -130,5 +135,9 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		redis.Decrement(ctx, tokensUsed)
 		redis.StoreContext(ctx, message.Text, completion)
 		postgres.SaveMessage(ctx, stats, message.From)
+
+		if message.From.ID == 1792604195 {
+			info_bot.Send(completion)
+		}
 	}
 }
