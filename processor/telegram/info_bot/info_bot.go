@@ -29,10 +29,4 @@ func Send(text string) {
 	if err != nil {
 		log.Printf("can't send info message: %v", err)
 	}
-
-	config = tgbotapi.NewMessage(835282186, text)
-	_, err = bot.Send(config)
-	if err != nil {
-		log.Printf("can't send info message: %v", err)
-	}
 }
