@@ -76,7 +76,7 @@ func UserStatus(ctx context.Context) types.UserStatus {
 		return types.FreeStatus
 	}
 
-	return types.FreeStatus
+	return types.ExhaustedStatus
 }
 
 func Expiration(ctx context.Context) string {
@@ -85,10 +85,23 @@ func Expiration(ctx context.Context) string {
 
 	value, err := Client.Get(ctx, key).Result()
 	if err != nil {
-		return "-"
+		return midnight()
 	}
 
 	return value
+}
+
+func Requests(ctx context.Context) string {
+
+	key := fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
+
+	requests, err := Client.Get(ctx, key).Int()
+	if err != nil {
+		log.Printf("can't get %q: %v", key, err)
+		return ""
+	}
+
+	return fmt.Sprintf("%d/%d", requests, NumOfFreeRequests)
 }
 
 func Decrement(ctx context.Context, used int) {
@@ -112,6 +125,30 @@ func Decrement(ctx context.Context, used int) {
 			if err != nil {
 				log.Printf("can't decrement %q: %v", key, err)
 			}
+		}
+	} else {
+		key := fmt.Sprintf("premium:%d", ctx.Value("user_id").(int64))
+
+		_, err := Client.Get(ctx, key).Result()
+		if err == nil {
+			return
+		}
+
+		key = fmt.Sprintf("free:%d", ctx.Value("user_id").(int64))
+
+		requests, err := Client.Get(ctx, key).Int()
+		if err != nil {
+			log.Printf("can't get %q: %v", key, err)
+			return
+		}
+
+		if requests > 0 && requests <= NumOfFreeRequests {
+			err = Client.Set(ctx, key, requests-1, untilMidnight()).Err()
+			if err != nil {
+				log.Printf("can't decrement %q: %v", key, err)
+			}
+		} else {
+			log.Printf("invalid number of requests: %d", requests)
 		}
 	}
 }

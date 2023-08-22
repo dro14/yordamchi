@@ -68,6 +68,6 @@ func msg(ctx context.Context, lang string) string {
 	case types.PremiumStatus:
 		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
 	default:
-		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
+		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
 	}
 }

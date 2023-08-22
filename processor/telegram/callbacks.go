@@ -35,6 +35,14 @@ func helpCallback(ctx context.Context, messageID int) {
 	}
 }
 
+func premiumCallback(ctx context.Context, messageID int) {
+
+	err := telegram.EditMessage(ctx, text.Premium[lang(ctx)], messageID, button.Premium(ctx, lang(ctx)))
+	if err != nil {
+		log.Printf("can't edit premium callback")
+	}
+}
+
 func modelCallback(ctx context.Context, messageID int, model string) {
 
 	var err error

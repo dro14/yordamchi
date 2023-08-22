@@ -8,6 +8,7 @@ const (
 	GPT4Status
 	PremiumStatus
 	FreeStatus
+	ExhaustedStatus
 )
 
 type Activity struct {
