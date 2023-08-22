@@ -28,7 +28,7 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 		examples(ctx)
 	case "premium":
 		premium(ctx)
-	case "gpt-4":
+	case "gpt4":
 		gpt4(ctx)
 	case "donate":
 		donate(ctx)

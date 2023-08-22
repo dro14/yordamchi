@@ -4,15 +4,21 @@ var Settings1 = map[string]string{
 
 	"uz": `Tarif: %s
 So'rovlar soni: %s
-Tugash muddati: %s`,
+Tugash muddati: %s
+
+Cheksiz so'rovlar kerakmi? Unda premium foydalanuvchi bo'ling!`,
 
 	"ru": `Тариф: %s
 Количество запросов: %s
-Срок истечения: %s`,
+Срок истечения: %s
+
+Нужны безлимитные запросы? Тогда станьте премиум-пользователем!`,
 
 	"en": `Tariff: %s
 Number of requests: %s
-Expiration date: %s`,
+Expiration date: %s
+
+Need unlimited requests? Then become a premium user!`,
 }
 
 var FreeTariff = map[string]string{
@@ -38,21 +44,21 @@ var Settings2 = map[string]string{
 	"uz": `Mavjud tokenlar: %d
 
 GPT-4 tokenlari kerakmi?
-U holda adminga murojaat qiling:
+Ularni quyidagi komanda orqali sotib olishingiz mumkin:
 
-👉 @yordamchiga_yordam 👈`,
+👉 /gpt4 👈`,
 
 	"ru": `Доступно токенов: %d
 
 Нужны токены GPT-4?
-Тогда обратитесь к админу:
+Их можно купить с помощью следующей команды:
 
-👉 @yordamchiga_yordam 👈`,
+👉 /gpt4 👈`,
 
 	"en": `Available tokens: %d
 
 Need GPT-4 tokens?
-Then contact the admin:
+You can buy them using the following command:
 
-👉 @yordamchiga_yordam 👈`,
+👉 /gpt4 👈`,
 }
