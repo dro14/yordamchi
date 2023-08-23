@@ -64,11 +64,11 @@ func SendMessage(ctx context.Context, message string, replyToMsgID int, keyboard
 	userID := ctx.Value("user_id").(int64)
 
 	request := &tg.MessagesSendMessageRequest{
-		Peer:         &tg.InputPeerUser{UserID: userID},
-		Message:      message,
-		ReplyToMsgID: replyToMsgID,
-		RandomID:     time.Now().UnixNano(),
-		NoWebpage:    true,
+		Peer:      &tg.InputPeerUser{UserID: userID},
+		Message:   message,
+		ReplyTo:   &tg.InputReplyToMessage{ReplyToMsgID: replyToMsgID},
+		RandomID:  time.Now().UnixNano(),
+		NoWebpage: true,
 	}
 
 	if keyboard != nil {
