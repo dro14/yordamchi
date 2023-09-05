@@ -17,6 +17,9 @@ type Response struct {
 	Choices []Choice `json:"choices"`
 	Usage   Usage    `json:"usage"`
 	Error   Error    `json:"error"`
+	Data    []struct {
+		URL string `json:"url"`
+	} `json:"data"`
 }
 
 type Choice struct {
@@ -33,4 +36,8 @@ type Usage struct {
 type Error struct {
 	Message string `json:"message"`
 	Type    string `json:"type"`
+}
+
+type Generations struct {
+	Prompt string `json:"prompt"`
 }

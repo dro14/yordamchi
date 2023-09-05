@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -25,6 +26,11 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 	if message.From.ID == 1792604195 {
 		info_bot.Send(message.Text)
+	}
+
+	if strings.Contains(message.Text, "#image") {
+		GeneratePhoto(ctx, message)
+		return
 	}
 
 	stats := &types.Stats{IsPremium: isPremium}

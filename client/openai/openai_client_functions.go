@@ -14,7 +14,7 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
-func send(ctx context.Context, request *types.Request) (*http.Response, error) {
+func send[T *types.Request | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -48,7 +48,7 @@ func send(ctx context.Context, request *types.Request) (*http.Response, error) {
 	}
 }
 
-func makeRequest(ctx context.Context, request *types.Request) (*http.Response, error) {
+func makeRequest[T *types.Request | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
 
 	var buffer bytes.Buffer
 	err := json.NewEncoder(&buffer).Encode(request)
@@ -57,7 +57,7 @@ func makeRequest(ctx context.Context, request *types.Request) (*http.Response, e
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.openai.com/v1/chat/completions", &buffer)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, ctx.Value("url").(string), &buffer)
 	if err != nil {
 		log.Printf("can't create request: %v", err)
 		return nil, err

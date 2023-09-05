@@ -34,8 +34,10 @@ func Init() {
 
 func CompletionWithStream(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
+	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/chat/completions")
+
 	request := &types.Request{
-		Model:     ctx.Value("model").(string) + "-0613",
+		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    true,
@@ -67,9 +69,10 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, maxToke
 func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*types.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
+	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/chat/completions")
 
 	request := &types.Request{
-		Model:     ctx.Value("model").(string) + "-0613",
+		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    false,
@@ -104,4 +107,35 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*
 	}
 
 	return response, nil
+}
+
+func Generations(ctx context.Context, prompt string) string {
+
+	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/images/generations")
+
+	request := &types.Generations{
+		Prompt: prompt,
+	}
+
+	resp, err := send(ctx, request)
+	if err != nil {
+		log.Printf("can't send request: %v", err)
+		return ""
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	bts, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("can't read response: %v", err)
+		return ""
+	}
+
+	response := &types.Response{}
+	err = json.Unmarshal(bts, response)
+	if err != nil {
+		log.Printf("can't decode response: %v\nbody: %s", err, string(bts))
+		return ""
+	}
+
+	return response.Data[0].URL
 }
