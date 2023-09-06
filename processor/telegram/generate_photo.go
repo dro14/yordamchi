@@ -23,21 +23,15 @@ func GeneratePhoto(ctx context.Context, message *tgbotapi.Message) {
 	prompt = strings.TrimSpace(prompt)
 
 	imageURL := url.QueryEscape(openai.Generations(ctx, prompt))
-	fmt.Println(imageURL)
 
 	resp, err := http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto?chat_id=%d&photo=%s", os.Getenv("BOT_TOKEN"), userID, imageURL))
 	if err != nil {
-		log.Printf("can't send photo: %v", err)
+		log.Printf("can't send photo: %v\n", err)
+		bts, _ := io.ReadAll(resp.Body)
+		log.Printf("body: %s", string(bts))
 		return
 	}
-	defer resp.Body.Close()
+	_ = resp.Body.Close()
 
-	bts, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("can't read response: %v", err)
-		return
-	}
-
-	fmt.Println(string(bts))
 	redis.Decrement(ctx, 0)
 }

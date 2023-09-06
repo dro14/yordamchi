@@ -13,6 +13,10 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
+const Baseurl = "https://api.openai.com/v1"
+const ChatCompletions = "/chat/completions"
+const ImagesGenerations = "/images/generations"
+
 var keys []string
 var index int
 
@@ -34,7 +38,7 @@ func Init() {
 
 func CompletionWithStream(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
 
-	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/chat/completions")
+	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
 		Model:     ctx.Value("model").(string),
@@ -69,7 +73,7 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, maxToke
 func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*types.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
-	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/chat/completions")
+	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
 		Model:     ctx.Value("model").(string),
@@ -111,7 +115,7 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*
 
 func Generations(ctx context.Context, prompt string) string {
 
-	ctx = context.WithValue(ctx, "url", "https://api.openai.com/v1/images/generations")
+	ctx = context.WithValue(ctx, "url", Baseurl+ImagesGenerations)
 
 	request := &types.Generations{
 		Prompt: prompt,
