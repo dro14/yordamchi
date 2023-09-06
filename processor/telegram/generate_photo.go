@@ -3,8 +3,10 @@ package telegram
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -20,13 +22,22 @@ func GeneratePhoto(ctx context.Context, message *tgbotapi.Message) {
 	prompt := strings.ReplaceAll(message.Text, "#image", "")
 	prompt = strings.TrimSpace(prompt)
 
-	imageURL := openai.Generations(ctx, prompt)
+	imageURL := url.QueryEscape(openai.Generations(ctx, prompt))
+	fmt.Println(imageURL)
 
-	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto?chat_id=%d&photo=%s", os.Getenv("BOT_TOKEN"), userID, imageURL)
-	_, err := http.Get(url)
+	resp, err := http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto?chat_id=%d&photo=%s", os.Getenv("BOT_TOKEN"), userID, imageURL))
 	if err != nil {
 		log.Printf("can't send photo: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	bts, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("can't read response: %v", err)
+		return
 	}
 
+	fmt.Println(string(bts))
 	redis.Decrement(ctx, 0)
 }
