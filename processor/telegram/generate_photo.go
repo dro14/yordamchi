@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/client/openai"
+	"github.com/dro14/yordamchi/client/translator"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -20,7 +21,7 @@ func GeneratePhoto(ctx context.Context, message *tgbotapi.Message) {
 	userID := ctx.Value("user_id").(int64)
 
 	prompt := strings.ReplaceAll(message.Text, "#image", "")
-	prompt = strings.TrimSpace(prompt)
+	prompt, err := translator.Translate("auto", "en", strings.TrimSpace(prompt))
 
 	imageURL := url.QueryEscape(openai.Generations(ctx, prompt))
 
