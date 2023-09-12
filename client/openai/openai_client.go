@@ -41,7 +41,7 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, maxToke
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
-		Model:     ctx.Value("model").(string),
+		Model:     ctx.Value("model").(string) + "-0613",
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    true,
@@ -76,7 +76,7 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
-		Model:     ctx.Value("model").(string),
+		Model:     ctx.Value("model").(string) + "-0613",
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    false,
