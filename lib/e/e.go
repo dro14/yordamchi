@@ -25,6 +25,8 @@ const (
 	InvalidRequest            = "invalid_request_error"
 	StreamError               = "stream error"
 	BadGateway                = "502 Bad Gateway"
+	ServiceUnavailable        = "503 Service Unavailable"
+	ContextDeadlineExceeded   = "context deadline exceeded"
 )
 
 // Postgres errors

@@ -108,7 +108,9 @@ Retry:
 				return text.TooLong[lang(ctx)], err
 			}
 			goto Retry
-		case strings.HasPrefix(errMsg, e.BadGateway):
+		case strings.HasPrefix(errMsg, e.BadGateway),
+			strings.HasPrefix(errMsg, e.ServiceUnavailable),
+			strings.Contains(errMsg, e.ContextDeadlineExceeded):
 			goto Retry
 		}
 
