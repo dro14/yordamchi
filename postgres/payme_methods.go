@@ -72,7 +72,7 @@ func CheckPerformTransaction(params *types.Params) (gin.H, int) {
 
 	result := gin.H{
 		"allow": true,
-		"details": gin.H{
+		"detail": gin.H{
 			"receipt_type": 0,
 			"items": []gin.H{
 				{
