@@ -121,9 +121,9 @@ func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMe
 
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
-		deactivated(ctx, &chatMemberUpdated.From)
+		postgres.DeactivateUser(ctx, &chatMemberUpdated.From)
 	case "member":
-		rejoined(ctx, &chatMemberUpdated.From)
+		postgres.RejoinUser(ctx, &chatMemberUpdated.From)
 	default:
 		log.Printf("unknown chat member status: %v", chatMemberUpdated.NewChatMember.Status)
 	}
