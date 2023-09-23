@@ -57,15 +57,15 @@ func CheckPerformTransaction(params *types.Params) (gin.H, int) {
 
 	switch Type {
 	case "weekly":
-		title = "Weekly tariff for ChatGPT"
+		title = "Недельный тариф для ChatGPT"
 		price = amount
 		count = 1
 	case "monthly":
-		title = "Monthly tariff for ChatGPT"
+		title = "Месячный тариф для ChatGPT"
 		price = amount
 		count = 1
 	case "gpt-4":
-		title = "Tokens for GPT-4"
+		title = "Токены для GPT-4"
 		price = 100
 		count = amount / 100
 	}
