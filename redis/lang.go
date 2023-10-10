@@ -21,10 +21,6 @@ func Lang(ctx context.Context, languageCode string) (context.Context, error) {
 		return ctx, err
 	}
 
-	if lang != "-" {
-		ctx = context.WithValue(ctx, "language_code", lang)
-	}
-
 	ctx = context.WithValue(ctx, "target_lang", lang)
 	return ctx, nil
 }

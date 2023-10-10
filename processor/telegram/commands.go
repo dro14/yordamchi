@@ -22,8 +22,8 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 		help(ctx)
 	case "settings":
 		settings(ctx)
-	case "translate":
-		translate(ctx)
+	case "language":
+		language(ctx)
 	case "examples":
 		examples(ctx)
 	case "premium":
@@ -67,11 +67,11 @@ func settings(ctx context.Context) {
 	}
 }
 
-func translate(ctx context.Context) {
+func language(ctx context.Context) {
 
-	_, err := telegram.SendMessage(ctx, text.Translate[lang(ctx)], 0, button.Translate(lang(ctx)))
+	_, err := telegram.SendMessage(ctx, text.Language, 0, button.Language())
 	if err != nil {
-		log.Printf("can't send translate command")
+		log.Printf("can't send language command")
 	}
 }
 

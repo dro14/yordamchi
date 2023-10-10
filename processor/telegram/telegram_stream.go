@@ -54,7 +54,7 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	go telegram.SetTyping(ctx, isTyping)
 	defer isTyping.Store(false)
 
-	if ctx.Value("target_lang") != "-" {
+	if ctx.Value("target_lang") == "uz" {
 		completions := UseTranslator(ctx, message, stats)
 
 		stats.Requests++

@@ -64,30 +64,16 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 	}
 }
 
-func translatorEnabled(ctx context.Context, messageID int) {
+func languageChosen(ctx context.Context, messageID int, lang string) {
 
-	redis.SetLang(ctx, "uz")
-	_, err := telegram.SendMessage(ctx, text.TranslatorEnabled[lang(ctx)], 0, nil)
+	redis.SetLang(ctx, lang)
+	_, err := telegram.SendMessage(ctx, text.LanguageChosen[lang], 0, nil)
 	if err != nil {
-		log.Printf("can't send translate callback")
+		log.Printf("can't send language chosen callback")
 	}
 
-	err = telegram.EditMessage(ctx, text.Translate[lang(ctx)], messageID, nil)
+	err = telegram.EditMessage(ctx, text.Language, messageID, nil)
 	if err != nil {
-		log.Printf("can't edit translate callback")
-	}
-}
-
-func translatorDisabled(ctx context.Context, messageID int) {
-
-	redis.SetLang(ctx, "-")
-	_, err := telegram.SendMessage(ctx, text.TranslatorDisabled[lang(ctx)], 0, nil)
-	if err != nil {
-		log.Printf("can't send translate callback")
-	}
-
-	err = telegram.EditMessage(ctx, text.Translate[lang(ctx)], messageID, nil)
-	if err != nil {
-		log.Printf("can't edit translate callback")
+		log.Printf("can't edit language chosen callback")
 	}
 }

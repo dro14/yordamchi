@@ -61,7 +61,7 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 
 	done := doCommand(ctx, message)
 	if err != nil {
-		translate(ctx)
+		language(ctx)
 		return
 	} else if done {
 		return
@@ -104,10 +104,8 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 		premiumCallback(ctx, callbackQuery.Message.MessageID)
 	case "gpt-3.5-turbo", "gpt-4":
 		modelCallback(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
-	case "enable":
-		translatorEnabled(ctx, callbackQuery.Message.MessageID)
-	case "disable":
-		translatorDisabled(ctx, callbackQuery.Message.MessageID)
+	case "uz", "ru", "en":
+		languageChosen(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
 	default:
 		log.Printf("unknown callback data: %v", callbackQuery.Data)
 	}
