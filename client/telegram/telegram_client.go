@@ -204,23 +204,6 @@ Loop:
 	}
 }
 
-func DeleteMessage(ctx context.Context, messageID int) error {
-
-	userID := ctx.Value("user_id").(int64)
-
-	request := &tg.MessagesDeleteMessagesRequest{
-		ID: []int{messageID},
-	}
-
-	_, err := api.MessagesDeleteMessages(ctx, request)
-	if err != nil {
-		log.Printf("can't delete message for %d: %v", userID, err)
-		return err
-	}
-
-	return nil
-}
-
 func Send(ctx context.Context, message string, addButton bool) error {
 
 	userID := ctx.Value("user_id").(int64)
@@ -259,6 +242,21 @@ func Edit(ctx context.Context, message string, messageID int, addButton bool) er
 	_, err := bot.Request(config)
 	if err != nil {
 		log.Printf("can't edit message for %d: %v", userID, err)
+		return err
+	}
+
+	return nil
+}
+
+func Delete(ctx context.Context, messageID int) error {
+
+	userID := ctx.Value("user_id").(int64)
+
+	config := tgbotapi.NewDeleteMessage(userID, messageID)
+
+	_, err := bot.Request(config)
+	if err != nil {
+		log.Printf("can't delete message for %d: %v", userID, err)
 		return err
 	}
 
