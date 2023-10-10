@@ -8,7 +8,7 @@ const (
 
 const (
 	RetryDelay      = 1000 * time.Millisecond
-	RequestInterval = 1500 * time.Millisecond
+	RequestInterval = 2000 * time.Millisecond
 )
 
 var (

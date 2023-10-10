@@ -72,7 +72,7 @@ func makeRequest[T *types.Request | *types.Generations](ctx context.Context, req
 	}
 
 	var client http.Client
-	client.Timeout = 3 * time.Minute
+	client.Timeout = 10 * time.Minute
 
 	resp, err := client.Do(req)
 	if err != nil {
