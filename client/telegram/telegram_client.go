@@ -204,6 +204,23 @@ Loop:
 	}
 }
 
+func DeleteMessage(ctx context.Context, messageID int) error {
+
+	userID := ctx.Value("user_id").(int64)
+
+	request := &tg.MessagesDeleteMessagesRequest{
+		ID: []int{messageID},
+	}
+
+	_, err := api.MessagesDeleteMessages(ctx, request)
+	if err != nil {
+		log.Printf("can't delete message for %d: %v", userID, err)
+		return err
+	}
+
+	return nil
+}
+
 func Send(ctx context.Context, message string, addButton bool) error {
 
 	userID := ctx.Value("user_id").(int64)

@@ -72,7 +72,7 @@ func languageChosen(ctx context.Context, messageID int, lang string) {
 		log.Printf("can't send language chosen callback")
 	}
 
-	err = telegram.EditMessage(ctx, text.Language, messageID, nil)
+	err = telegram.DeleteMessage(ctx, messageID)
 	if err != nil {
 		log.Printf("can't edit language chosen callback")
 	}
