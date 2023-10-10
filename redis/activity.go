@@ -23,7 +23,6 @@ func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium
 		LastName:     message.From.LastName,
 		Username:     message.From.UserName,
 		LanguageCode: ctx.Value("language_code").(string),
-		TargetLang:   ctx.Value("target_lang").(string),
 		IsPremium:    isPremium,
 	}
 
