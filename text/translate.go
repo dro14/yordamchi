@@ -1,10 +1,10 @@
 package text
 
-var Language = `O'z tilingizni tanlang:
+var Language = `Botning tilini tanlang:
 
-Выберите свой язык:
+Выберите язык бота:
 
-Choose your language:`
+Choose the language of the bot:`
 
 var LanguageChosen = map[string]string{
 	"uz": "O'zbek tili tanlandi",

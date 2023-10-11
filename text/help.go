@@ -7,8 +7,10 @@ var Help = map[string]string{
 /start - Botni ishga tushirish
 /help - Bot haqida ma'lumot
 /settings - Qolgan so'rovlar soni
-/translate - Tarjimon
+/language - Tilni o'zgartirish
 /examples - Foydalanish misollari
+/premium - Cheksiz so'rovlar
+/gpt4 - Eng kuchlisi
 /donate - Xayriya bilan qo'llab-quvvatlash
 
 Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishingiz mumkin.`,
@@ -18,8 +20,10 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /start - Запуск бота
 /help - Информация о боте
 /settings - Количество оставшихся запросов
-/translate - Переводчик
+/language - Поменять язык
 /examples - Примеры использования
+/premium - Неограниченные запросы
+/gpt4 - Самый мощный
 /donate - Поддержать благотворительностью
 
 Команды также можно использовать с помощью синей кнопки меню в нижнем левом углу.`,
@@ -29,8 +33,10 @@ Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishing
 /start - Start the bot
 /help - Information about the bot
 /settings - Number of remaining requests
-/translate - Translator
+/language - Change the language
 /examples - Examples of usage
+/premium - Unlimited requests
+/gpt4 - The most powerful
 /donate - Supporting by charity
 
 You can also use these commands with via the blue menu button in the lower left corner.`,
