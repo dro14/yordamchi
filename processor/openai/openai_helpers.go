@@ -27,7 +27,7 @@ func tokens(ctx context.Context, messages []types.Message) int {
 		return 4096 - bobdev.Tokens(ctx, messages)
 	}
 
-	maxTokens := 8191 - bobdev.Tokens(ctx, messages)
+	maxTokens := 4096 - bobdev.Tokens(ctx, messages)
 	availableTokens := redis.GPT4Tokens(ctx)
 	if availableTokens < maxTokens {
 		return availableTokens
