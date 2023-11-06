@@ -172,39 +172,6 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	return keyboard
 }
 
-func Donate(lang string) *tg.ReplyInlineMarkup {
-	text := map[string]string{
-		"uz": "😇 Xayriya 😇",
-		"ru": "😇 Донат 😇",
-		"en": "😇 Donate 😇",
-	}
-	return url(text[lang], "https://payme.uz/60d6dbeb3632e1ceb8664de3")
-}
-
-func Blocked(lang string) *tg.ReplyInlineMarkup {
-	text := map[string]string{
-		"uz": "👤 Admin 👤",
-		"ru": "👤 Админ 👤",
-		"en": "👤 Admin 👤",
-	}
-	return url(text[lang], "https://t.me/yordamchiga_yordam")
-}
-
-func url(text, url string) *tg.ReplyInlineMarkup {
-
-	row := tg.KeyboardButtonRow{}
-	row.Buttons = append(row.Buttons,
-		&tg.KeyboardButtonURL{
-			Text: text,
-			URL:  url,
-		},
-	)
-
-	keyboard := &tg.ReplyInlineMarkup{}
-	keyboard.Rows = append(keyboard.Rows, row)
-	return keyboard
-}
-
 func data(text, data string) *tg.ReplyInlineMarkup {
 
 	row := tg.KeyboardButtonRow{}

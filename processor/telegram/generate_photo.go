@@ -21,15 +21,18 @@ func GeneratePhoto(ctx context.Context, message *tgbotapi.Message) {
 	userID := ctx.Value("user_id").(int64)
 
 	prompt := strings.ReplaceAll(message.Text, "#image", "")
-	prompt, err := translator.Translate("auto", "en", strings.TrimSpace(prompt))
+	prompt = strings.TrimSpace(prompt)
+	prompt, _ = translator.Translate("auto", "en", prompt)
 
-	imageURL := url.QueryEscape(openai.Generations(ctx, prompt))
+	imageURL := openai.Generations(ctx, prompt)
+	imageURL = url.QueryEscape(imageURL)
+	botToken := os.Getenv("BOT_TOKEN")
+	URL := fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto?chat_id=%d&photo=%s", botToken, userID, imageURL)
 
-	resp, err := http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto?chat_id=%d&photo=%s", os.Getenv("BOT_TOKEN"), userID, imageURL))
+	resp, err := http.Get(URL)
 	if err != nil {
-		log.Printf("can't send photo: %v\n", err)
 		bts, _ := io.ReadAll(resp.Body)
-		log.Printf("body: %s", string(bts))
+		log.Printf("can't send photo: %v\nbody: %s", err, string(bts))
 		return
 	}
 	_ = resp.Body.Close()

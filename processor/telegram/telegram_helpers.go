@@ -52,14 +52,6 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func format(timestamp string) string {
-	t, err := time.Parse(time.RFC3339, timestamp)
-	if err != nil {
-		return timestamp
-	}
-	return t.Format(time.DateTime)
-}
-
 func msg(ctx context.Context, lang string) string {
 
 	switch redis.UserStatus(ctx) {

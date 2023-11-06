@@ -30,8 +30,6 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 		premium(ctx)
 	case "gpt4":
 		gpt4(ctx)
-	case "donate":
-		donate(ctx)
 	default:
 		return false
 	}
@@ -96,13 +94,5 @@ func gpt4(ctx context.Context) {
 	_, err := telegram.SendMessage(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send gpt4 command")
-	}
-}
-
-func donate(ctx context.Context) {
-
-	_, err := telegram.SendMessage(ctx, text.Donate[lang(ctx)], 0, button.Donate(lang(ctx)))
-	if err != nil {
-		log.Printf("can't send donate command")
 	}
 }
