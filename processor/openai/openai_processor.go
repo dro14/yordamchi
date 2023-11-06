@@ -15,11 +15,6 @@ import (
 	"github.com/dro14/yordamchi/text"
 )
 
-var tokenLimit = map[any]int{
-	"gpt-3.5-turbo": 4096,
-	"gpt-4":         8191,
-}
-
 func ProcessWithStream(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
 	maxTokens := tokens(ctx, messages)
@@ -40,7 +35,7 @@ Retry:
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				totalTokens, _ := strconv.Atoi(errMsg)
-				diff := totalTokens - tokenLimit[ctx.Value("model")]
+				diff := totalTokens - 4096
 				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
@@ -72,7 +67,7 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = tokenLimit[ctx.Value("model")] - maxTokens
+	stats.PromptTokens = 4096 - maxTokens
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}
@@ -100,7 +95,7 @@ Retry:
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
 				totalTokens, _ := strconv.Atoi(errMsg)
-				diff := totalTokens - tokenLimit[ctx.Value("model")]
+				diff := totalTokens - 4096
 				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
@@ -128,7 +123,7 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = tokenLimit[ctx.Value("model")] - maxTokens
+	stats.PromptTokens = 4096 - maxTokens
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}

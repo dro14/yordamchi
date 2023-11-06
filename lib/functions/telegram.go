@@ -4,34 +4,36 @@ import "bytes"
 
 func MarkdownV2(text string) string {
 
-	var (
-		found       bool
-		before      []byte
-		buffer      bytes.Buffer
-		char        = []byte{0}
-		bts         = []byte(text)
-		escape      = []byte{'\\', 0}
-		block       = []byte{'`', '`', '`'}
-		blocks      = bytes.Count(bts, block)
-		escapeChars = []byte{'\\', '_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!', '`'}
-	)
+	bts := []byte(text)
+	escapeChars := []byte{'\\', '_', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'}
 
+	char := []byte{' '}
+	escape := []byte{'\\', ' '}
 	for i := range escapeChars {
 		char[0] = escapeChars[i]
 		escape[1] = escapeChars[i]
-		if i != 18 {
-			bts = bytes.ReplaceAll(bts, char, escape)
-		}
+		bts = bytes.ReplaceAll(bts, char, escape)
 	}
 
+	block := []byte{'`', '`', '`'}
+	blocks := bytes.Count(bts, block)
 	if blocks%2 != 0 {
 		bts = append(bts, block...)
 	}
 
+	var (
+		found  bool
+		before []byte
+		buffer bytes.Buffer
+	)
+
 	for {
 		before, bts, found = bytes.Cut(bts, block)
-		if bytes.Count(before, char)%2 != 0 {
-			before = bytes.ReplaceAll(before, char, escape)
+		switch {
+		case bytes.Count(before, []byte{'`'})%2 != 0:
+			before = bytes.ReplaceAll(before, []byte{'`'}, []byte{'\\', '`'})
+		case bytes.Count(before, []byte{'*', '*'})%2 != 0:
+			before = bytes.ReplaceAll(before, []byte{'*'}, []byte{'\\', '*'})
 		}
 		buffer.Write(before)
 		if !found {
@@ -40,7 +42,8 @@ func MarkdownV2(text string) string {
 		buffer.Write(block)
 
 		before, bts, _ = bytes.Cut(bts, block)
-		before = bytes.ReplaceAll(before, char, escape)
+		before = bytes.ReplaceAll(before, []byte{'`'}, []byte{'\\', '`'})
+		before = bytes.ReplaceAll(before, []byte{'*'}, []byte{'\\', '*'})
 		buffer.Write(before)
 		buffer.Write(block)
 	}

@@ -33,7 +33,7 @@ func main() {
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
-		port = "80"
+		port = "8000"
 	}
 
 	telegram.Init()

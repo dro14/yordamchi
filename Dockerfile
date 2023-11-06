@@ -24,8 +24,8 @@ FROM gcr.io/distroless/base-debian10
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/main /main
 
-# Expose port 80 to the outside world
-EXPOSE 80
+# Expose port 8000 to the outside world
+EXPOSE 8000
 
 # Run the web service on container startup.
 CMD ["/main"]
