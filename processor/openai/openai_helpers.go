@@ -23,11 +23,11 @@ func lang(ctx context.Context) string {
 
 func tokens(ctx context.Context, messages []types.Message) int {
 
+	maxTokens := 4096 - bobdev.Tokens(ctx, messages)
 	if ctx.Value("model") == "gpt-3.5-turbo" {
-		return 4096 - bobdev.Tokens(ctx, messages)
+		return maxTokens
 	}
 
-	maxTokens := 4096 - bobdev.Tokens(ctx, messages)
 	availableTokens := redis.GPT4Tokens(ctx)
 	if availableTokens < maxTokens {
 		return availableTokens
