@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/dro14/yordamchi/lib/types"
@@ -42,17 +41,9 @@ func Init() {
 
 func UserStatus(ctx context.Context) types.UserStatus {
 
-	id := strconv.Itoa(int(ctx.Value("user_id").(int64)))
+	id := fmt.Sprintf("%d", ctx.Value("user_id").(int64))
 
-	result, err := isBlocked(ctx, id)
-	if err != nil {
-		log.Printf("can't check whether user %s is blocked: %v", id, err)
-		return types.UnknownStatus
-	} else if result {
-		return types.BlockedStatus
-	}
-
-	result, err = isGPT4(ctx, id)
+	result, err := isGPT4(ctx, id)
 	if err != nil {
 		log.Printf("can't check whether user %s is gpt-4: %v", id, err)
 		return types.UnknownStatus
@@ -153,35 +144,29 @@ func Decrement(ctx context.Context, used int) {
 	}
 }
 
-func PerformTransaction(userID int64, amount int, Type string) error {
+func PerformTransaction(userID int64, amount int, Type string) {
 
-	key := fmt.Sprintf("gpt-4:%d", userID)
+	ctx := context.Background()
 
 	if Type == "gpt-4" {
-		err := Client.Set(context.Background(), key, amount/100, 0).Err()
-		if err != nil {
-			log.Printf("can't set %q: %v", key, err)
-			return err
+		key := fmt.Sprintf("gpt-4:%d", userID)
+
+		tokens, _ := Client.Get(ctx, key).Int()
+		tokens += amount / 100
+
+		Client.Set(ctx, key, tokens, 0)
+	} else {
+		key := fmt.Sprintf("premium:%d", userID)
+
+		var expiration time.Time
+		switch Type {
+		case "weekly":
+			expiration = time.Now().AddDate(0, 0, 7)
+		case "monthly":
+			expiration = time.Now().AddDate(0, 1, 0)
 		}
-		return nil
-	}
 
-	key = fmt.Sprintf("premium:%d", userID)
-
-	var expiration time.Time
-	switch Type {
-	case "weekly", "requests":
-		expiration = time.Now().AddDate(0, 0, 7)
-	case "monthly":
-		expiration = time.Now().AddDate(0, 1, 0)
-	default:
-		return fmt.Errorf("invalid type: %s", Type)
+		expirationDate := expiration.Format("15:04:05 02.01.2006")
+		Client.Set(ctx, key, expirationDate, time.Until(expiration))
 	}
-
-	err := Client.Set(context.Background(), key, expiration.Format("15:04:05 02.01.2006"), time.Until(expiration)).Err()
-	if err != nil {
-		log.Printf("can't set %q: %v", key, err)
-		return err
-	}
-	return nil
 }

@@ -118,7 +118,12 @@ func Generations(ctx context.Context, prompt string) string {
 	ctx = context.WithValue(ctx, "url", Baseurl+ImagesGenerations)
 
 	request := &types.Generations{
-		Prompt: prompt,
+		Prompt:  prompt,
+		Model:   "dall-e-3",
+		Quality: "hd",
+		Size:    "1024x1024",
+		Style:   "vivid",
+		User:    fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
 
 	resp, err := send(ctx, request)

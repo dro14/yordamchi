@@ -39,5 +39,10 @@ type Error struct {
 }
 
 type Generations struct {
-	Prompt string `json:"prompt"`
+	Prompt  string `json:"prompt"`
+	Model   string `json:"model"`
+	Quality string `json:"quality"`
+	Size    string `json:"size"`
+	Style   string `json:"style"`
+	User    string `json:"user"`
 }

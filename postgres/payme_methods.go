@@ -168,10 +168,7 @@ func PerformTransaction(params *types.Params) (gin.H, int) {
 		return nil, -32400
 	}
 
-	err = redis.PerformTransaction(userID, amount, Type)
-	if err != nil {
-		return nil, -32400
-	}
+	redis.PerformTransaction(userID, amount, Type)
 
 	var lang string
 	err = db.QueryRow(`SELECT language_code FROM users WHERE id = $1;`, userID).Scan(&lang)

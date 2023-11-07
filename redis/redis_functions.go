@@ -5,23 +5,6 @@ import (
 	"fmt"
 )
 
-func isBlocked(ctx context.Context, id string) (bool, error) {
-
-	value, err := Client.Get(ctx, "blocked:"+id).Int()
-	if err != nil {
-		if err.Error() == KeyNotFound {
-			return false, nil
-		}
-		return false, err
-	}
-
-	if value == -14 {
-		return true, nil
-	} else {
-		return false, fmt.Errorf("invalid value: %d", value)
-	}
-}
-
 func isGPT4(ctx context.Context, id string) (bool, error) {
 
 	_, err := Client.Get(ctx, "model:"+id).Result()
