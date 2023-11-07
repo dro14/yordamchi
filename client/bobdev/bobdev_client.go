@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
 )
 
@@ -18,7 +18,10 @@ type Request struct {
 
 func Tokens(ctx context.Context, messages []types.Message) int {
 
-	model := strings.Split(ctx.Value("model").(string), "-")[0]
+	model := "gpt-3.5-turbo"
+	if ctx.Value("model") == models.GPT4 {
+		model = "gpt-4"
+	}
 
 	request := &Request{
 		Model:    model,

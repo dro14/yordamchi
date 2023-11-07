@@ -2,12 +2,12 @@ package telegram
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/lib/models"
 	"log"
 
 	"github.com/dro14/yordamchi/client/ocr"
 	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/client/telegram"
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/postgres"
