@@ -137,7 +137,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: ten[lang],
-			URL:  payme.CheckoutURL(ctx, 1000000, models.GPT4),
+			URL:  payme.CheckoutURL(ctx, 1000000, "gpt-4"),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)
@@ -151,7 +151,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: thirty[lang],
-			URL:  payme.CheckoutURL(ctx, 3000000, models.GPT4),
+			URL:  payme.CheckoutURL(ctx, 3000000, "gpt-4"),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)
@@ -165,7 +165,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: hundred[lang],
-			URL:  payme.CheckoutURL(ctx, 10000000, models.GPT4),
+			URL:  payme.CheckoutURL(ctx, 10000000, "gpt-4"),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)

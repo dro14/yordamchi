@@ -2,7 +2,9 @@ package telegram
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/models"
 	"log"
 	"strings"
 	"sync/atomic"
@@ -92,9 +94,9 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 			stats.Requests++
 			err = telegram.EditMessage(ctx, completions[index], messageID, nil)
-			if err == e.UserBlockedError {
+			if errors.Is(err, e.UserBlockedError) {
 				return
-			} else if err == e.UserDeletedMessage {
+			} else if errors.Is(err, e.UserDeletedMessage) {
 				log.Printf("user deleted completion")
 				index--
 			}
@@ -114,7 +116,7 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 				stats.Requests++
 				time.Sleep(constants.RequestInterval)
 				messageID, err = telegram.SendMessage(ctx, completions[index], 0, nil)
-				if err == e.UserBlockedError {
+				if errors.Is(err, e.UserBlockedError) {
 					return
 				} else if err != nil {
 					log.Printf("can't send next message")
@@ -126,7 +128,7 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		}
 
 		tokensUsed := stats.PromptTokens + stats.CompletionTokens
-		if ctx.Value("model") == "gpt-4" {
+		if ctx.Value("model") == models.GPT4 {
 			completions[index] = fmt.Sprintf(text.TokensUsed[lang(ctx)], completions[index], tokensUsed)
 		}
 

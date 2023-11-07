@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/models"
 	"log"
 	"os"
 	"time"
@@ -97,7 +98,7 @@ func Requests(ctx context.Context) string {
 
 func Decrement(ctx context.Context, used int) {
 
-	if ctx.Value("model") == "gpt-4" {
+	if ctx.Value("model") == models.GPT4 {
 		key := fmt.Sprintf("gpt-4:%d", ctx.Value("user_id").(int64))
 
 		available, err := Client.Get(ctx, key).Int()
