@@ -3,7 +3,6 @@ package openai
 import (
 	"context"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/dro14/yordamchi/client/bobdev"
@@ -17,12 +16,11 @@ import (
 
 func ProcessWithStream(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
 
-	maxTokens := tokens(ctx, messages)
 	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:
 	stats.Attempts++
-	response, err := openai.CompletionWithStream(ctx, messages, maxTokens, channel)
+	response, err := openai.CompletionWithStream(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
 
@@ -34,12 +32,8 @@ Retry:
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT3)
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
-				totalTokens, _ := strconv.Atoi(errMsg)
-				diff := totalTokens - 4096
-				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
-				maxTokens = tokens(ctx, messages)
 			} else {
 				channel <- text.TooLong[lang(ctx)]
 				return
@@ -67,7 +61,7 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = 4096 - maxTokens
+	stats.PromptTokens = bobdev.Tokens(ctx, messages)
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}
@@ -77,12 +71,11 @@ Retry:
 
 func Process(ctx context.Context, messages []types.Message, stats *types.Stats) (string, error) {
 
-	maxTokens := tokens(ctx, messages)
 	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:
 	stats.Attempts++
-	response, err := openai.Completion(ctx, messages, maxTokens)
+	response, err := openai.Completion(ctx, messages)
 	if err != nil {
 		errMsg = err.Error()
 
@@ -94,12 +87,8 @@ Retry:
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT3)
 				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
 				errMsg, _, _ = strings.Cut(errMsg, " tokens")
-				totalTokens, _ := strconv.Atoi(errMsg)
-				diff := totalTokens - 4096
-				maxTokens -= diff
 			} else if len(messages) > 2 {
 				messages = messages[2:]
-				maxTokens = tokens(ctx, messages)
 			} else {
 				log.Printf("%s", errMsg)
 				return text.TooLong[lang(ctx)], err
@@ -123,7 +112,7 @@ Retry:
 	}
 
 	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = 4096 - maxTokens
+	stats.PromptTokens = bobdev.Tokens(ctx, messages)
 	stats.PromptLength = length(messages)
 
 	completions := []types.Message{response.Choices[0].Message}

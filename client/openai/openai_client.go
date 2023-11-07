@@ -10,7 +10,9 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/redis"
 )
 
 const Baseurl = "https://api.openai.com/v1"
@@ -36,14 +38,14 @@ func Init() {
 	}
 }
 
-func CompletionWithStream(ctx context.Context, messages []types.Message, maxTokens int, channel chan<- string) (*types.Response, error) {
+func CompletionWithStream(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
 
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
-		MaxTokens: maxTokens,
+		MaxTokens: maxTokens(ctx),
 		Stream:    true,
 		User:      fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
@@ -70,7 +72,7 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, maxToke
 	return response, nil
 }
 
-func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*types.Response, error) {
+func Completion(ctx context.Context, messages []types.Message) (*types.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
@@ -78,7 +80,7 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*
 	request := &types.Request{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
-		MaxTokens: maxTokens,
+		MaxTokens: maxTokens(ctx),
 		Stream:    false,
 		User:      fmt.Sprintf("%d", userID),
 	}
@@ -147,4 +149,18 @@ func Generations(ctx context.Context, prompt string) string {
 	}
 
 	return response.Data[0].URL
+}
+
+func maxTokens(ctx context.Context) int {
+
+	if ctx.Value("model") == models.GPT3 {
+		return 4096
+	}
+
+	availableTokens := redis.GPT4Tokens(ctx)
+	if availableTokens < 4096 {
+		return availableTokens
+	} else {
+		return 4096
+	}
 }
