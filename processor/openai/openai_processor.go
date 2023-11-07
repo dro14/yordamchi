@@ -25,20 +25,6 @@ Retry:
 		errMsg = err.Error()
 
 		switch {
-		case strings.HasPrefix(errMsg, e.InvalidRequest):
-			errMsg = strings.TrimPrefix(errMsg, e.InvalidRequest)
-			if strings.HasPrefix(errMsg, e.ContextLengthExceededGPT3) ||
-				strings.HasPrefix(errMsg, e.ContextLengthExceededGPT4) {
-				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT3)
-				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
-				errMsg, _, _ = strings.Cut(errMsg, " tokens")
-			} else if len(messages) > 2 {
-				messages = messages[2:]
-			} else {
-				channel <- text.TooLong[lang(ctx)]
-				return
-			}
-			goto Retry
 		case strings.HasPrefix(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
 			goto Retry
@@ -80,20 +66,6 @@ Retry:
 		errMsg = err.Error()
 
 		switch {
-		case strings.HasPrefix(errMsg, e.InvalidRequest):
-			errMsg = strings.TrimPrefix(errMsg, e.InvalidRequest)
-			if strings.HasPrefix(errMsg, e.ContextLengthExceededGPT3) ||
-				strings.HasPrefix(errMsg, e.ContextLengthExceededGPT4) {
-				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT3)
-				errMsg = strings.TrimPrefix(errMsg, e.ContextLengthExceededGPT4)
-				errMsg, _, _ = strings.Cut(errMsg, " tokens")
-			} else if len(messages) > 2 {
-				messages = messages[2:]
-			} else {
-				log.Printf("%s", errMsg)
-				return text.TooLong[lang(ctx)], err
-			}
-			goto Retry
 		case strings.HasPrefix(errMsg, e.BadGateway),
 			strings.HasPrefix(errMsg, e.ServiceUnavailable),
 			strings.Contains(errMsg, e.ContextDeadlineExceeded):

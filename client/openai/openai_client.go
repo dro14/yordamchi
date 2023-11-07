@@ -15,9 +15,9 @@ import (
 	"github.com/dro14/yordamchi/redis"
 )
 
-const Baseurl = "https://api.openai.com/v1"
-const ChatCompletions = "/chat/completions"
-const ImagesGenerations = "/images/generations"
+const Baseurl = "https://api.openai.com/v1/"
+const ChatCompletions = "chat/completions"
+const ImagesGenerations = "images/generations"
 
 var keys []string
 var index int
@@ -123,8 +123,8 @@ func Generations(ctx context.Context, prompt string) string {
 		Prompt:  prompt,
 		Model:   "dall-e-3",
 		Quality: "hd",
-		Size:    "1024x1024",
-		Style:   "natural",
+		Size:    "1792x1024",
+		Style:   "vivid",
 		User:    fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
 

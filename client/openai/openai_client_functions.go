@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/types"
 )
 
@@ -33,18 +32,12 @@ func send[T *types.Request | *types.Generations](ctx context.Context, request T)
 		_ = resp.Body.Close()
 		var response types.Response
 		err = json.Unmarshal(bts, &response)
-
-		switch response.Error.Type {
-		case e.InvalidRequest:
-			return nil, fmt.Errorf(response.Error.Type + response.Error.Message)
-		default:
-			if err != nil {
-				log.Printf("%s for %d\ncan't decode response: %v\nbody: %q", resp.Status, userID, err, string(bts))
-			} else {
-				log.Printf("%s for %d\ntype: %s\nmessage: %s", resp.Status, userID, response.Error.Type, response.Error.Message)
-			}
-			return nil, fmt.Errorf("%s for %d", resp.Status, userID)
+		if err != nil {
+			log.Printf("%s for %d\ncan't decode response: %v\nbody: %q", resp.Status, userID, err, string(bts))
+		} else {
+			log.Printf("%s for %d\ntype: %s\nmessage: %s", resp.Status, userID, response.Error.Type, response.Error.Message)
 		}
+		return nil, fmt.Errorf("%s for %d", resp.Status, userID)
 	}
 }
 
