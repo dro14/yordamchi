@@ -42,7 +42,7 @@ func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonCallback{
 			Text: texts[0],
-			Data: []byte(models.GPT4),
+			Data: []byte(models.GPT3),
 		},
 	)
 	row.Buttons = append(row.Buttons,
