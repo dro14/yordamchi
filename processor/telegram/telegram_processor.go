@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/lib/models"
 	"log"
 
 	"github.com/dro14/yordamchi/client/ocr"
@@ -70,7 +71,7 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 	switch redis.UserStatus(ctx) {
 	case types.GPT4Status:
 		if redis.GPT4Tokens(ctx) > 0 {
-			Stream(ctx, message, "gpt-4")
+			Stream(ctx, message, models.GPT4)
 		} else {
 			gpt4(ctx)
 		}
@@ -98,7 +99,7 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 		examplesCallback(ctx, callbackQuery.Message.MessageID)
 	case "help":
 		helpCallback(ctx, callbackQuery.Message.MessageID)
-	case "gpt-3.5-turbo", "gpt-4":
+	case models.GPT3, models.GPT4:
 		modelCallback(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
 	case "uz", "ru", "en":
 		languageChosen(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)

@@ -45,14 +45,14 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	stats.Activity = redis.IncrementActivity(ctx, message, isPremium)
 	defer redis.DecrementActivity(ctx)
 
-	if message.Photo != nil {
-		message.Text = ocr.Analyze(ctx, message)
-	}
-
 	isTyping := &atomic.Bool{}
 	isTyping.Store(true)
 	go telegram.SetTyping(ctx, isTyping)
 	defer isTyping.Store(false)
+
+	if message.Photo != nil {
+		message.Text = ocr.Analyze(ctx, message)
+	}
 
 	if lang(ctx) == "uz" {
 		completions := UseTranslator(ctx, message, stats)

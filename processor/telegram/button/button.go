@@ -3,6 +3,7 @@ package button
 import (
 	"context"
 
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/gotd/td/tg"
@@ -29,7 +30,7 @@ func Examples(lang string) *tg.ReplyInlineMarkup {
 func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
 
 	texts := make([]string, 2)
-	if redis.Model(ctx) == "gpt-3.5-turbo" {
+	if redis.Model(ctx) == models.GPT3 {
 		texts[0] = "GPT-3.5 ✅"
 		texts[1] = "GPT-4"
 	} else {
@@ -41,13 +42,13 @@ func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonCallback{
 			Text: texts[0],
-			Data: []byte("gpt-3.5-turbo"),
+			Data: []byte(models.GPT4),
 		},
 	)
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonCallback{
 			Text: texts[1],
-			Data: []byte("gpt-4"),
+			Data: []byte(models.GPT4),
 		},
 	)
 
@@ -136,7 +137,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: ten[lang],
-			URL:  payme.CheckoutURL(ctx, 1000000, "gpt-4"),
+			URL:  payme.CheckoutURL(ctx, 1000000, models.GPT4),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)
@@ -150,7 +151,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: thirty[lang],
-			URL:  payme.CheckoutURL(ctx, 3000000, "gpt-4"),
+			URL:  payme.CheckoutURL(ctx, 3000000, models.GPT4),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)
@@ -164,7 +165,7 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	row.Buttons = append(row.Buttons,
 		&tg.KeyboardButtonURL{
 			Text: hundred[lang],
-			URL:  payme.CheckoutURL(ctx, 10000000, "gpt-4"),
+			URL:  payme.CheckoutURL(ctx, 10000000, models.GPT4),
 		},
 	)
 	keyboard.Rows = append(keyboard.Rows, row)

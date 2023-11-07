@@ -41,7 +41,7 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, maxToke
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
-		Model:     ctx.Value("model").(string) + "-0613",
+		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    true,
@@ -76,7 +76,7 @@ func Completion(ctx context.Context, messages []types.Message, maxTokens int) (*
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 
 	request := &types.Request{
-		Model:     ctx.Value("model").(string) + "-0613",
+		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens,
 		Stream:    false,
@@ -122,7 +122,7 @@ func Generations(ctx context.Context, prompt string) string {
 		Model:   "dall-e-3",
 		Quality: "hd",
 		Size:    "1024x1024",
-		Style:   "vivid",
+		Style:   "natural",
 		User:    fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
 

@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/models"
 )
 
 func GPT3(ctx context.Context) error {
@@ -12,16 +13,16 @@ func GPT3(ctx context.Context) error {
 
 func GPT4(ctx context.Context) error {
 	key := fmt.Sprintf("model:%d", ctx.Value("user_id").(int64))
-	return Client.Set(ctx, key, "gpt-4", 0).Err()
+	return Client.Set(ctx, key, models.GPT4, 0).Err()
 }
 
 func Model(ctx context.Context) string {
 	key := fmt.Sprintf("model:%d", ctx.Value("user_id").(int64))
-	model, err := Client.Get(ctx, key).Result()
+	_, err := Client.Get(ctx, key).Result()
 	if err != nil {
-		return "gpt-3.5-turbo"
+		return models.GPT3
 	}
-	return model
+	return models.GPT4
 }
 
 func GPT4Tokens(ctx context.Context) int {

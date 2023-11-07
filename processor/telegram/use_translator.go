@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/models"
 
 	"github.com/dro14/yordamchi/client/translator"
 	"github.com/dro14/yordamchi/lib/functions"
@@ -32,7 +33,7 @@ func UseTranslator(ctx context.Context, message *tgbotapi.Message, stats *types.
 	}
 
 	tokensUsed := stats.PromptTokens + stats.CompletionTokens
-	if ctx.Value("model") == "gpt-4" {
+	if ctx.Value("model") == models.GPT4 {
 		translation = fmt.Sprintf(text.TokensUsed[lang(ctx)], translation, tokensUsed)
 	}
 

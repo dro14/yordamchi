@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/lib/models"
 	"log"
 
 	"github.com/dro14/yordamchi/client/telegram"
@@ -40,7 +41,7 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 	var err error
 	if model == redis.Model(ctx) {
 		return
-	} else if model == "gpt-4" {
+	} else if model == models.GPT4 {
 		err = redis.GPT4(ctx)
 	} else {
 		err = redis.GPT3(ctx)
@@ -59,6 +60,8 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 func languageChosen(ctx context.Context, messageID int, lang string) {
 
 	redis.SetLang(ctx, lang)
+	telegram.SetCommands(ctx, lang)
+
 	_, err := telegram.SendMessage(ctx, text.LanguageChosen[lang], 0, nil)
 	if err != nil {
 		log.Printf("can't send language chosen callback")
@@ -66,6 +69,6 @@ func languageChosen(ctx context.Context, messageID int, lang string) {
 
 	err = telegram.Delete(ctx, messageID)
 	if err != nil {
-		log.Printf("can't edit language chosen callback")
+		log.Printf("can't delete language command message")
 	}
 }
