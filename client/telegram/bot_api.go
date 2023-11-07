@@ -44,7 +44,7 @@ func Edit(ctx context.Context, message string, messageID int, addButton bool) er
 
 	_, err := bot.Request(config)
 	if err != nil {
-		log.Printf("can't edit message for %d: %v", userID, err)
+		log.Printf("can't edit message for %d: %v\nmessage: %q", userID, err, message)
 		return err
 	}
 	return nil
