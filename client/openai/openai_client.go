@@ -123,7 +123,7 @@ func Generations(ctx context.Context, prompt string) string {
 		Prompt:  prompt,
 		Model:   "dall-e-3",
 		Quality: "hd",
-		Size:    "1792x1024",
+		Size:    "1024x1024",
 		Style:   "vivid",
 		User:    fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
 	}
