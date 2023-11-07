@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/dro14/yordamchi/lib/types"
 )
@@ -17,8 +18,10 @@ type Request struct {
 
 func Tokens(ctx context.Context, messages []types.Message) int {
 
+	model := strings.Split(ctx.Value("model").(string), "-")[0]
+
 	request := &Request{
-		Model:    ctx.Value("model").(string),
+		Model:    model,
 		Messages: messages,
 	}
 
