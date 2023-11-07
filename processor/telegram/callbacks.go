@@ -2,17 +2,16 @@ package telegram
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/lib/models"
 	"log"
 
 	"github.com/dro14/yordamchi/client/telegram"
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 )
 
 func newChatCallback(ctx context.Context) {
-
 	redis.DeleteContext(ctx)
 	_, err := telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
@@ -21,7 +20,6 @@ func newChatCallback(ctx context.Context) {
 }
 
 func examplesCallback(ctx context.Context, messageID int) {
-
 	err := telegram.EditMessage(ctx, text.Examples[lang(ctx)], messageID, button.Examples(lang(ctx)))
 	if err != nil {
 		log.Printf("can't edit examples callback")
@@ -29,7 +27,6 @@ func examplesCallback(ctx context.Context, messageID int) {
 }
 
 func helpCallback(ctx context.Context, messageID int) {
-
 	err := telegram.EditMessage(ctx, text.Help[lang(ctx)], messageID, nil)
 	if err != nil {
 		log.Printf("can't edit help callback")
@@ -37,7 +34,6 @@ func helpCallback(ctx context.Context, messageID int) {
 }
 
 func modelCallback(ctx context.Context, messageID int, model string) {
-
 	var err error
 	if model == redis.Model(ctx) {
 		return
@@ -58,7 +54,6 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 }
 
 func languageChosen(ctx context.Context, messageID int, lang string) {
-
 	redis.SetLang(ctx, lang)
 	telegram.SetCommands(ctx, lang)
 

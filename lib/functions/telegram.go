@@ -1,51 +1,49 @@
 package functions
 
-import "bytes"
+import (
+	"strings"
+)
 
 func MarkdownV2(text string) string {
 
-	bts := []byte(text)
-	escapeChars := []byte{'\\', '_', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'}
-
-	char := []byte{' '}
-	escape := []byte{'\\', ' '}
+	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
-		char[0] = escapeChars[i]
-		escape[1] = escapeChars[i]
-		bts = bytes.ReplaceAll(bts, char, escape)
+		char := string(escapeChars[i])
+		escape := "\\" + char
+		text = strings.ReplaceAll(text, char, escape)
 	}
 
-	block := []byte{'`', '`', '`'}
-	blocks := bytes.Count(bts, block)
+	block := "```"
+	blocks := strings.Count(text, block)
 	if blocks%2 != 0 {
-		bts = append(bts, block...)
+		text += block
 	}
 
 	var (
 		found  bool
-		before []byte
-		buffer bytes.Buffer
+		before string
+		buffer strings.Builder
 	)
 
 	for {
-		before, bts, found = bytes.Cut(bts, block)
+		before, text, found = strings.Cut(text, block)
 		switch {
-		case bytes.Count(before, []byte{'`'})%2 != 0:
-			before = bytes.ReplaceAll(before, []byte{'`'}, []byte{'\\', '`'})
-		case bytes.Count(before, []byte{'*', '*'})%2 != 0:
-			before = bytes.ReplaceAll(before, []byte{'*'}, []byte{'\\', '*'})
+		case strings.Count(before, "`")%2 != 0:
+			before = strings.ReplaceAll(before, "`", "\\`")
+		case strings.Count(before, "**")%2 != 0:
+			before = strings.ReplaceAll(before, "*", "\\*")
 		}
-		buffer.Write(before)
+		buffer.WriteString(before)
 		if !found {
 			break
 		}
-		buffer.Write(block)
+		buffer.WriteString(block)
 
-		before, bts, _ = bytes.Cut(bts, block)
-		before = bytes.ReplaceAll(before, []byte{'`'}, []byte{'\\', '`'})
-		before = bytes.ReplaceAll(before, []byte{'*'}, []byte{'\\', '*'})
-		buffer.Write(before)
-		buffer.Write(block)
+		before, text, _ = strings.Cut(text, block)
+		before = strings.ReplaceAll(before, "`", "\\`")
+		before = strings.ReplaceAll(before, "*", "\\*")
+		buffer.WriteString(before)
+		buffer.WriteString(block)
 	}
 
 	return buffer.String()
