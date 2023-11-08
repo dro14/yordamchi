@@ -30,7 +30,8 @@ func MarkdownV2(text string) string {
 		switch {
 		case strings.Count(before, "`")%2 != 0:
 			before = strings.ReplaceAll(before, "`", "\\`")
-		case strings.Count(before, "**")%2 != 0:
+		case strings.Count(before, "*")%4 != 0 &&
+			strings.Count(before, "**")%2 != 0:
 			before = strings.ReplaceAll(before, "*", "\\*")
 		}
 		buffer.WriteString(before)
