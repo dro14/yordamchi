@@ -40,7 +40,7 @@ func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Cont
 	ctx = context.WithValue(ctx, "date", message.Date)
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
 	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
-	ctx, shouldSetLang := redis.Lang(ctx)
+	ctx, shouldSetLang := redis.Lang(ctx, message.From.LanguageCode)
 	return ctx, false, shouldSetLang
 }
 

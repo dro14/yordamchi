@@ -7,7 +7,16 @@ import (
 	"github.com/dro14/yordamchi/lib/e"
 )
 
-func Lang(ctx context.Context) (context.Context, bool) {
+func Lang(ctx context.Context, languageCode string) (context.Context, bool) {
+	switch languageCode {
+	case "uz", "":
+		ctx = context.WithValue(ctx, "language_code", "uz")
+	case "ru":
+		ctx = context.WithValue(ctx, "language_code", "ru")
+	default:
+		ctx = context.WithValue(ctx, "language_code", "en")
+	}
+
 	key := fmt.Sprintf("lang:%d", ctx.Value("user_id").(int64))
 	lang, err := Client.Get(ctx, key).Result()
 	if err != nil && err.Error() == e.KeyNotFound {

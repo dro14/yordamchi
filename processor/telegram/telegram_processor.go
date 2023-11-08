@@ -89,11 +89,7 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 	defer recoverFromPanic()
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
-	ctx, shouldSetLang := redis.Lang(ctx)
-	if shouldSetLang {
-		language(ctx)
-		return
-	}
+	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
 
 	switch callbackQuery.Data {
 	case "new_chat":
@@ -115,11 +111,7 @@ func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMe
 	defer recoverFromPanic()
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
-	ctx, shouldSetLang := redis.Lang(ctx)
-	if shouldSetLang {
-		language(ctx)
-		return
-	}
+	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
 
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
