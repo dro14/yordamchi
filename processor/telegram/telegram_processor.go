@@ -92,7 +92,6 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 	ctx, shouldSetLang := redis.Lang(ctx)
 	if shouldSetLang {
 		language(ctx)
-		blockedUsers.Delete(callbackQuery.From.ID)
 		return
 	}
 
@@ -119,7 +118,6 @@ func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMe
 	ctx, shouldSetLang := redis.Lang(ctx)
 	if shouldSetLang {
 		language(ctx)
-		blockedUsers.Delete(chatMemberUpdated.From.ID)
 		return
 	}
 
