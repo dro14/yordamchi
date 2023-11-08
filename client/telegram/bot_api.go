@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -33,6 +34,7 @@ func Send(ctx context.Context, message string, addButton bool) error {
 func Edit(ctx context.Context, message string, messageID int, addButton bool) error {
 	userID := ctx.Value("user_id").(int64)
 	lang := ctx.Value("language_code").(string)
+	original := message
 	message = functions.MarkdownV2(message)
 
 	config := tgbotapi.NewEditMessageText(userID, messageID, message)
@@ -44,7 +46,10 @@ func Edit(ctx context.Context, message string, messageID int, addButton bool) er
 
 	_, err := bot.Request(config)
 	if err != nil {
-		log.Printf("can't edit message for %d: %v\nmessage: %s", userID, err, message)
+		log.Printf("can't edit message for %d: %v", userID, err)
+		info_bot.Send(err.Error())
+		info_bot.Send(original)
+		info_bot.Send(message)
 		return err
 	}
 	return nil

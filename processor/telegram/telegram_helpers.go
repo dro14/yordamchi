@@ -59,9 +59,9 @@ func msg(ctx context.Context, lang string) string {
 	}
 }
 
-func recoverFromPanic() {
+func recoverFromPanic(source string) {
 	if r := recover(); r != nil {
-		info_bot.Send(fmt.Sprintf("panic:\n%v", r))
+		info_bot.Send(fmt.Sprintf("%s: %v", source, r))
 		log.Fatalf("fatal error: restarting bot")
 	}
 }
