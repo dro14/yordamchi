@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dro14/yordamchi/lib/models"
 	"log"
 	"strings"
 	"sync/atomic"
@@ -15,6 +14,7 @@ import (
 	"github.com/dro14/yordamchi/lib/constants"
 	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
@@ -24,7 +24,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
+func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 	if message.From.ID == 1792604195 {
 		info_bot.Send(message.Text)
@@ -36,14 +36,17 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	}
 
 	stats := &types.Stats{IsPremium: isPremium}
+
 	stats.Requests++
 	messageID, err := telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Printf("can't send loading message")
 		return
 	}
+
 	beginning := ctx.Value("beginning").(time.Time)
 	stats.FirstSend = time.Since(beginning).Milliseconds()
+
 	stats.Activity = redis.IncrementActivity(ctx, message, isPremium)
 	defer redis.DecrementActivity(ctx)
 
@@ -86,7 +89,6 @@ func Stream(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		completion := ""
 		var completions []string
 		for completion = range channel {
-
 			completions = functions.Slice(completion)
 			if index >= len(completions) {
 				index = len(completions) - 1

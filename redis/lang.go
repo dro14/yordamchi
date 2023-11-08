@@ -3,34 +3,26 @@ package redis
 import (
 	"context"
 	"fmt"
-	"log"
 )
 
-func Lang(ctx context.Context, languageCode string) (context.Context, error) {
-
+func Lang(ctx context.Context, languageCode string) (context.Context, bool) {
 	if languageCode == "" {
-		languageCode = "uz"
+		ctx = context.WithValue(ctx, "language_code", "uz")
 	} else if languageCode != "uz" && languageCode != "ru" {
-		languageCode = "en"
+		ctx = context.WithValue(ctx, "language_code", "en")
 	}
-	ctx = context.WithValue(ctx, "language_code", languageCode)
 
 	key := fmt.Sprintf("lang:%d", ctx.Value("user_id").(int64))
 	lang, err := Client.Get(ctx, key).Result()
 	if err != nil {
-		return ctx, err
+		return ctx, true
 	}
-
 	ctx = context.WithValue(ctx, "language_code", lang)
-	return ctx, nil
+	return ctx, false
 }
 
-func SetLang(ctx context.Context, lang string) {
-
+func SetLang(ctx context.Context) {
 	key := fmt.Sprintf("lang:%d", ctx.Value("user_id").(int64))
-
-	err := Client.Set(ctx, key, lang, 0).Err()
-	if err != nil {
-		log.Printf("can't set %q: %v", key, err)
-	}
+	lang := ctx.Value("language_code").(string)
+	Client.Set(ctx, key, lang, 0)
 }

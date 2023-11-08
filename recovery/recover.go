@@ -42,6 +42,6 @@ func Init() {
 			log.Printf("can't send error message: %v", err)
 		}
 
-		go processor.Stream(ctx, message, activity.IsPremium)
+		go processor.Process(ctx, message, activity.IsPremium)
 	}
 }

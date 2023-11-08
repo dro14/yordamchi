@@ -62,8 +62,9 @@ func Delete(ctx context.Context, messageID int) error {
 	return nil
 }
 
-func SetCommands(ctx context.Context, lang string) {
+func SetCommands(ctx context.Context) {
 	userID := ctx.Value("user_id").(int64)
+	lang := ctx.Value("language_code").(string)
 	scope := tgbotapi.NewBotCommandScopeChat(userID)
 	config := tgbotapi.NewSetMyCommandsWithScope(scope, commands[lang]...)
 	_, err := bot.Request(config)

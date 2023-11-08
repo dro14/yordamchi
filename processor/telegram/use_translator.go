@@ -3,10 +3,10 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/lib/models"
 
 	"github.com/dro14/yordamchi/client/translator"
 	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/redis"

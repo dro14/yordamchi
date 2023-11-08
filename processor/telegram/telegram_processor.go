@@ -30,14 +30,12 @@ func Init() {
 }
 
 func ProcessUpdate(c *gin.Context) {
-
 	update := &tgbotapi.Update{}
 	if err := c.ShouldBindJSON(update); err != nil {
 		log.Printf("can't bind json: %v", err)
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-
 	switch {
 	case update.Message != nil:
 		go ProcessMessage(context.Background(), update.Message)
@@ -48,37 +46,36 @@ func ProcessUpdate(c *gin.Context) {
 	default:
 		log.Printf("unknown update type:\n%+v", update)
 	}
-
 	c.JSON(200, gin.H{"ok": true})
 }
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
-
-	ctx, allow, err := messageUpdate(ctx, message)
-	if !allow {
+	ctx, allow, shouldSetLang := messageUpdate(ctx, message)
+	if !allow || shouldSetLang {
+		if shouldSetLang {
+			language(ctx)
+			blockedUsers.Delete(message.From.ID)
+		}
 		return
 	}
 	defer blockedUsers.Delete(message.From.ID)
 
 	done := doCommand(ctx, message)
-	if err != nil {
-		language(ctx)
-		return
-	} else if done {
+	if done {
 		return
 	}
 
 	switch redis.UserStatus(ctx) {
 	case types.GPT4Status:
 		if redis.GPT4Tokens(ctx) > 0 {
-			Stream(ctx, message, models.GPT4)
+			Process(ctx, message, models.GPT4)
 		} else {
 			gpt4(ctx)
 		}
 	case types.PremiumStatus:
-		Stream(ctx, message, "true")
+		Process(ctx, message, "true")
 	case types.FreeStatus:
-		Stream(ctx, message, "false")
+		Process(ctx, message, "false")
 	case types.ExhaustedStatus:
 		exhausted(ctx)
 	default:
@@ -87,7 +84,6 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
@@ -102,14 +98,13 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 	case models.GPT3, models.GPT4:
 		modelCallback(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
 	case "uz", "ru", "en":
-		languageChosen(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
+		languageChosenCallback(ctx, callbackQuery.Message, callbackQuery.Data)
 	default:
 		log.Printf("unknown callback data: %v", callbackQuery.Data)
 	}
 }
 
 func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
-
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)

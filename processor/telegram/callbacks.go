@@ -9,6 +9,7 @@ import (
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func newChatCallback(ctx context.Context) {
@@ -53,16 +54,13 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 	}
 }
 
-func languageChosen(ctx context.Context, messageID int, lang string) {
-	redis.SetLang(ctx, lang)
-	telegram.SetCommands(ctx, lang)
+func languageChosenCallback(ctx context.Context, message *tgbotapi.Message, lang string) {
+	ctx = context.WithValue(ctx, "language_code", lang)
+	redis.SetLang(ctx)
+	telegram.SetCommands(ctx)
+	start(ctx, message)
 
-	_, err := telegram.SendMessage(ctx, text.LanguageChosen[lang], 0, nil)
-	if err != nil {
-		log.Printf("can't send language chosen callback")
-	}
-
-	err = telegram.Delete(ctx, messageID)
+	err := telegram.Delete(ctx, message.MessageID)
 	if err != nil {
 		log.Printf("can't delete language command message")
 	}

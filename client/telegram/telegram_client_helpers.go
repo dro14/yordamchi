@@ -13,6 +13,7 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "examples", Description: "Foydalanish misollari"},
 		{Command: "premium", Description: "Cheksiz so'rovlar"},
 		{Command: "gpt4", Description: "Eng kuchlisi"},
+		{Command: "image", Description: "Rasm generatsiyasi"},
 	},
 
 	"ru": {
@@ -23,6 +24,7 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "examples", Description: "Примеры использования"},
 		{Command: "premium", Description: "Безлимитные запросы"},
 		{Command: "gpt4", Description: "Самый мощный"},
+		{Command: "image", Description: "Генерация изображений"},
 	},
 
 	"en": {
@@ -33,6 +35,7 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "examples", Description: "Usage examples"},
 		{Command: "premium", Description: "Unlimited requests"},
 		{Command: "gpt4", Description: "The most powerful"},
+		{Command: "image", Description: "Image generation"},
 	},
 }
 

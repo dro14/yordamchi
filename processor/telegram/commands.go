@@ -29,6 +29,10 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 		premium(ctx)
 	case "gpt4":
 		gpt4(ctx)
+	case "image":
+		// TODO: add image command
+	case "generate":
+		// TODO: add generate command
 	}
 	return message.IsCommand()
 }
@@ -82,5 +86,12 @@ func gpt4(ctx context.Context) {
 	_, err := telegram.SendMessage(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send gpt4 command")
+	}
+}
+
+func exhausted(ctx context.Context) {
+	_, err := telegram.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
+	if err != nil {
+		log.Printf("can't send exhausted message")
 	}
 }
