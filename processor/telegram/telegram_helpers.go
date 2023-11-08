@@ -34,14 +34,14 @@ func unblockUser(userID int64) {
 func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
 	switch {
 	case message.From.IsBot, message.Chat.Type != "private", isBlocked(message.From.ID):
-		return ctx, false, false
+		return ctx, true, false
 	}
 	ctx = context.WithValue(ctx, "beginning", time.Now())
 	ctx = context.WithValue(ctx, "date", message.Date)
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
 	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
-	ctx, shouldSetLang := redis.Lang(ctx, message.From.LanguageCode)
-	return ctx, true, shouldSetLang
+	ctx, shouldSetLang := redis.Lang(ctx)
+	return ctx, false, shouldSetLang
 }
 
 func lang(ctx context.Context) string {

@@ -2,19 +2,15 @@ package redis
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/dro14/yordamchi/lib/e"
 )
 
-func Lang(ctx context.Context, languageCode string) (context.Context, bool) {
-	if languageCode == "" {
-		ctx = context.WithValue(ctx, "language_code", "uz")
-	} else if languageCode != "uz" && languageCode != "ru" {
-		ctx = context.WithValue(ctx, "language_code", "en")
-	}
-
+func Lang(ctx context.Context) (context.Context, bool) {
 	key := fmt.Sprintf("lang:%d", ctx.Value("user_id").(int64))
 	lang, err := Client.Get(ctx, key).Result()
-	if err != nil {
+	if errors.Is(err, e.KeyNotFoundError) {
 		return ctx, true
 	}
 	ctx = context.WithValue(ctx, "language_code", lang)

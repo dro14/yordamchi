@@ -52,8 +52,8 @@ func ProcessUpdate(c *gin.Context) {
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 	defer recoverFromPanic()
-	ctx, allow, shouldSetLang := messageUpdate(ctx, message)
-	if !allow || shouldSetLang {
+	ctx, notAllowed, shouldSetLang := messageUpdate(ctx, message)
+	if notAllowed || shouldSetLang {
 		if shouldSetLang {
 			language(ctx)
 			blockedUsers.Delete(message.From.ID)
@@ -89,7 +89,12 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 	defer recoverFromPanic()
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
-	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
+	ctx, shouldSetLang := redis.Lang(ctx)
+	if shouldSetLang {
+		language(ctx)
+		blockedUsers.Delete(callbackQuery.From.ID)
+		return
+	}
 
 	switch callbackQuery.Data {
 	case "new_chat":
@@ -111,7 +116,12 @@ func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMe
 	defer recoverFromPanic()
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
-	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
+	ctx, shouldSetLang := redis.Lang(ctx)
+	if shouldSetLang {
+		language(ctx)
+		blockedUsers.Delete(chatMemberUpdated.From.ID)
+		return
+	}
 
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
