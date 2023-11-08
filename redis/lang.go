@@ -10,7 +10,7 @@ import (
 func Lang(ctx context.Context) (context.Context, bool) {
 	key := fmt.Sprintf("lang:%d", ctx.Value("user_id").(int64))
 	lang, err := Client.Get(ctx, key).Result()
-	if err.Error() == e.KeyNotFound {
+	if err != nil && err.Error() == e.KeyNotFound {
 		return ctx, true
 	}
 	ctx = context.WithValue(ctx, "language_code", lang)
