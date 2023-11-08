@@ -23,17 +23,9 @@ Retry:
 	response, err := openai.CompletionWithStream(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
-
-		switch {
-		case strings.HasPrefix(errMsg, e.StreamError):
+		if strings.HasPrefix(errMsg, e.StreamError) {
 			channel <- text.Error[lang(ctx)]
-			goto Retry
-		case strings.HasPrefix(errMsg, e.BadGateway),
-			strings.HasPrefix(errMsg, e.ServiceUnavailable),
-			strings.Contains(errMsg, e.ContextDeadlineExceeded):
-			goto Retry
 		}
-
 		if stats.Attempts < constants.RetryAttempts {
 			functions.Sleep(&retryDelay)
 			goto Retry
@@ -64,14 +56,6 @@ Retry:
 	response, err := openai.Completion(ctx, messages)
 	if err != nil {
 		errMsg = err.Error()
-
-		switch {
-		case strings.HasPrefix(errMsg, e.BadGateway),
-			strings.HasPrefix(errMsg, e.ServiceUnavailable),
-			strings.Contains(errMsg, e.ContextDeadlineExceeded):
-			goto Retry
-		}
-
 		if stats.Attempts < constants.RetryAttempts {
 			functions.Sleep(&retryDelay)
 			goto Retry
