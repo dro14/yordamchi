@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -61,5 +62,6 @@ func msg(ctx context.Context, lang string) string {
 func recoverFromPanic() {
 	if r := recover(); r != nil {
 		info_bot.Send(fmt.Sprintf("panic:\n%v", r))
+		log.Fatalf("fatal error: restarting bot")
 	}
 }
