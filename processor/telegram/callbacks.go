@@ -57,6 +57,7 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 func languageChosenCallback(ctx context.Context, message *tgbotapi.Message, lang string) {
 	ctx = context.WithValue(ctx, "language_code", lang)
 	redis.SetLang(ctx)
+	redis.DeleteContext(ctx)
 	telegram.SetCommands(ctx)
 	start(ctx, message)
 

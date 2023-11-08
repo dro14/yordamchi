@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dro14/yordamchi/lib/types"
+	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -54,5 +55,11 @@ func msg(ctx context.Context, lang string) string {
 		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
 	default:
 		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
+	}
+}
+
+func recoverFromPanic() {
+	if r := recover(); r != nil {
+		info_bot.Send(fmt.Sprintf("panic:\n%v", r))
 	}
 }

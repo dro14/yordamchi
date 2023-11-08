@@ -20,13 +20,10 @@ var (
 
 // OpenAI errors
 const (
-	ContextLengthExceededGPT3 = "This model's maximum context length is 4097 tokens. However, you requested "
-	ContextLengthExceededGPT4 = "This model's maximum context length is 8192 tokens. However, you requested "
-	InvalidRequest            = "invalid_request_error"
-	StreamError               = "stream error"
-	BadGateway                = "502 Bad Gateway"
-	ServiceUnavailable        = "503 Service Unavailable"
-	ContextDeadlineExceeded   = "context deadline exceeded"
+	StreamError             = "stream error"
+	BadGateway              = "502 Bad Gateway"
+	ServiceUnavailable      = "503 Service Unavailable"
+	ContextDeadlineExceeded = "context deadline exceeded"
 )
 
 // Postgres errors
@@ -36,3 +33,8 @@ const (
 	UnsupportedConversion = "converting NULL to string is unsupported"
 	NotFound              = "no rows in result set"
 )
+
+// Redis errors
+const KeyNotFound = "redis: nil"
+
+var KeyNotFoundError = errors.New(KeyNotFound)

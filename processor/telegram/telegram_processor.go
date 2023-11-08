@@ -50,6 +50,7 @@ func ProcessUpdate(c *gin.Context) {
 }
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
+	defer recoverFromPanic()
 	ctx, allow, shouldSetLang := messageUpdate(ctx, message)
 	if !allow || shouldSetLang {
 		if shouldSetLang {
