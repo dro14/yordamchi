@@ -15,7 +15,6 @@ import (
 )
 
 func ProcessWithStream(ctx context.Context, messages []types.Message, stats *types.Stats, channel chan<- string) {
-
 	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:
@@ -48,7 +47,6 @@ Retry:
 }
 
 func Process(ctx context.Context, messages []types.Message, stats *types.Stats) (string, error) {
-
 	retryDelay := 10 * constants.RetryDelay
 	var errMsg string
 Retry:

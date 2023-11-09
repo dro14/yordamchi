@@ -2,23 +2,20 @@ package redis
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/dro14/yordamchi/lib/models"
 )
 
-func GPT3(ctx context.Context) error {
-	key := fmt.Sprintf("model:%d", ctx.Value("user_id").(int64))
-	return Client.Del(ctx, key).Err()
+func GPT3(ctx context.Context) {
+	Client.Del(ctx, "model:"+id(ctx))
 }
 
-func GPT4(ctx context.Context) error {
-	key := fmt.Sprintf("model:%d", ctx.Value("user_id").(int64))
-	return Client.Set(ctx, key, models.GPT4, 0).Err()
+func GPT4(ctx context.Context) {
+	Client.Set(ctx, "model:"+id(ctx), models.GPT4, 0)
 }
 
 func Model(ctx context.Context) string {
-	key := fmt.Sprintf("model:%d", ctx.Value("user_id").(int64))
-	_, err := Client.Get(ctx, key).Result()
+	_, err := Client.Get(ctx, "model:"+id(ctx)).Result()
 	if err != nil {
 		return models.GPT3
 	}
@@ -26,10 +23,6 @@ func Model(ctx context.Context) string {
 }
 
 func GPT4Tokens(ctx context.Context) int {
-	key := fmt.Sprintf("gpt-4:%d", ctx.Value("user_id").(int64))
-	tokens, err := Client.Get(ctx, key).Int()
-	if err != nil {
-		return 0
-	}
+	tokens, _ := Client.Get(ctx, "gpt-4:"+id(ctx)).Int()
 	return tokens
 }

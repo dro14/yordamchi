@@ -35,20 +35,14 @@ func helpCallback(ctx context.Context, messageID int) {
 }
 
 func modelCallback(ctx context.Context, messageID int, model string) {
-	var err error
 	if model == redis.Model(ctx) {
 		return
 	} else if model == models.GPT4 {
-		err = redis.GPT4(ctx)
+		redis.GPT4(ctx)
 	} else {
-		err = redis.GPT3(ctx)
+		redis.GPT3(ctx)
 	}
-	if err != nil {
-		log.Printf("can't set model callback: %v", err)
-		return
-	}
-
-	err = telegram.EditMessage(ctx, msg(ctx, lang(ctx)), messageID, button.Settings(ctx))
+	err := telegram.EditMessage(ctx, msg(ctx), messageID, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't edit model callback")
 	}
@@ -60,7 +54,6 @@ func languageChosenCallback(ctx context.Context, message *tgbotapi.Message, lang
 	redis.DeleteContext(ctx)
 	telegram.SetCommands(ctx)
 	start(ctx, message)
-
 	err := telegram.Delete(ctx, message.MessageID)
 	if err != nil {
 		log.Printf("can't delete language command message")

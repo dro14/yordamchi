@@ -18,13 +18,7 @@ var (
 	UserBlockedError   = errors.New(UserBlocked)
 )
 
-// OpenAI errors
-const (
-	StreamError             = "stream error"
-	BadGateway              = "502 Bad Gateway"
-	ServiceUnavailable      = "503 Service Unavailable"
-	ContextDeadlineExceeded = "context deadline exceeded"
-)
+const StreamError = "stream error" // OpenAI stream error
 
 // Postgres errors
 const (
@@ -33,8 +27,3 @@ const (
 	UnsupportedConversion = "converting NULL to string is unsupported"
 	NotFound              = "no rows in result set"
 )
-
-// Redis errors
-const KeyNotFound = "redis: nil"
-
-var KeyNotFoundError = errors.New(KeyNotFound)

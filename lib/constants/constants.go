@@ -11,6 +11,10 @@ const (
 	RequestInterval = 500 * time.Millisecond
 )
 
+const (
+	NumOfFreeRequests = 5
+)
+
 var (
 	MerchantID      string
 	TestKey         string

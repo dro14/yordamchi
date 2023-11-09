@@ -52,9 +52,9 @@ func ProcessUpdate(c *gin.Context) {
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 	defer recoverFromPanic("ProcessMessage")
-	ctx, notAllowed, shouldSetLang := messageUpdate(ctx, message)
-	if notAllowed || shouldSetLang {
-		if shouldSetLang {
+	ctx, allowed, foundLang := messageUpdate(ctx, message)
+	if !allowed || !foundLang {
+		if !foundLang {
 			language(ctx)
 			blockedUsers.Delete(message.From.ID)
 		}

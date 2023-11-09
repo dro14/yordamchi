@@ -17,7 +17,6 @@ import (
 )
 
 func GeneratePhoto(ctx context.Context, message *tgbotapi.Message) {
-
 	userID := ctx.Value("user_id").(int64)
 
 	prompt := strings.ReplaceAll(message.Text, "#image", "")

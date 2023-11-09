@@ -55,7 +55,7 @@ func help(ctx context.Context) {
 }
 
 func settings(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, msg(ctx, lang(ctx)), 0, button.Settings(ctx))
+	_, err := telegram.SendMessage(ctx, msg(ctx), 0, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't send settings command")
 	}

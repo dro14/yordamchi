@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -11,42 +10,35 @@ import (
 )
 
 func LoadContext(ctx context.Context, prompt string) []types.Message {
-	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
-	messages := make([]types.Message, 0, 3)
+	var messages []types.Message
 	message := types.Message{Content: prompt, Role: "user"}
 
-	jsonData, err := Client.Get(ctx, key).Result()
+	jsonData, err := Client.Get(ctx, "context:"+id(ctx)).Result()
 	if err != nil {
-		if err.Error() != KeyNotFound {
-			log.Printf("can't get %q: %v", key, err)
-		}
 		return append(messages, message)
 	}
 
 	err = json.Unmarshal([]byte(jsonData), &messages)
 	if err != nil {
-		log.Printf("can't decode %q: %v", key, err)
+		log.Printf("can't decode %q: %v", "context:"+id(ctx), err)
 		return append(messages, message)
 	}
-
 	return append(messages, message)
 }
 
 func StoreContext(ctx context.Context, prompt, completion string) {
-	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
 	messages := []types.Message{
 		{Content: prompt, Role: "user"},
 		{Content: completion, Role: "assistant"},
 	}
 	jsonData, err := json.Marshal(messages)
 	if err != nil {
-		log.Printf("can't encode %q: %v", key, err)
+		log.Printf("can't encode %q: %v", "context:"+id(ctx), err)
 		return
 	}
-	Client.Set(ctx, key, string(jsonData), 72*time.Hour)
+	Client.Set(ctx, "context:"+id(ctx), string(jsonData), 72*time.Hour)
 }
 
 func DeleteContext(ctx context.Context) {
-	key := fmt.Sprintf("context:%d", ctx.Value("user_id").(int64))
-	Client.Del(ctx, key)
+	Client.Del(ctx, "context:"+id(ctx))
 }

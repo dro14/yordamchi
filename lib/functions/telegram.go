@@ -28,11 +28,24 @@ func MarkdownV2(text string) string {
 	for {
 		before, text, found = strings.Cut(text, block)
 		switch {
-		case strings.Count(before, "`")%2 != 0:
-			before = strings.ReplaceAll(before, "`", "\\`")
-		case strings.Count(before, "*")%4 != 0 ||
-			strings.Count(before, "**")%2 != 0:
-			before = strings.ReplaceAll(before, "*", "\\*")
+		case strings.Count(before, "`") > 0:
+			backticks := strings.Count(before, "`")
+			shouldEscape := true
+			if backticks%2 == 0 {
+				shouldEscape = false
+			}
+			if shouldEscape {
+				before = strings.ReplaceAll(before, "`", "\\`")
+			}
+		case strings.Count(before, "*") > 0:
+			doubleAsterisks := strings.Count(before, "**")
+			shouldEscape := true
+			if doubleAsterisks > 0 && doubleAsterisks%2 == 0 {
+				shouldEscape = false
+			}
+			if shouldEscape {
+				before = strings.ReplaceAll(before, "*", "\\*")
+			}
 		}
 		buffer.WriteString(before)
 		if !found {

@@ -34,34 +34,34 @@ func unblockUser(userID int64) {
 func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
 	switch {
 	case message.From.IsBot, message.Chat.Type != "private", isBlocked(message.From.ID):
-		return ctx, true, false
+		return ctx, false, false
 	}
 	ctx = context.WithValue(ctx, "beginning", time.Now())
 	ctx = context.WithValue(ctx, "date", message.Date)
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
 	ctx = context.WithValue(ctx, "model", redis.Model(ctx))
-	ctx, shouldSetLang := redis.Lang(ctx, message.From.LanguageCode)
-	return ctx, false, shouldSetLang
+	ctx, foundLang := redis.Lang(ctx, message.From.LanguageCode)
+	return ctx, true, foundLang
 }
 
 func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func msg(ctx context.Context, lang string) string {
+func msg(ctx context.Context) string {
 	switch redis.UserStatus(ctx) {
 	case types.GPT4Status:
-		return fmt.Sprintf(text.Settings2[lang], redis.GPT4Tokens(ctx))
+		return fmt.Sprintf(text.Settings2[lang(ctx)], redis.GPT4Tokens(ctx))
 	case types.PremiumStatus:
-		return fmt.Sprintf(text.Settings1[lang], text.PremiumTariff[lang], text.Unlimited[lang], redis.Expiration(ctx))
+		return fmt.Sprintf(text.Settings1[lang(ctx)], text.PremiumTariff[lang(ctx)], text.Unlimited[lang(ctx)], redis.Expiration(ctx))
 	default:
-		return fmt.Sprintf(text.Settings1[lang], text.FreeTariff[lang], redis.Requests(ctx), redis.Expiration(ctx))
+		return fmt.Sprintf(text.Settings1[lang(ctx)], text.FreeTariff[lang(ctx)], redis.Requests(ctx), redis.Expiration(ctx))
 	}
 }
 
 func recoverFromPanic(source string) {
 	if r := recover(); r != nil {
-		info_bot.Send(fmt.Sprintf("%s: %v", source, r))
+		info_bot.Send(fmt.Sprintf("%s: %+v", source, r))
 		log.Fatalf("fatal error: restarting bot")
 	}
 }

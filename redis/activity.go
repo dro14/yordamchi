@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/dro14/yordamchi/lib/types"
@@ -11,9 +10,6 @@ import (
 )
 
 func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium string) int {
-
-	key := fmt.Sprintf("activity:%d", ctx.Value("user_id").(int64))
-
 	activity := &types.Activity{
 		MessageID:    message.MessageID,
 		Message:      message.Text,
@@ -25,64 +21,45 @@ func IncrementActivity(ctx context.Context, message *tgbotapi.Message, isPremium
 		LanguageCode: ctx.Value("language_code").(string),
 		IsPremium:    isPremium,
 	}
-
-	data, err := json.Marshal(activity)
+	jsonData, err := json.Marshal(activity)
 	if err != nil {
-		log.Printf("can't encode activity: %v", err)
+		log.Printf("can't encode activity for %s: %v", id(ctx), err)
 		return 0
 	}
-
-	err = Client.Set(ctx, key, string(data), 0).Err()
-	if err != nil {
-		log.Printf("can't store activity: %v", err)
-	}
+	Client.Set(ctx, "activity:"+id(ctx), string(jsonData), 0)
 
 	keys, err := Client.Keys(ctx, "activity:*").Result()
 	if err != nil {
-		log.Printf("can't get keys: %v", err)
+		log.Printf("can't get \"activity:*\": %v", err)
 		return 0
 	}
-
 	return len(keys)
 }
 
 func DecrementActivity(ctx context.Context) {
-
-	key := fmt.Sprintf("activity:%d", ctx.Value("user_id").(int64))
-
-	err := Client.Del(ctx, key).Err()
-	if err != nil {
-		log.Printf("can't delete activity: %v", err)
-	}
+	Client.Del(ctx, "activity:"+id(ctx))
 }
 
 func LoadActivity(ctx context.Context) []*types.Activity {
-
 	var activities []*types.Activity
-
 	keys, err := Client.Keys(ctx, "activity:*").Result()
 	if err != nil {
-		log.Printf("can't get keys: %v", err)
+		log.Printf("can't get \"activity:*\": %v", err)
 		return activities
 	}
-
 	for _, key := range keys {
-
 		result, err := Client.Get(ctx, key).Result()
 		if err != nil {
-			log.Printf("can't get \"%s\": %v", key, err)
+			log.Printf("can't get %q: %v", key, err)
 			continue
 		}
-
 		activity := &types.Activity{}
 		err = json.Unmarshal([]byte(result), activity)
 		if err != nil {
-			log.Printf("can't decode activity: %v", err)
+			log.Printf("can't decode %q: %v", key, err)
 			continue
 		}
-
 		activities = append(activities, activity)
 	}
-
 	return activities
 }
