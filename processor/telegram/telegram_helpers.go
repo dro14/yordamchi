@@ -34,7 +34,7 @@ func unblockUser(userID int64) {
 func messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
 	switch {
 	case message.From.IsBot, message.Chat.Type != "private", isBlocked(message.From.ID):
-		return ctx, false, false
+		return ctx, false, true
 	}
 	ctx = context.WithValue(ctx, "beginning", time.Now())
 	ctx = context.WithValue(ctx, "date", message.Date)
