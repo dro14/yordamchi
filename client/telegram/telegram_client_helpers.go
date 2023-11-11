@@ -34,19 +34,3 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "image", Description: "Image generation"},
 	},
 }
-
-func newChatButton(lang string) *tgbotapi.InlineKeyboardMarkup {
-	text := map[string]string{
-		"uz": "💬 Yangi suhbat 💬",
-		"ru": "💬 Новый разговор 💬",
-		"en": "💬 New chat 💬",
-	}
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(
-				text[lang], "new_chat",
-			),
-		),
-	)
-	return &keyboard
-}

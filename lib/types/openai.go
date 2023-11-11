@@ -27,14 +27,19 @@ type Response struct {
 }
 
 type Choice struct {
-	Message      Message `json:"message"`
-	Delta        Delta   `json:"delta"`
-	FinishReason string  `json:"finish_reason"`
+	Message       Message       `json:"message"`
+	Delta         Delta         `json:"delta"`
+	FinishReason  string        `json:"finish_reason"`
+	FinishDetails FinishDetails `json:"finish_details"`
 }
 
 type Delta struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+}
+
+type FinishDetails struct {
+	Type string `json:"type"`
 }
 
 type Usage struct {

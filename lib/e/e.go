@@ -3,22 +3,10 @@ package e
 import "errors"
 
 // Telegram errors
-const (
-	BrokenPipe         = "broken pipe"
-	TooManyRequests    = "420: FLOOD_WAIT "
-	MessageNotFound    = "400: MESSAGE_ID_INVALID"
-	MessageEmpty       = "400: MESSAGE_EMPTY"
-	MessageNotModified = "400: MESSAGE_NOT_MODIFIED"
-	MessageTooLong     = "400: MESSAGE_TOO_LONG"
-	UserBlocked        = "400: USER_IS_BLOCKED"
-)
-
 var (
-	UserDeletedMessage = errors.New(MessageNotFound)
-	UserBlockedError   = errors.New(UserBlocked)
+	UserDeletedMessage = errors.New("429 Bad Request: message to edit not found")
+	UserBlockedBot     = errors.New("403 Forbidden: bot was blocked by the user")
 )
-
-const StreamError = "stream error" // OpenAI stream error
 
 // Postgres errors
 const (

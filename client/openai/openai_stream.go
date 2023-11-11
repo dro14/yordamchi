@@ -63,7 +63,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 			break
 		}
 
-		err = json.Unmarshal(bts, &response)
+		err = json.Unmarshal(bts, response)
 		if err != nil {
 			log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
 			return nil, fmt.Errorf("can't decode response for %d", userID)
@@ -77,6 +77,11 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 		if response.Choices[0].FinishReason != "" {
 			if response.Choices[0].FinishReason != "stop" {
 				log.Printf("finish reason for %d isn't \"stop\": %q", userID, response.Choices[0].FinishReason)
+			}
+			break
+		} else if response.Choices[0].FinishDetails.Type != "" {
+			if response.Choices[0].FinishDetails.Type != "stop" {
+				log.Printf("finish details type for %d isn't \"stop\": %q", userID, response.Choices[0].FinishDetails.Type)
 			}
 			break
 		}

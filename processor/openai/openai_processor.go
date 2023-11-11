@@ -8,7 +8,6 @@ import (
 	"github.com/dro14/yordamchi/client/bobdev"
 	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/lib/constants"
-	"github.com/dro14/yordamchi/lib/e"
 	"github.com/dro14/yordamchi/lib/functions"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/text"
@@ -23,7 +22,7 @@ Retry:
 	if err != nil {
 		errMsg = err.Error()
 		switch {
-		case strings.Contains(errMsg, e.StreamError):
+		case strings.Contains(errMsg, "stream error"):
 			channel <- text.Error[lang(ctx)]
 			fallthrough
 		case strings.Contains(errMsg, "context deadline exceeded"):

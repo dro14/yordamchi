@@ -14,21 +14,21 @@ import (
 
 func newChatCallback(ctx context.Context) {
 	redis.DeleteContext(ctx)
-	_, err := telegram.Send(ctx, text.NewChat[lang(ctx)], 0, false)
+	_, err := telegram.Send(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
 		log.Printf("can't send new chat callback")
 	}
 }
 
 func examplesCallback(ctx context.Context, messageID int) {
-	err := telegram.EditMessage(ctx, text.Examples[lang(ctx)], messageID, button.Examples(lang(ctx)))
+	err := telegram.Edit(ctx, text.Examples[lang(ctx)], messageID, button.Examples(lang(ctx)))
 	if err != nil {
 		log.Printf("can't edit examples callback")
 	}
 }
 
 func helpCallback(ctx context.Context, messageID int) {
-	err := telegram.Edit(ctx, text.Help[lang(ctx)], messageID, false)
+	err := telegram.Edit(ctx, text.Help[lang(ctx)], messageID, nil)
 	if err != nil {
 		log.Printf("can't edit help callback")
 	}
@@ -42,7 +42,7 @@ func modelCallback(ctx context.Context, messageID int, model string) {
 	} else {
 		redis.GPT3(ctx)
 	}
-	err := telegram.EditMessage(ctx, msg(ctx), messageID, button.Settings(ctx))
+	err := telegram.Edit(ctx, msg(ctx), messageID, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't edit model callback")
 	}

@@ -18,6 +18,7 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/postgres"
 	"github.com/dro14/yordamchi/processor/openai"
+	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
@@ -38,7 +39,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	stats := &types.Stats{IsPremium: isPremium}
 
 	stats.Requests++
-	messageID, err := telegram.Send(ctx, text.Loading[lang(ctx)], message.MessageID, false)
+	messageID, err := telegram.Send(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Printf("can't send loading message")
 		return
@@ -71,15 +72,23 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	if lang(ctx) == "uz" {
 		completions := UseTranslator(ctx, message, stats)
 
+		var replyMarkup *tgbotapi.InlineKeyboardMarkup
+		if len(completions) == 1 {
+			replyMarkup = button.NewChat(lang(ctx))
+		}
+
 		stats.Requests++
-		err = telegram.Edit(ctx, completions[0], messageID, len(completions) == 1)
+		err = telegram.Edit(ctx, completions[0], messageID, replyMarkup)
 		if err != nil {
 			log.Printf("can't add new chat button")
 		}
 
 		for i := 1; i < len(completions); i++ {
+			if i == len(completions)-1 {
+				replyMarkup = button.NewChat(lang(ctx))
+			}
 			stats.Requests++
-			_, err = telegram.Send(ctx, completions[i], 0, i == len(completions)-1)
+			_, err = telegram.Send(ctx, completions[i], 0, replyMarkup)
 			if err != nil {
 				log.Printf("can't send completion")
 				i--
@@ -104,8 +113,8 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 			}
 
 			stats.Requests++
-			err = telegram.Edit(ctx, completions[index], messageID, false)
-			if errors.Is(err, e.UserBlockedError) {
+			err = telegram.Edit(ctx, completions[index], messageID, nil)
+			if errors.Is(err, e.UserBlockedBot) {
 				return
 			} else if errors.Is(err, e.UserDeletedMessage) {
 				log.Printf("user deleted completion")
@@ -126,8 +135,8 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 				index = len(completions) - 1
 				stats.Requests++
 				time.Sleep(constants.RequestInterval)
-				messageID, err = telegram.Send(ctx, completions[index], 0, false)
-				if errors.Is(err, e.UserBlockedError) {
+				messageID, err = telegram.Send(ctx, completions[index], 0, nil)
+				if errors.Is(err, e.UserBlockedBot) {
 					return
 				} else if err != nil {
 					log.Printf("can't send next message")
@@ -144,7 +153,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		}
 
 		stats.Requests++
-		err = telegram.Edit(ctx, completions[index], messageID, true)
+		err = telegram.Edit(ctx, completions[index], messageID, button.NewChat(lang(ctx)))
 		if err != nil {
 			log.Printf("can't add new chat button")
 		}

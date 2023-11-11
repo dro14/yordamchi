@@ -29,8 +29,8 @@ func send[T *types.Completions | *types.Generations](ctx context.Context, reques
 	default:
 		bts, _ := io.ReadAll(resp.Body)
 		_ = resp.Body.Close()
-		var response types.Response
-		err = json.Unmarshal(bts, &response)
+		response := &types.Response{}
+		err = json.Unmarshal(bts, response)
 		if err != nil {
 			log.Printf("%s for %d\ncan't decode response: %v\nbody: %q", resp.Status, userID, err, string(bts))
 		} else {
@@ -48,7 +48,8 @@ func makeRequest[T *types.Completions | *types.Generations](ctx context.Context,
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, ctx.Value("url").(string), &buffer)
+	URL := ctx.Value("url").(string)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, URL, &buffer)
 	if err != nil {
 		log.Printf("can't create request: %v", err)
 		return nil, err
@@ -63,7 +64,7 @@ func makeRequest[T *types.Completions | *types.Generations](ctx context.Context,
 	}
 
 	var client http.Client
-	client.Timeout = 10 * time.Minute
+	client.Timeout = 3 * time.Minute
 
 	resp, err := client.Do(req)
 	if err != nil {

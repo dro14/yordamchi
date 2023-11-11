@@ -38,7 +38,7 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 }
 
 func start(ctx context.Context, message *tgbotapi.Message) {
-	_, err := telegram.SendMessage(ctx, text.Start[lang(ctx)], 0, button.Start(lang(ctx)))
+	_, err := telegram.Send(ctx, text.Start[lang(ctx)], 0, button.Start(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send start command")
 	}
@@ -48,49 +48,49 @@ func start(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func help(ctx context.Context) {
-	_, err := telegram.Send(ctx, text.Help[lang(ctx)], 0, false)
+	_, err := telegram.Send(ctx, text.Help[lang(ctx)], 0, nil)
 	if err != nil {
 		log.Printf("can't send help command")
 	}
 }
 
 func settings(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, msg(ctx), 0, button.Settings(ctx))
+	_, err := telegram.Send(ctx, msg(ctx), 0, button.Settings(ctx))
 	if err != nil {
 		log.Printf("can't send settings command")
 	}
 }
 
 func language(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.Language, 0, button.Language())
+	_, err := telegram.Send(ctx, text.Language, 0, button.Language())
 	if err != nil {
 		log.Printf("can't send language command")
 	}
 }
 
 func examples(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.Examples[lang(ctx)], 0, button.Examples(lang(ctx)))
+	_, err := telegram.Send(ctx, text.Examples[lang(ctx)], 0, button.Examples(lang(ctx)))
 	if err != nil {
 		log.Printf("can't send examples command")
 	}
 }
 
 func premium(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.Premium[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
+	_, err := telegram.Send(ctx, text.Premium[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send premium command")
 	}
 }
 
 func gpt4(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
+	_, err := telegram.Send(ctx, text.GPT4[lang(ctx)], 0, button.GPT4(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send gpt4 command")
 	}
 }
 
 func exhausted(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
+	_, err := telegram.Send(ctx, text.Exhausted[lang(ctx)], 0, button.Premium(ctx, lang(ctx)))
 	if err != nil {
 		log.Printf("can't send exhausted message")
 	}
