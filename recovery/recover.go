@@ -37,7 +37,7 @@ func Init() {
 			},
 		}
 
-		_, err := telegram.Send(ctx, text.Error[activity.LanguageCode], 0, false)
+		_, err := telegram.Send(ctx, text.Error[activity.LanguageCode], 0, nil)
 		if err != nil {
 			log.Printf("can't send error message: %v", err)
 		}
