@@ -28,8 +28,13 @@ type Response struct {
 
 type Choice struct {
 	Message      Message `json:"message"`
-	Delta        Message `json:"delta"`
+	Delta        Delta   `json:"delta"`
 	FinishReason string  `json:"finish_reason"`
+}
+
+type Delta struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
 
 type Usage struct {

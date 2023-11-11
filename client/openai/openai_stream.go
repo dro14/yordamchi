@@ -81,7 +81,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 			break
 		}
 
-		builder.WriteString(response.Choices[0].Delta.Content.(string))
+		builder.WriteString(response.Choices[0].Delta.Content)
 		buffer.Store(builder.String())
 	}
 

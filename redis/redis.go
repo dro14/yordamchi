@@ -74,7 +74,8 @@ func Requests(ctx context.Context) string {
 }
 
 func Decrement(ctx context.Context, used int) {
-	if ctx.Value("model") == models.GPT4 {
+	switch ctx.Value("model") {
+	case models.GPT4, models.GPT4V:
 		available, err := Client.Get(ctx, "gpt-4:"+id(ctx)).Int()
 		if err != nil {
 			log.Printf("can't get %q: %v", "gpt-4:"+id(ctx), err)
@@ -85,7 +86,7 @@ func Decrement(ctx context.Context, used int) {
 		} else {
 			Client.Set(ctx, "gpt-4:"+id(ctx), available-used, 0)
 		}
-	} else {
+	default:
 		_, err := Client.Get(ctx, "premium:"+id(ctx)).Result()
 		if err == nil {
 			return
