@@ -14,7 +14,6 @@ import (
 )
 
 func send[T *types.Completions | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
-
 	userID := ctx.Value("user_id").(int64)
 
 	resp, err := makeRequest(ctx, request)
@@ -42,7 +41,6 @@ func send[T *types.Completions | *types.Generations](ctx context.Context, reques
 }
 
 func makeRequest[T *types.Completions | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
-
 	var buffer bytes.Buffer
 	err := json.NewEncoder(&buffer).Encode(request)
 	if err != nil {

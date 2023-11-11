@@ -53,10 +53,12 @@ func CompletionsWithStream(ctx context.Context, messages []types.Message, channe
 	if ctx.Value("model") == models.GPT4V {
 		n := len(messages)
 		URL, text, _ := strings.Cut(messages[n-1].Content.(string), "\n\n\n")
-		messages[n-1].Content = []types.Content{
-			{Type: "text", Text: text},
-			{Type: "image_url", ImageURL: types.ImageURL{URL: URL}},
+		var content []types.Content
+		if len(text) > 0 {
+			content = append(content, types.Content{Type: "text", Text: text})
 		}
+		content = append(content, types.Content{Type: "image_url", ImageURL: types.ImageURL{URL: URL}})
+		messages[n-1] = types.Message{Role: "user", Content: content}
 		request.Messages = messages
 	}
 
