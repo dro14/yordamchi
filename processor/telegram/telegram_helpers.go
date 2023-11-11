@@ -27,7 +27,7 @@ func isBlocked(userID int64) bool {
 }
 
 func unblockUser(userID int64) {
-	time.Sleep(1 * time.Minute)
+	time.Sleep(10 * time.Second)
 	blockedUsers.Delete(userID)
 }
 

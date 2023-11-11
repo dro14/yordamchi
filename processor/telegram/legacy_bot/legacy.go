@@ -12,12 +12,10 @@ import (
 var bot *tgbotapi.BotAPI
 
 func Init() {
-
 	token, ok := os.LookupEnv("LEGACY_BOT_TOKEN")
 	if !ok {
 		log.Fatalf("legacy bot token is not specified")
 	}
-
 	var err error
 	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
@@ -26,7 +24,6 @@ func Init() {
 }
 
 func Reply(c *gin.Context) {
-
 	update := &tgbotapi.Update{}
 	if err := c.ShouldBindJSON(update); err != nil {
 		log.Printf("can't bind json: %v", err)
@@ -34,19 +31,20 @@ func Reply(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"ok": true})
-
 	if update.Message == nil {
 		return
 	}
 
-	lang := update.Message.From.LanguageCode
-	if lang == "" {
-		lang = "uz"
-	} else if lang != "uz" && lang != "ru" {
-		lang = "en"
+	var message string
+	switch update.Message.From.LanguageCode {
+	case "uz", "":
+		message = text.LegacyMessage["uz"]
+	case "ru":
+		message = text.LegacyMessage["ru"]
+	default:
+		message = text.LegacyMessage["en"]
 	}
-
-	config := tgbotapi.NewMessage(update.Message.From.ID, text.LegacyMessage[lang])
+	config := tgbotapi.NewMessage(update.Message.From.ID, message)
 	_, err := bot.Send(config)
 	if err != nil {
 		log.Printf("can't send legacy message: %v", err)

@@ -1,6 +1,6 @@
 package types
 
-type Request struct {
+type Completions struct {
 	Model     string    `json:"model,omitempty"`
 	Messages  []Message `json:"messages"`
 	MaxTokens int       `json:"max_tokens,omitempty"`
@@ -9,17 +9,22 @@ type Request struct {
 }
 
 type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role     string    `json:"role"`
+	Content  string    `json:"content,omitempty"`
+	Contents []Content `json:"content,omitempty"`
+}
+
+type Content struct {
+	Type     string   `json:"type"`
+	Text     string   `json:"text,omitempty"`
+	ImageURL ImageURL `json:"image_url,omitempty"`
 }
 
 type Response struct {
-	Choices []Choice `json:"choices"`
-	Usage   Usage    `json:"usage"`
-	Error   Error    `json:"error"`
-	Data    []struct {
-		URL string `json:"url"`
-	} `json:"data"`
+	Choices []Choice   `json:"choices"`
+	Usage   Usage      `json:"usage"`
+	Error   Error      `json:"error"`
+	Data    []ImageURL `json:"data"`
 }
 
 type Choice struct {
@@ -36,6 +41,10 @@ type Usage struct {
 type Error struct {
 	Message string `json:"message"`
 	Type    string `json:"type"`
+}
+
+type ImageURL struct {
+	URL string `json:"url"`
 }
 
 type Generations struct {

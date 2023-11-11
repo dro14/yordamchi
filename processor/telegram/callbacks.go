@@ -14,7 +14,7 @@ import (
 
 func newChatCallback(ctx context.Context) {
 	redis.DeleteContext(ctx)
-	_, err := telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
+	_, err := telegram.Send(ctx, text.NewChat[lang(ctx)], 0, false)
 	if err != nil {
 		log.Printf("can't send new chat callback")
 	}
@@ -28,7 +28,7 @@ func examplesCallback(ctx context.Context, messageID int) {
 }
 
 func helpCallback(ctx context.Context, messageID int) {
-	err := telegram.EditMessage(ctx, text.Help[lang(ctx)], messageID, nil)
+	err := telegram.Edit(ctx, text.Help[lang(ctx)], messageID, false)
 	if err != nil {
 		log.Printf("can't edit help callback")
 	}

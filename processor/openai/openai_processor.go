@@ -19,11 +19,15 @@ func ProcessWithStream(ctx context.Context, messages []types.Message, stats *typ
 	var errMsg string
 Retry:
 	stats.Attempts++
-	response, err := openai.CompletionWithStream(ctx, messages, channel)
+	response, err := openai.CompletionsWithStream(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
-		if strings.HasPrefix(errMsg, e.StreamError) {
+		switch {
+		case strings.Contains(errMsg, e.StreamError):
 			channel <- text.Error[lang(ctx)]
+			fallthrough
+		case strings.Contains(errMsg, "context deadline exceeded"):
+			retryDelay = 0
 		}
 		if stats.Attempts < constants.RetryAttempts {
 			functions.Sleep(&retryDelay)
@@ -51,9 +55,13 @@ func Process(ctx context.Context, messages []types.Message, stats *types.Stats) 
 	var errMsg string
 Retry:
 	stats.Attempts++
-	response, err := openai.Completion(ctx, messages)
+	response, err := openai.Completions(ctx, messages)
 	if err != nil {
 		errMsg = err.Error()
+		switch {
+		case strings.Contains(errMsg, "context deadline exceeded"):
+			retryDelay = 0
+		}
 		if stats.Attempts < constants.RetryAttempts {
 			functions.Sleep(&retryDelay)
 			goto Retry

@@ -178,7 +178,7 @@ func PerformTransaction(params *types.Params) (gin.H, int) {
 	}
 
 	ctx := context.WithValue(context.Background(), "user_id", userID)
-	_, err = telegram.SendMessage(ctx, text.Success[lang], 0, nil)
+	_, err = telegram.Send(ctx, text.Success[lang], 0, false)
 	if err != nil {
 		log.Printf("can't send success message: %v", err)
 	}

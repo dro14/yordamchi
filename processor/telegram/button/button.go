@@ -15,7 +15,7 @@ func Start(lang string) *tg.ReplyInlineMarkup {
 		"ru": "❔ Как пользоваться ❔",
 		"en": "❔ How to use ❔",
 	}
-	return data(text[lang], "examples")
+	return data("examples", text[lang])
 }
 
 func Examples(lang string) *tg.ReplyInlineMarkup {
@@ -24,7 +24,7 @@ func Examples(lang string) *tg.ReplyInlineMarkup {
 		"ru": "📝 Информация о боте 📝",
 		"en": "📝 Information about the bot 📝",
 	}
-	return data(text[lang], "help")
+	return data("help", text[lang])
 }
 
 func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
@@ -58,35 +58,7 @@ func Settings(ctx context.Context) *tg.ReplyInlineMarkup {
 }
 
 func Language() *tg.ReplyInlineMarkup {
-
-	keyboard := &tg.ReplyInlineMarkup{}
-	row := tg.KeyboardButtonRow{}
-	row.Buttons = append(row.Buttons,
-		&tg.KeyboardButtonCallback{
-			Text: "🇺🇿 O'zbekcha 🇺🇿",
-			Data: []byte("uz"),
-		},
-	)
-	keyboard.Rows = append(keyboard.Rows, row)
-
-	row = tg.KeyboardButtonRow{}
-	row.Buttons = append(row.Buttons,
-		&tg.KeyboardButtonCallback{
-			Text: "🇷🇺 Русский 🇷🇺",
-			Data: []byte("ru"),
-		},
-	)
-	keyboard.Rows = append(keyboard.Rows, row)
-
-	row = tg.KeyboardButtonRow{}
-	row.Buttons = append(row.Buttons,
-		&tg.KeyboardButtonCallback{
-			Text: "🇺🇸 English 🇺🇸",
-			Data: []byte("en"),
-		},
-	)
-	keyboard.Rows = append(keyboard.Rows, row)
-	return keyboard
+	return data("uz", "ru", "en", "🇺🇿 O'zbekcha 🇺🇿", "🇷🇺 Русский 🇷🇺", "🇺🇸 English 🇺🇸")
 }
 
 func Premium(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
@@ -173,17 +145,51 @@ func GPT4(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
 	return keyboard
 }
 
-func data(text, data string) *tg.ReplyInlineMarkup {
-
-	row := tg.KeyboardButtonRow{}
-	row.Buttons = append(row.Buttons,
-		&tg.KeyboardButtonCallback{
-			Text: text,
-			Data: []byte(data),
-		},
-	)
-
+func data(args ...string) *tg.ReplyInlineMarkup {
 	keyboard := &tg.ReplyInlineMarkup{}
-	keyboard.Rows = append(keyboard.Rows, row)
+	n := len(args) / 2
+	for i := 0; i < n; i++ {
+		row := tg.KeyboardButtonRow{}
+		row.Buttons = append(row.Buttons,
+			&tg.KeyboardButtonCallback{
+				Text: args[i+n],
+				Data: []byte(args[i]),
+			},
+		)
+		keyboard.Rows = append(keyboard.Rows, row)
+	}
 	return keyboard
 }
+
+//func Premium(ctx context.Context, lang string) *tg.ReplyInlineMarkup {
+//	text := map[string][]string{
+//		"uz": {"⭐ Kunlik ⭐", "🔥 Haftalik 🔥", "🚀 Oylik 🚀"},
+//		"ru": {"⭐ Суточный ⭐", "🔥 Недельный 🔥", "🚀 Месячный 🚀"},
+//		"en": {"⭐ Daily ⭐", "🔥 Weekly 🔥", "🚀 Monthly 🚀"},
+//	}
+//	args := make([]string, 6)
+//	args[0] = payme.CheckoutURL(ctx, 599000, "daily")
+//	args[1] = payme.CheckoutURL(ctx, 1999000, "weekly")
+//	args[2] = payme.CheckoutURL(ctx, 5999000, "monthly")
+//	args[3] = text[lang][0]
+//	args[4] = text[lang][1]
+//	args[5] = text[lang][2]
+//	return url(args...)
+//}
+//
+//func url(args ...string) *tg.ReplyInlineMarkup {
+//	keyboard := &tg.ReplyInlineMarkup{}
+//	n := len(args) / 2
+//	for i := 0; i < n; i++ {
+//		row := tg.KeyboardButtonRow{}
+//		row.Buttons = append(row.Buttons,
+//			&tg.KeyboardButtonURL{
+//				Text: args[i+n],
+//				URL:  args[i],
+//			},
+//		)
+//		keyboard.Rows = append(keyboard.Rows, row)
+//	}
+//	return keyboard
+//}
+//

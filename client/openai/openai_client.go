@@ -12,7 +12,6 @@ import (
 
 	"github.com/dro14/yordamchi/lib/models"
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/redis"
 )
 
 const Baseurl = "https://api.openai.com/v1/"
@@ -38,16 +37,28 @@ func Init() {
 	}
 }
 
-func CompletionWithStream(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
+func CompletionsWithStream(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
 
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
+	userID := ctx.Value("user_id").(int64)
 
-	request := &types.Request{
+	request := &types.Completions{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens(ctx),
 		Stream:    true,
-		User:      fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
+		User:      fmt.Sprintf("%d", userID),
+	}
+
+	if ctx.Value("model") == models.GPT4V {
+		n := len(messages)
+		URL, text, _ := strings.Cut(messages[n-1].Content, "\n\n\n")
+		messages[n-1].Content = ""
+		messages[n-1].Contents = []types.Content{
+			{Type: "text", Text: text},
+			{Type: "image_url", ImageURL: types.ImageURL{URL: URL}},
+		}
+		request.Messages = messages
 	}
 
 	resp, err := send(ctx, request)
@@ -72,12 +83,12 @@ func CompletionWithStream(ctx context.Context, messages []types.Message, channel
 	return response, nil
 }
 
-func Completion(ctx context.Context, messages []types.Message) (*types.Response, error) {
+func Completions(ctx context.Context, messages []types.Message) (*types.Response, error) {
 
-	userID := ctx.Value("user_id").(int64)
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
+	userID := ctx.Value("user_id").(int64)
 
-	request := &types.Request{
+	request := &types.Completions{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens(ctx),
@@ -118,6 +129,7 @@ func Completion(ctx context.Context, messages []types.Message) (*types.Response,
 func Generations(ctx context.Context, prompt string) string {
 
 	ctx = context.WithValue(ctx, "url", Baseurl+ImagesGenerations)
+	userID := ctx.Value("user_id").(int64)
 
 	request := &types.Generations{
 		Prompt:  prompt,
@@ -125,7 +137,7 @@ func Generations(ctx context.Context, prompt string) string {
 		Quality: "hd",
 		Size:    "1024x1024",
 		Style:   "vivid",
-		User:    fmt.Sprintf("%d", ctx.Value("user_id").(int64)),
+		User:    fmt.Sprintf("%d", userID),
 	}
 
 	resp, err := send(ctx, request)
@@ -149,18 +161,4 @@ func Generations(ctx context.Context, prompt string) string {
 	}
 
 	return response.Data[0].URL
-}
-
-func maxTokens(ctx context.Context) int {
-
-	if ctx.Value("model") == models.GPT3 {
-		return 4096
-	}
-
-	availableTokens := redis.GPT4Tokens(ctx)
-	if availableTokens < 4096 {
-		return availableTokens
-	} else {
-		return 4096
-	}
 }

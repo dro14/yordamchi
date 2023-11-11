@@ -10,14 +10,7 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/lib/constants"
-	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
-
-var bot *tgbotapi.BotAPI
-
-type Request struct {
-	URL string `json:"url"`
-}
 
 type Response struct {
 	Regions []struct {
@@ -30,41 +23,26 @@ type Response struct {
 }
 
 func Init() {
-
 	subscriptionKey, ok := os.LookupEnv("SUBSCRIPTION_KEY")
 	if !ok {
 		log.Fatalf("subscription key is not specified")
 	}
 	constants.SubscriptionKey = subscriptionKey
-
-	var err error
-	bot, err = tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
-	if err != nil {
-		log.Fatalf("can't initialize bot: %v", err)
-	}
 }
 
-func Analyze(ctx context.Context, message *tgbotapi.Message) string {
-
-	photo := message.Photo[len(message.Photo)-1]
-	fileURL, err := bot.GetFileDirectURL(photo.FileID)
-	if err != nil {
-		log.Printf("can't get file url: %v", err)
-		return message.Caption
-	}
-
-	request := &Request{fileURL}
+func Read(ctx context.Context, photoURL, caption string) string {
 	var buffer bytes.Buffer
-	err = json.NewEncoder(&buffer).Encode(request)
+	request := map[string]string{"url": photoURL}
+	err := json.NewEncoder(&buffer).Encode(request)
 	if err != nil {
 		log.Printf("can't encode request: %v", err)
-		return message.Caption
+		return caption
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", "https://yordamchi.cognitiveservices.azure.com/vision/v3.1/ocr", &buffer)
 	if err != nil {
 		log.Printf("can't create request: %v", err)
-		return message.Caption
+		return caption
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -73,7 +51,7 @@ func Analyze(ctx context.Context, message *tgbotapi.Message) string {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Printf("can't do request: %v", err)
-		return message.Caption
+		return caption
 	}
 	defer func() { _ = resp.Body.Close() }()
 
@@ -81,12 +59,12 @@ func Analyze(ctx context.Context, message *tgbotapi.Message) string {
 	err = json.NewDecoder(resp.Body).Decode(response)
 	if err != nil {
 		log.Printf("can't decode response: %v", err)
-		return message.Caption
+		return caption
 	}
 
 	var builder strings.Builder
-	if len(message.Caption) > 0 {
-		builder.WriteString(message.Caption + ":\n\n")
+	if len(caption) > 0 {
+		builder.WriteString(caption + ":\n\n")
 	}
 
 	for _, region := range response.Regions {
@@ -96,6 +74,7 @@ func Analyze(ctx context.Context, message *tgbotapi.Message) string {
 			}
 			builder.WriteString("\n")
 		}
+		builder.WriteString("\n\n")
 	}
 
 	return builder.String()

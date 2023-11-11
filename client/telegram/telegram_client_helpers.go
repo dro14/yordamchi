@@ -1,8 +1,6 @@
 package telegram
 
-import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-)
+import "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 var commands = map[string][]tgbotapi.BotCommand{
 	"uz": {
@@ -15,7 +13,6 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "gpt4", Description: "Eng kuchlisi"},
 		{Command: "image", Description: "Rasm generatsiyasi"},
 	},
-
 	"ru": {
 		{Command: "start", Description: "Запустить бота"},
 		{Command: "help", Description: "Информация о боте"},
@@ -26,7 +23,6 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "gpt4", Description: "Самый мощный"},
 		{Command: "image", Description: "Генерация изображений"},
 	},
-
 	"en": {
 		{Command: "start", Description: "Start the bot"},
 		{Command: "help", Description: "Information about the bot"},
@@ -40,13 +36,11 @@ var commands = map[string][]tgbotapi.BotCommand{
 }
 
 func newChatButton(lang string) *tgbotapi.InlineKeyboardMarkup {
-
 	text := map[string]string{
 		"uz": "💬 Yangi suhbat 💬",
 		"ru": "💬 Новый разговор 💬",
 		"en": "💬 New chat 💬",
 	}
-
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(
@@ -54,6 +48,5 @@ func newChatButton(lang string) *tgbotapi.InlineKeyboardMarkup {
 			),
 		),
 	)
-
 	return &keyboard
 }

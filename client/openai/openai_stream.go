@@ -16,7 +16,6 @@ import (
 )
 
 func streamOut(buffer *atomic.Value, isStreaming *atomic.Int64, channel chan<- string) {
-
 	var previous string
 	var completion string
 
@@ -33,28 +32,19 @@ func streamOut(buffer *atomic.Value, isStreaming *atomic.Int64, channel chan<- s
 	if len(strings.TrimSpace(completion)) > 0 {
 		channel <- completion
 	}
-
 	if isStreaming.Load() == 0 {
 		close(channel)
 	}
 }
 
 func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error) {
-
-	var (
-		err      error
-		bts      []byte
-		builder  strings.Builder
-		response = &types.Response{}
-		reader   = bufio.NewReader(resp.Body)
-		prefix   = []byte{'d', 'a', 't', 'a', ':', ' '}
-		userID   = resp.Request.Context().Value("user_id").(int64)
-	)
-
-	response.Choices = append(response.Choices, types.Choice{})
+	var builder strings.Builder
+	response := &types.Response{}
+	reader := bufio.NewReader(resp.Body)
+	userID := resp.Request.Context().Value("user_id").(int64)
 
 	for {
-		bts, err = reader.ReadBytes('\n')
+		bts, err := reader.ReadBytes('\n')
 		if err != nil {
 			if strings.HasPrefix(err.Error(), "stream error") {
 				return nil, fmt.Errorf("stream error for %d", userID)
@@ -67,7 +57,7 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 			continue
 		}
 
-		bts = bytes.TrimPrefix(bts, prefix)
+		bts = bytes.TrimPrefix(bts, []byte("data: "))
 		if string(bts) == "[DONE]\n" {
 			response.Choices[0].FinishReason = "done"
 			break
@@ -77,6 +67,11 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 		if err != nil {
 			log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
 			return nil, fmt.Errorf("can't decode response for %d", userID)
+		}
+
+		if len(response.Choices) == 0 {
+			log.Printf("empty choices for %d", userID)
+			continue
 		}
 
 		if response.Choices[0].FinishReason != "" {

@@ -48,7 +48,7 @@ func start(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func help(ctx context.Context) {
-	_, err := telegram.SendMessage(ctx, text.Help[lang(ctx)], 0, nil)
+	_, err := telegram.Send(ctx, text.Help[lang(ctx)], 0, false)
 	if err != nil {
 		log.Printf("can't send help command")
 	}

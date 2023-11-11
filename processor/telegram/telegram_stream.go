@@ -38,7 +38,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	stats := &types.Stats{IsPremium: isPremium}
 
 	stats.Requests++
-	messageID, err := telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
+	messageID, err := telegram.Send(ctx, text.Loading[lang(ctx)], message.MessageID, false)
 	if err != nil {
 		log.Printf("can't send loading message")
 		return
@@ -56,7 +56,16 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	defer isTyping.Store(false)
 
 	if message.Photo != nil {
-		message.Text = ocr.Analyze(ctx, message)
+		photoURL, err := telegram.GetPhotoURL(message)
+		if err != nil {
+			log.Printf("can't get photo url")
+			message.Text = message.Caption
+		} else if isPremium == models.GPT4 {
+			ctx = context.WithValue(ctx, "model", models.GPT4V)
+			message.Text = photoURL + "\n\n\n" + message.Caption
+		} else {
+			message.Text = ocr.Read(ctx, photoURL, message.Caption)
+		}
 	}
 
 	if lang(ctx) == "uz" {
@@ -70,7 +79,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 		for i := 1; i < len(completions); i++ {
 			stats.Requests++
-			err = telegram.Send(ctx, completions[i], i == len(completions)-1)
+			_, err = telegram.Send(ctx, completions[i], 0, i == len(completions)-1)
 			if err != nil {
 				log.Printf("can't send completion")
 				i--
@@ -95,7 +104,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 			}
 
 			stats.Requests++
-			err = telegram.EditMessage(ctx, completions[index], messageID, nil)
+			err = telegram.Edit(ctx, completions[index], messageID, false)
 			if errors.Is(err, e.UserBlockedError) {
 				return
 			} else if errors.Is(err, e.UserDeletedMessage) {
@@ -117,7 +126,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 				index = len(completions) - 1
 				stats.Requests++
 				time.Sleep(constants.RequestInterval)
-				messageID, err = telegram.SendMessage(ctx, completions[index], 0, nil)
+				messageID, err = telegram.Send(ctx, completions[index], 0, false)
 				if errors.Is(err, e.UserBlockedError) {
 					return
 				} else if err != nil {

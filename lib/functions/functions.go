@@ -6,9 +6,11 @@ import (
 )
 
 func Sleep(retryDelay *time.Duration) {
-	log.Printf("retrying request after %v", *retryDelay)
-	time.Sleep(*retryDelay)
-	*retryDelay *= 2
+	if *retryDelay > 0 {
+		log.Printf("retrying request after %v", *retryDelay)
+		time.Sleep(*retryDelay)
+		*retryDelay *= 2
+	}
 }
 
 func Slice(completion string) []string {

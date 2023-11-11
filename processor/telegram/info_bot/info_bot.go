@@ -1,20 +1,20 @@
 package info_bot
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"os"
+
+	"github.com/dro14/yordamchi/lib/functions"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 var bot *tgbotapi.BotAPI
 
 func Init() {
-
 	token, ok := os.LookupEnv("INFO_BOT_TOKEN")
 	if !ok {
 		log.Fatalf("info bot token is not specified")
 	}
-
 	var err error
 	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
@@ -23,8 +23,9 @@ func Init() {
 }
 
 func Send(text string) {
-
+	text = functions.Slice(functions.MarkdownV2(text))[0]
 	config := tgbotapi.NewMessage(1331278972, text)
+	config.ParseMode = tgbotapi.ModeMarkdownV2
 	_, err := bot.Send(config)
 	if err != nil {
 		log.Printf("can't send info message: %v", err)

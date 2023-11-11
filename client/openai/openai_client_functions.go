@@ -13,7 +13,7 @@ import (
 	"github.com/dro14/yordamchi/lib/types"
 )
 
-func send[T *types.Request | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
+func send[T *types.Completions | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
 
 	userID := ctx.Value("user_id").(int64)
 
@@ -41,7 +41,7 @@ func send[T *types.Request | *types.Generations](ctx context.Context, request T)
 	}
 }
 
-func makeRequest[T *types.Request | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
+func makeRequest[T *types.Completions | *types.Generations](ctx context.Context, request T) (*http.Response, error) {
 
 	var buffer bytes.Buffer
 	err := json.NewEncoder(&buffer).Encode(request)
@@ -69,7 +69,6 @@ func makeRequest[T *types.Request | *types.Generations](ctx context.Context, req
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("can't do request: %v", err)
 		return nil, err
 	}
 
