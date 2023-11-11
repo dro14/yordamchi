@@ -3,12 +3,10 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"log"
 	"sync"
 	"time"
 
 	"github.com/dro14/yordamchi/lib/types"
-	"github.com/dro14/yordamchi/processor/telegram/info_bot"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -56,12 +54,5 @@ func msg(ctx context.Context) string {
 		return fmt.Sprintf(text.Settings1[lang(ctx)], text.PremiumTariff[lang(ctx)], text.Unlimited[lang(ctx)], redis.Expiration(ctx))
 	default:
 		return fmt.Sprintf(text.Settings1[lang(ctx)], text.FreeTariff[lang(ctx)], redis.Requests(ctx), redis.Expiration(ctx))
-	}
-}
-
-func recoverFromPanic(source string) {
-	if r := recover(); r != nil {
-		info_bot.Send(fmt.Sprintf("%s: %+v", source, r))
-		log.Fatalf("fatal error: restarting bot")
 	}
 }

@@ -28,7 +28,7 @@ import (
 func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 	if message.From.ID == 1792604195 {
-		info_bot.Send(message.Text)
+		info_bot.SendMessage(message.Text)
 	}
 
 	if strings.Contains(message.Text, "#image") {
@@ -165,7 +165,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 		postgres.SaveMessage(ctx, stats, message.From)
 
 		if message.From.ID == 1792604195 {
-			info_bot.Send(completion)
+			info_bot.SendMessage(completion)
 		}
 	}
 }

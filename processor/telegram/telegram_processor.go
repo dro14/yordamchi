@@ -30,7 +30,6 @@ func Init() {
 }
 
 func ProcessUpdate(c *gin.Context) {
-	defer recoverFromPanic("ProcessUpdate")
 	update := &tgbotapi.Update{}
 	if err := c.ShouldBindJSON(update); err != nil {
 		log.Printf("can't bind json: %v", err)
@@ -51,7 +50,6 @@ func ProcessUpdate(c *gin.Context) {
 }
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
-	defer recoverFromPanic("ProcessMessage")
 	ctx, allowed, foundLang := messageUpdate(ctx, message)
 	if !allowed || !foundLang {
 		if !foundLang {
@@ -86,7 +84,6 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	defer recoverFromPanic("ProcessCallbackQuery")
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
@@ -108,7 +105,6 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 }
 
 func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
-	defer recoverFromPanic("ProcessMyChatMember")
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
