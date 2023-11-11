@@ -9,9 +9,8 @@ type Completions struct {
 }
 
 type Message struct {
-	Role     string    `json:"role"`
-	Content  string    `json:"content,omitempty"`
-	Contents []Content `json:"content,omitempty"`
+	Role    string `json:"role"`
+	Content any    `json:"content"`
 }
 
 type Content struct {

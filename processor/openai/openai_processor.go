@@ -47,7 +47,7 @@ Retry:
 
 	completions := []types.Message{response.Choices[0].Message}
 	stats.CompletionTokens = bobdev.Tokens(ctx, completions) - 8
-	stats.CompletionLength = len(completions[0].Content)
+	stats.CompletionLength = len(completions[0].Content.(string))
 }
 
 func Process(ctx context.Context, messages []types.Message, stats *types.Stats) (string, error) {
@@ -79,6 +79,6 @@ Retry:
 
 	completions := []types.Message{response.Choices[0].Message}
 	stats.CompletionTokens = bobdev.Tokens(ctx, completions) - 8
-	stats.CompletionLength = len(completions[0].Content)
-	return completions[0].Content, nil
+	stats.CompletionLength = len(completions[0].Content.(string))
+	return completions[0].Content.(string), nil
 }

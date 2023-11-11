@@ -52,9 +52,8 @@ func CompletionsWithStream(ctx context.Context, messages []types.Message, channe
 
 	if ctx.Value("model") == models.GPT4V {
 		n := len(messages)
-		URL, text, _ := strings.Cut(messages[n-1].Content, "\n\n\n")
-		messages[n-1].Content = ""
-		messages[n-1].Contents = []types.Content{
+		URL, text, _ := strings.Cut(messages[n-1].Content.(string), "\n\n\n")
+		messages[n-1].Content = []types.Content{
 			{Type: "text", Text: text},
 			{Type: "image_url", ImageURL: types.ImageURL{URL: URL}},
 		}
@@ -119,7 +118,7 @@ func Completions(ctx context.Context, messages []types.Message) (*types.Response
 		log.Printf("finish reason for %d isn't \"stop\": %q", userID, response.Choices[0].FinishReason)
 	}
 
-	if len(strings.TrimSpace(response.Choices[0].Message.Content)) == 0 {
+	if len(strings.TrimSpace(response.Choices[0].Message.Content.(string))) == 0 {
 		return nil, fmt.Errorf("empty completion for %d", userID)
 	}
 

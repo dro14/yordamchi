@@ -10,7 +10,7 @@ import (
 func length(messages []types.Message) int {
 	var promptLength int
 	for i := range messages {
-		promptLength += len(fmt.Sprintf("role: %s\ncontent: %s", messages[i].Role, messages[i].Content))
+		promptLength += len(fmt.Sprintf("role: %s\ncontent: %v", messages[i].Role, messages[i].Content))
 	}
 	return promptLength
 }
