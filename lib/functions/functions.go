@@ -14,9 +14,7 @@ func Sleep(retryDelay *time.Duration) {
 }
 
 func Slice(completion string) []string {
-
 	var completions []string
-
 	for len(completion) > 4096 {
 		cutIndex := 0
 	Loop:
@@ -30,6 +28,5 @@ func Slice(completion string) []string {
 		completions = append(completions, completion[:cutIndex])
 		completion = completion[cutIndex:]
 	}
-
 	return append(completions, completion)
 }

@@ -7,7 +7,9 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/client/telegram"
+	"github.com/dro14/yordamchi/client/translator"
 	"github.com/dro14/yordamchi/postgres"
+	"github.com/dro14/yordamchi/processor/openai"
 	"github.com/dro14/yordamchi/processor/telegram/button"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -32,7 +34,7 @@ func doCommand(ctx context.Context, message *tgbotapi.Message) bool {
 	case "image":
 		// TODO: add image command
 	case "generate":
-		// TODO: add generate command
+		generate(ctx, message)
 	}
 	return message.IsCommand()
 }
@@ -87,6 +89,27 @@ func gpt4(ctx context.Context) {
 	if err != nil {
 		log.Printf("can't send gpt4 command")
 	}
+}
+
+func generate(ctx context.Context, message *tgbotapi.Message) {
+	_, err := telegram.Send(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
+	if err != nil {
+		log.Printf("can't send loading message")
+		return
+	}
+
+	prompt := strings.ReplaceAll(message.Text, "/generate", "")
+	prompt = strings.TrimSpace(prompt)
+	prompt, _ = translator.Translate("auto", "en", prompt)
+
+	photoURL, err := openai.ProcessGenerations(ctx, prompt)
+	if err != nil {
+		log.Printf("can't process generations: %s", err)
+		return
+	}
+
+	telegram.SendPhoto(ctx, photoURL)
+	telegram.Delete(ctx, message.MessageID)
 }
 
 func exhausted(ctx context.Context) {

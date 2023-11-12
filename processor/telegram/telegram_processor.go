@@ -3,11 +3,15 @@ package telegram
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/dro14/yordamchi/client/ocr"
 	"github.com/dro14/yordamchi/client/openai"
 	"github.com/dro14/yordamchi/client/telegram"
 	"github.com/dro14/yordamchi/lib/models"
+	"github.com/dro14/yordamchi/lib/recover"
 	"github.com/dro14/yordamchi/lib/types"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/postgres"
@@ -50,6 +54,9 @@ func ProcessUpdate(c *gin.Context) {
 }
 
 func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	defer recover.Recover(sigChan)
 	ctx, allowed, foundLang := messageUpdate(ctx, message)
 	if !allowed || !foundLang {
 		if !foundLang {
@@ -84,6 +91,9 @@ func ProcessMessage(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	defer recover.Recover(sigChan)
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = redis.Lang(ctx, callbackQuery.From.LanguageCode)
@@ -105,6 +115,9 @@ func ProcessCallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQ
 }
 
 func ProcessMyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	defer recover.Recover(sigChan)
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)

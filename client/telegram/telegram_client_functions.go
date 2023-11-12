@@ -148,3 +148,12 @@ func GetPhotoURL(ctx context.Context, message *tgbotapi.Message) (string, error)
 	}
 	return photoURL, nil
 }
+
+func SendPhoto(ctx context.Context, photoURL string) {
+	photo := tgbotapi.FileURL(photoURL)
+	config := tgbotapi.NewPhoto(id(ctx), photo)
+	resp, err := bot.Request(config)
+	if err != nil {
+		log.Printf("can't send photo to %d: %d %s", id(ctx), resp.ErrorCode, resp.Description)
+	}
+}

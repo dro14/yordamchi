@@ -41,15 +41,14 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 	var builder strings.Builder
 	response := &types.Response{}
 	reader := bufio.NewReader(resp.Body)
-	userID := resp.Request.Context().Value("user_id").(int64)
 
 	for {
 		bts, err := reader.ReadBytes('\n')
 		if err != nil {
 			if strings.HasPrefix(err.Error(), "stream error") {
-				return nil, fmt.Errorf("stream error for %d", userID)
+				return nil, fmt.Errorf("stream error for %s", id(resp.Request.Context()))
 			}
-			log.Printf("%v", err)
+			log.Printf("%s", err)
 			return nil, err
 		}
 
@@ -65,23 +64,23 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 
 		err = json.Unmarshal(bts, response)
 		if err != nil {
-			log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
-			return nil, fmt.Errorf("can't decode response for %d", userID)
+			log.Printf("can't decode response for %s: %s\nbody: %s", id(resp.Request.Context()), err, string(bts))
+			return nil, fmt.Errorf("can't decode response for %s", id(resp.Request.Context()))
 		}
 
 		if len(response.Choices) == 0 {
-			log.Printf("empty choices for %d", userID)
+			log.Printf("empty choices for %s", id(resp.Request.Context()))
 			continue
 		}
 
 		if response.Choices[0].FinishReason != "" {
 			if response.Choices[0].FinishReason != "stop" {
-				log.Printf("finish reason for %d isn't \"stop\": %q", userID, response.Choices[0].FinishReason)
+				log.Printf("finish reason for %s isn't \"stop\": %q", id(resp.Request.Context()), response.Choices[0].FinishReason)
 			}
 			break
 		} else if response.Choices[0].FinishDetails.Type != "" {
 			if response.Choices[0].FinishDetails.Type != "stop" {
-				log.Printf("finish details type for %d isn't \"stop\": %q", userID, response.Choices[0].FinishDetails.Type)
+				log.Printf("finish details type for %s isn't \"stop\": %q", id(resp.Request.Context()), response.Choices[0].FinishDetails.Type)
 			}
 			break
 		}
@@ -91,11 +90,9 @@ func streamIn(resp *http.Response, buffer *atomic.Value) (*types.Response, error
 	}
 
 	if len(strings.TrimSpace(builder.String())) == 0 {
-		return nil, fmt.Errorf("empty completion for %d", userID)
+		return nil, fmt.Errorf("empty completion for %s", id(resp.Request.Context()))
 	}
-
 	response.Choices[0].Message.Role = "assistant"
 	response.Choices[0].Message.Content = builder.String()
-
 	return response, nil
 }

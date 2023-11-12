@@ -22,7 +22,7 @@ func UseTranslator(ctx context.Context, message *tgbotapi.Message, stats *types.
 	}
 
 	messages := redis.LoadContext(ctx, prompt)
-	completion, err := openai.Process(ctx, messages, stats)
+	completion, err := openai.ProcessCompletions(ctx, messages, stats)
 	if err != nil {
 		return []string{completion}
 	}

@@ -23,14 +23,14 @@ func Init() {
 }
 
 func SendMessage(text string) {
-	text = functions.MarkdownV2(text)
+	config := tgbotapi.NewMessage(1331278972, "")
+	config.ParseMode = tgbotapi.ModeMarkdownV2
 	slices := functions.Slice(text)
 	for _, slice := range slices {
-		config := tgbotapi.NewMessage(1331278972, slice)
-		config.ParseMode = tgbotapi.ModeMarkdownV2
+		config.Text = functions.MarkdownV2(slice)
 		_, err := bot.Send(config)
 		if err != nil {
-			log.Printf("can't send info message: %v", err)
+			log.Printf("can't send info message: %s", err)
 		}
 	}
 }
@@ -40,6 +40,6 @@ func SendFile(path string) {
 	config := tgbotapi.NewDocument(1331278972, file)
 	_, err := bot.Request(config)
 	if err != nil {
-		log.Printf("can't send info file: %v", err)
+		log.Printf("can't send log file: %s", err)
 	}
 }

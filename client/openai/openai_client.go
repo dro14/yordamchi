@@ -22,7 +22,6 @@ var keys []string
 var index int
 
 func Init() {
-
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("OPENAI_TOKEN_%d", i)
 		token, ok := os.LookupEnv(key)
@@ -31,35 +30,24 @@ func Init() {
 		}
 		keys = append(keys, "Bearer "+token)
 	}
-
 	if len(keys) == 0 {
 		log.Fatalf("openai token is not specified")
 	}
 }
 
 func CompletionsWithStream(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
-
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
-	userID := ctx.Value("user_id").(int64)
 
 	request := &types.Completions{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens(ctx),
 		Stream:    true,
-		User:      fmt.Sprintf("%d", userID),
+		User:      id(ctx),
 	}
 
 	if ctx.Value("model") == models.GPT4V {
-		n := len(messages)
-		URL, text, _ := strings.Cut(messages[n-1].Content.(string), "\n\n\n")
-		var content []types.Content
-		if len(text) > 0 {
-			content = append(content, types.Content{Type: "text", Text: text})
-		}
-		content = append(content, types.Content{Type: "image_url", ImageURL: types.ImageURL{URL: URL}})
-		messages[n-1] = types.Message{Role: "user", Content: content}
-		request.Messages = messages
+		request.Messages = vision(messages)
 	}
 
 	resp, err := send(ctx, request)
@@ -79,22 +67,19 @@ func CompletionsWithStream(ctx context.Context, messages []types.Message, channe
 		isStreaming.Store(-1)
 		return nil, err
 	}
-
 	isStreaming.Store(0)
 	return response, nil
 }
 
 func Completions(ctx context.Context, messages []types.Message) (*types.Response, error) {
-
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
-	userID := ctx.Value("user_id").(int64)
 
 	request := &types.Completions{
 		Model:     ctx.Value("model").(string),
 		Messages:  messages,
 		MaxTokens: maxTokens(ctx),
 		Stream:    false,
-		User:      fmt.Sprintf("%d", userID),
+		User:      id(ctx),
 	}
 
 	resp, err := send(ctx, request)
@@ -105,32 +90,28 @@ func Completions(ctx context.Context, messages []types.Message) (*types.Response
 
 	bts, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Printf("can't read response for %d: %v", userID, err)
-		return nil, fmt.Errorf("can't read response for %d", userID)
+		log.Printf("can't read response for %s: %s", id(ctx), err)
+		return nil, fmt.Errorf("can't read response for %s", id(ctx))
 	}
 
 	response := &types.Response{}
 	err = json.Unmarshal(bts, response)
 	if err != nil {
-		log.Printf("can't decode response for %d: %v\nbody: %s", userID, err, string(bts))
-		return nil, fmt.Errorf("can't decode response for %d", userID)
+		log.Printf("can't decode response for %s: %s\nbody: %s", id(ctx), err, string(bts))
+		return nil, fmt.Errorf("can't decode response for %s", id(ctx))
 	}
 
 	if response.Choices[0].FinishReason != "stop" {
-		log.Printf("finish reason for %d isn't \"stop\": %q", userID, response.Choices[0].FinishReason)
+		log.Printf("finish reason for %s isn't \"stop\": %q", id(ctx), response.Choices[0].FinishReason)
 	}
-
 	if len(strings.TrimSpace(response.Choices[0].Message.Content.(string))) == 0 {
-		return nil, fmt.Errorf("empty completion for %d", userID)
+		return nil, fmt.Errorf("empty completion for %s", id(ctx))
 	}
-
 	return response, nil
 }
 
-func Generations(ctx context.Context, prompt string) string {
-
+func Generations(ctx context.Context, prompt string) (*types.Response, error) {
 	ctx = context.WithValue(ctx, "url", Baseurl+ImagesGenerations)
-	userID := ctx.Value("user_id").(int64)
 
 	request := &types.Generations{
 		Prompt:  prompt,
@@ -138,28 +119,26 @@ func Generations(ctx context.Context, prompt string) string {
 		Quality: "hd",
 		Size:    "1024x1024",
 		Style:   "vivid",
-		User:    fmt.Sprintf("%d", userID),
+		User:    id(ctx),
 	}
 
 	resp, err := send(ctx, request)
 	if err != nil {
-		log.Printf("can't send request: %v", err)
-		return ""
+		return nil, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	bts, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Printf("can't read response: %v", err)
-		return ""
+		log.Printf("can't read response for %s: %s", id(ctx), err)
+		return nil, fmt.Errorf("can't read response for %s", id(ctx))
 	}
 
 	response := &types.Response{}
 	err = json.Unmarshal(bts, response)
 	if err != nil {
-		log.Printf("can't decode response: %v\nbody: %s", err, string(bts))
-		return ""
+		log.Printf("can't decode response for %s: %s\nbody: %s", id(ctx), err, string(bts))
+		return nil, fmt.Errorf("can't decode response for %s", id(ctx))
 	}
-
-	return response.Data[0].URL
+	return response, nil
 }

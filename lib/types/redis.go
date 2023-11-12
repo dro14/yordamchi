@@ -4,7 +4,6 @@ type UserStatus int
 
 const (
 	UnknownStatus UserStatus = iota
-	BlockedStatus
 	GPT4Status
 	PremiumStatus
 	FreeStatus
