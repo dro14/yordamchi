@@ -57,13 +57,12 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 	defer isTyping.Store(false)
 
 	if message.Photo != nil {
-		photoURL, err := telegram.GetPhotoURL(message)
+		photoURL, err := telegram.GetPhotoURL(ctx, message)
 		if err != nil {
-			log.Printf("can't get photo url")
 			message.Text = message.Caption
 		} else if isPremium == models.GPT4 {
-			ctx = context.WithValue(ctx, "model", models.GPT4V)
 			message.Text = photoURL + "\n\n\n" + message.Caption
+			ctx = context.WithValue(ctx, "model", models.GPT4V)
 		} else {
 			message.Text = ocr.Read(ctx, photoURL, message.Caption)
 		}

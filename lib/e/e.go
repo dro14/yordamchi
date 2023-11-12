@@ -4,8 +4,8 @@ import "errors"
 
 // Telegram errors
 var (
-	UserDeletedMessage = errors.New("429 Bad Request: message to edit not found")
-	UserBlockedBot     = errors.New("403 Forbidden: bot was blocked by the user")
+	UserDeletedMessage = errors.New("user deleted message")
+	Forbidden          = errors.New("forbidden")
 )
 
 // Postgres errors

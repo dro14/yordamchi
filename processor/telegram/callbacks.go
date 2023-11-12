@@ -54,8 +54,5 @@ func languageChosenCallback(ctx context.Context, message *tgbotapi.Message, lang
 	redis.DeleteContext(ctx)
 	telegram.SetCommands(ctx)
 	start(ctx, message)
-	err := telegram.Delete(ctx, message.MessageID)
-	if err != nil {
-		log.Printf("can't delete language command message")
-	}
+	telegram.Delete(ctx, message.MessageID)
 }

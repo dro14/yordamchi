@@ -1,6 +1,10 @@
 package telegram
 
-import "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+import (
+	"context"
+
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
 
 var commands = map[string][]tgbotapi.BotCommand{
 	"uz": {
@@ -33,4 +37,8 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "gpt4", Description: "The most powerful"},
 		{Command: "image", Description: "Image generation"},
 	},
+}
+
+func id(ctx context.Context) int64 {
+	return ctx.Value("user_id").(int64)
 }

@@ -5,19 +5,16 @@ import (
 	"log"
 	"time"
 
-	"github.com/dro14/yordamchi/client/telegram"
-	processor "github.com/dro14/yordamchi/processor/telegram"
+	tgClient "github.com/dro14/yordamchi/client/telegram"
+	tgProcessor "github.com/dro14/yordamchi/processor/telegram"
 	"github.com/dro14/yordamchi/redis"
 	"github.com/dro14/yordamchi/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func Init() {
-
 	activities := redis.LoadActivity(context.Background())
-
 	for _, activity := range activities {
-
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, "beginning", time.Now())
 		ctx = context.WithValue(ctx, "date", activity.Date)
@@ -37,11 +34,10 @@ func Init() {
 			},
 		}
 
-		_, err := telegram.Send(ctx, text.Error[activity.LanguageCode], 0, nil)
+		_, err := tgClient.Send(ctx, text.Error[activity.LanguageCode], 0, nil)
 		if err != nil {
 			log.Printf("can't send error message: %v", err)
 		}
-
-		go processor.Process(ctx, message, activity.IsPremium)
+		go tgProcessor.Process(ctx, message, activity.IsPremium)
 	}
 }
