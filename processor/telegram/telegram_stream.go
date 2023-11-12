@@ -113,7 +113,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 
 			stats.Requests++
 			err = telegram.Edit(ctx, completions[index], messageID, nil)
-			if errors.Is(err, e.UserBlockedBot) {
+			if errors.Is(err, e.Forbidden) {
 				return
 			} else if errors.Is(err, e.UserDeletedMessage) {
 				log.Printf("user deleted completion")
@@ -135,7 +135,7 @@ func Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
 				stats.Requests++
 				time.Sleep(constants.RequestInterval)
 				messageID, err = telegram.Send(ctx, completions[index], 0, nil)
-				if errors.Is(err, e.UserBlockedBot) {
+				if errors.Is(err, e.Forbidden) {
 					return
 				} else if err != nil {
 					log.Printf("can't send next message")
