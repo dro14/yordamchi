@@ -28,9 +28,15 @@ func New() *Legacy {
 	}
 }
 
-func (l *Legacy) Redirect(message *tgbotapi.Message) {
-	config := tgbotapi.NewMessage(message.From.ID, "")
-	switch message.From.LanguageCode {
+func (l *Legacy) Redirect(update *tgbotapi.Update) {
+	if update.Message == nil {
+		log.Printf("unknown update type:\n%+v", update)
+		return
+	}
+
+	user := update.Message.From
+	config := tgbotapi.NewMessage(user.ID, "")
+	switch user.LanguageCode {
 	case "uz", "":
 		config.Text = text.LegacyMessage["uz"]
 	case "ru":
@@ -38,6 +44,7 @@ func (l *Legacy) Redirect(message *tgbotapi.Message) {
 	default:
 		config.Text = text.LegacyMessage["en"]
 	}
+
 	_, err := l.bot.Request(config)
 	if err != nil {
 		log.Println("can't send legacy message:", err)

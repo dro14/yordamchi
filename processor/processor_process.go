@@ -10,7 +10,6 @@ import (
 
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/telegram"
-	"github.com/dro14/yordamchi/configs"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/utils"
@@ -50,7 +49,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	}
 
 	if message.From.ID == 1792604195 {
-		configs.SendMessage(message.Text)
+		utils.SendInfoMessage(message.Text)
 	}
 
 	var tokensUsed int
@@ -150,6 +149,6 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	p.redis.Decrement(ctx, tokensUsed)
 	p.postgres.SaveMessage(ctx, message.From, stats)
 	if message.From.ID == 1792604195 {
-		configs.SendMessage(completion)
+		utils.SendInfoMessage(completion)
 	}
 }

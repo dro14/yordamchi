@@ -8,10 +8,10 @@ import (
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/telegram"
-	"github.com/dro14/yordamchi/configs"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -35,9 +35,23 @@ func New() *Processor {
 	}
 }
 
-func (p *Processor) Message(message *tgbotapi.Message) {
-	defer configs.RecoverIfPanic()
-	ctx, allowed, foundLang := p.messageUpdate(message)
+func (p *Processor) Update(update *tgbotapi.Update) {
+	defer utils.RecoverIfPanic()
+	ctx := context.Background()
+	switch {
+	case update.Message != nil:
+		p.Message(ctx, update.Message)
+	case update.CallbackQuery != nil:
+		p.CallbackQuery(ctx, update.CallbackQuery)
+	case update.MyChatMember != nil:
+		p.MyChatMember(ctx, update.MyChatMember)
+	default:
+		log.Printf("unknown update type:\n%+v", update)
+	}
+}
+
+func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
+	ctx, allowed, foundLang := p.messageUpdate(ctx, message)
 	if !allowed || !foundLang {
 		if !foundLang {
 			p.language(ctx)
@@ -74,9 +88,7 @@ func (p *Processor) Message(message *tgbotapi.Message) {
 	}
 }
 
-func (p *Processor) CallbackQuery(callbackQuery *tgbotapi.CallbackQuery) {
-	defer configs.RecoverIfPanic()
-	ctx := context.Background()
+func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = p.redis.Lang(ctx, callbackQuery.From.LanguageCode)
@@ -97,9 +109,7 @@ func (p *Processor) CallbackQuery(callbackQuery *tgbotapi.CallbackQuery) {
 	}
 }
 
-func (p *Processor) MyChatMember(chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
-	defer configs.RecoverIfPanic()
-	ctx := context.Background()
+func (p *Processor) MyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = p.redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)

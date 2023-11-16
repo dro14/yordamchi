@@ -1,4 +1,4 @@
-package configs
+package utils
 
 import (
 	"log"
@@ -9,9 +9,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-var bot *tgbotapi.BotAPI
-
-func Init() {
+func SetConfigs() {
 	time.Local, _ = time.LoadLocation("Asia/Tashkent")
 
 	file, err := os.Create("yordamchi.log")

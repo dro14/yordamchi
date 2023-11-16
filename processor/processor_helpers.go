@@ -32,8 +32,7 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func (p *Processor) messageUpdate(message *tgbotapi.Message) (context.Context, bool, bool) {
-	ctx := context.Background()
+func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
 	if message.From.IsBot || message.Chat.Type != "private" || isBlocked(message.From.ID) {
 		return ctx, false, true
 	}

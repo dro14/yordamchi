@@ -21,7 +21,7 @@ type Content struct {
 }
 
 type ImageURL struct {
-	URL string `json:"url"`
+	URL string `json:"url,omitempty"`
 }
 
 // Generations is a struct for OpenAI Generations API

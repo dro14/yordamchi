@@ -42,16 +42,7 @@ func (h *Handler) Main(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	switch {
-	case update.Message != nil:
-		go h.processor.Message(update.Message)
-	case update.CallbackQuery != nil:
-		go h.processor.CallbackQuery(update.CallbackQuery)
-	case update.MyChatMember != nil:
-		go h.processor.MyChatMember(update.MyChatMember)
-	default:
-		log.Printf("unknown update type:\n%+v", update)
-	}
+	go h.processor.Update(update)
 	c.JSON(200, gin.H{"ok": true})
 }
 
@@ -63,12 +54,7 @@ func (h *Handler) Legacy(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	switch {
-	case update.Message != nil:
-		h.legacy.Redirect(update.Message)
-	default:
-		log.Printf("unknown update type:\n%+v", update)
-	}
+	h.legacy.Redirect(update)
 	c.JSON(200, gin.H{"ok": true})
 }
 

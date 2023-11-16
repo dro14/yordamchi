@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/configs"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/utils"
@@ -14,7 +13,7 @@ import (
 
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, stats *postgres.Stats, channel chan<- string) {
 	defer close(channel)
-	defer configs.RecoverIfPanic()
+	defer utils.RecoverIfPanic()
 	messages := o.redis.ConversationHistory(ctx, prompt)
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
