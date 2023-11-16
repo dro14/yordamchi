@@ -65,7 +65,7 @@ func (p *Processor) Message(message *tgbotapi.Message) {
 		if message.Photo == nil {
 			p.Process(ctx, message, "false")
 		} else {
-			// TODO
+			p.premium(ctx)
 		}
 	case redis.ExhaustedStatus:
 		p.exhausted(ctx)

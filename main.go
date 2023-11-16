@@ -15,7 +15,7 @@ func main() {
 	configs.Init()
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
-	defer configs.Main(sigChan)
+	go configs.Main(sigChan)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
