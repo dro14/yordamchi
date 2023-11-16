@@ -32,11 +32,11 @@ func (l *Legacy) Redirect(message *tgbotapi.Message) {
 	config := tgbotapi.NewMessage(message.From.ID, "")
 	switch message.From.LanguageCode {
 	case "uz", "":
-		message.Text = text.LegacyMessage["uz"]
+		config.Text = text.LegacyMessage["uz"]
 	case "ru":
-		message.Text = text.LegacyMessage["ru"]
+		config.Text = text.LegacyMessage["ru"]
 	default:
-		message.Text = text.LegacyMessage["en"]
+		config.Text = text.LegacyMessage["en"]
 	}
 	_, err := l.bot.Request(config)
 	if err != nil {
