@@ -228,7 +228,6 @@ func (p *Postgres) CheckTransaction(params *types.Params) (gin.H, int) {
 	var reason int
 	err := p.queryPayme(query, args, &id, &createTime, &transaction, &state, &performTime, &cancelTime, &reason)
 	if err != nil {
-		log.Println("can't get transaction:", err)
 		return nil, -31003
 	}
 
