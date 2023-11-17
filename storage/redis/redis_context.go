@@ -42,6 +42,17 @@ func (r *Redis) StoreHistory(ctx context.Context, messages []types.Message, comp
 	messages = append(messages, types.Message{Role: "assistant", Content: completion})
 	messages = messages[len(messages)-2:]
 
+	for _, message := range messages {
+		content, ok := message.Content.([]types.Content)
+		if ok {
+			if len(content) == 2 {
+				message.Content = content[1].Text
+			} else {
+				message.Content = ""
+			}
+		}
+	}
+
 	jsonData, err := json.Marshal(messages)
 	if err != nil {
 		log.Printf("can't encode %q: %s", "context:"+id(ctx), err)
