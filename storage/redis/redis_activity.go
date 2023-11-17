@@ -8,7 +8,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (r *Redis) UserActivity() []*Activity {
+func (r *Redis) Activities() []*Activity {
 	ctx := context.Background()
 	var activities []*Activity
 	keys, err := r.client.Keys(ctx, "activity:*").Result()
@@ -43,7 +43,7 @@ func (r *Redis) IncrementActivity(ctx context.Context, message *tgbotapi.Message
 		FirstName:    message.From.FirstName,
 		LastName:     message.From.LastName,
 		Username:     message.From.UserName,
-		LanguageCode: ctx.Value("language_code").(string),
+		LanguageCode: lang(ctx),
 		IsPremium:    isPremium,
 	}
 	jsonData, err := json.Marshal(activity)

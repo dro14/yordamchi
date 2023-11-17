@@ -70,9 +70,6 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 		}
 	}
 
-	if len(completion) == 0 {
-		return nil, fmt.Errorf("user %s: empty completion", id(ctx))
-	}
 	stream.Store(false)
 	response.Choices[0].Message.Role = "assistant"
 	response.Choices[0].Message.Content = completion

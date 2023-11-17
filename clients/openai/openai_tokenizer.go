@@ -12,11 +12,12 @@ func (o *OpenAI) countTokens(input any) int {
 			content, ok := message.Content.([]types.Content)
 			if ok {
 				if len(content) == 2 {
-					tokens += len(o.tkm.Encode(content[1].Text, nil, nil))
+					message.Content = content[1].Text
+				} else {
+					message.Content = ""
 				}
-			} else {
-				tokens += len(o.tkm.Encode(message.Content.(string), nil, nil))
 			}
+			tokens += len(o.tkm.Encode(message.Content.(string), nil, nil))
 			tokens += len(o.tkm.Encode(message.Role, nil, nil))
 			tokens += 3
 		}

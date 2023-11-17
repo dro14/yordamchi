@@ -15,13 +15,13 @@ type Message struct {
 }
 
 type Content struct {
-	Type     string   `json:"type"`
-	Text     string   `json:"text,omitempty"`
-	ImageURL ImageURL `json:"image_url,omitempty"`
+	Type     string    `json:"type"`
+	Text     string    `json:"text,omitempty"`
+	ImageURL *ImageURL `json:"image_url,omitempty"`
 }
 
 type ImageURL struct {
-	URL string `json:"url,omitempty"`
+	URL string `json:"url"`
 }
 
 // Generations is a struct for OpenAI Generations API

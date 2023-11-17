@@ -19,3 +19,7 @@ func midnight() string {
 func id(ctx context.Context) string {
 	return fmt.Sprintf("%d", ctx.Value("user_id").(int64))
 }
+
+func lang(ctx context.Context) string {
+	return ctx.Value("language_code").(string)
+}

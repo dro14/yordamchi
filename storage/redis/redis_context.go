@@ -15,7 +15,7 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) []types.
 	var message types.Message
 	if ctx.Value("model") == models.GPT4V {
 		URL, text, _ := strings.Cut(prompt, "\n\n\n")
-		content := []types.Content{{Type: "image_url", ImageURL: types.ImageURL{URL: URL}}}
+		content := []types.Content{{Type: "image_url", ImageURL: &types.ImageURL{URL: URL}}}
 		if len(text) > 0 {
 			content = append(content, types.Content{Type: "text", Text: text})
 		}

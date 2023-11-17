@@ -17,7 +17,7 @@ func Init() {
 	tgClient := telegram.New()
 	redisClient := redis.New()
 
-	activities := redisClient.UserActivity()
+	activities := redisClient.Activities()
 	for _, activity := range activities {
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, "beginning", time.Now())

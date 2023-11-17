@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dro14/yordamchi/utils"
 	"log"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -104,17 +104,16 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 	default:
 		ctx = context.WithValue(ctx, "language_code", "en")
 	}
-	lang, err := r.client.Get(ctx, "lang:"+id(ctx)).Result()
+	langCode, err := r.client.Get(ctx, "lang:"+id(ctx)).Result()
 	if err != nil {
 		return ctx, false
 	}
-	ctx = context.WithValue(ctx, "language_code", lang)
+	ctx = context.WithValue(ctx, "language_code", langCode)
 	return ctx, true
 }
 
 func (r *Redis) SetLang(ctx context.Context) {
-	lang := ctx.Value("language_code").(string)
-	r.client.Set(ctx, "lang:"+id(ctx), lang, 0)
+	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), 0)
 }
 
 func (r *Redis) GPT3(ctx context.Context) {
