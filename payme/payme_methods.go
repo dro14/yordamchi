@@ -45,6 +45,8 @@ func (p *Payme) Respond(c *gin.Context, request *types.Request) gin.H {
 				message = "Invalid account: order_id"
 			case -31051:
 				message = "Invalid id"
+			case -31052:
+				message = "Invalid account: type"
 			case -32400:
 				message = "System error"
 			}

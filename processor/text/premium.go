@@ -5,7 +5,7 @@ var Premium = map[string]string{
 
 Premium tarifda:
 • Eng kuchli sun'iy intellekt - GPT-4 ✅
-• Suratni tushunish - GPT-4 Vision ✅
+• Rasmni tushunish - GPT-4 Vision ✅
 • Cheksiz so'rovlar soni ✅
 
 Biz foydalanuvchilarimizga eng qulay interfeys yaratishga intilamiz, va doimiy yangi funktsiyalar ustida ishlaymiz.

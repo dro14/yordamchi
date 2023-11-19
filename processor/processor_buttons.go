@@ -31,8 +31,8 @@ func (p *Processor) settingsButton(ctx context.Context) *tgbotapi.InlineKeyboard
 	}
 	text := map[string]string{
 		"uz": "⭐️ Premium tarif ⭐️",
-		"ru": "⭐️ Премиум тариф ⭐️",
-		"en": "⭐️ Premium tariff ⭐️",
+		"ru": "⭐️ Премиум подписка ⭐️",
+		"en": "⭐️ Premium subscription ⭐️",
 	}
 	return data("settings", text[lang(ctx)])
 }
@@ -53,7 +53,7 @@ func (p *Processor) examplesButton(ctx context.Context) *tgbotapi.InlineKeyboard
 func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text := map[string][]string{
 		"uz": {"⭐️ Kunlik ⭐️", "🔥 Haftalik 🔥", "🚀 Oylik 🚀"},
-		"ru": {"⭐️ Дневной ⭐️", "🔥 Недельный 🔥", "🚀 Месячный 🚀"},
+		"ru": {"⭐️ Дневная ⭐️", "🔥 Недельная 🔥", "🚀 Месячная 🚀"},
 		"en": {"⭐️ Daily ⭐️", "🔥 Weekly 🔥", "🚀 Monthly 🚀"},
 	}
 	args := make([]string, 6)

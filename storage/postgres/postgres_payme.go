@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -23,11 +24,12 @@ func (p *Postgres) NewOrder(userID int64, amount int, Type string) (int, error) 
 }
 
 func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
-	query := "SELECT amount, type FROM orders_test WHERE id = $1;"
+	query := "SELECT amount, type, user_id FROM orders_test WHERE id = $1;"
 	args := []any{params.Account.OrderID}
 	var amount int
 	var Type string
-	err := p.queryPayme(query, args, &amount, &Type)
+	var userID int64
+	err := p.queryPayme(query, args, &amount, &Type, &userID)
 	if err != nil {
 		log.Println("can't get order:", err)
 		return nil, -31050
@@ -39,21 +41,16 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	}
 
 	var title string
-	var price int
-	var count int
 	switch Type {
-	case "weekly":
-		title = "Недельный тариф для ChatGPT"
-		price = amount
-		count = 1
-	case "monthly":
-		title = "Месячный тариф для ChatGPT"
-		price = amount
-		count = 1
-	case "gpt-4":
-		title = "Токены для GPT-4"
-		price = 100
-		count = amount / 100
+	case "daily:gpt-4":
+		title = fmt.Sprintf("Дневная подписка GPT-4 для пользователя %d", userID)
+	case "weekly:gpt-4":
+		title = fmt.Sprintf("Недельная подписка GPT-4 для пользователя %d", userID)
+	case "monthly:gpt-4":
+		title = fmt.Sprintf("Месячная подписка GPT-4 для пользователя %d", userID)
+	default:
+		log.Println("invalid order type:", Type)
+		return nil, -31052
 	}
 
 	result := gin.H{
@@ -63,8 +60,8 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 			"items": []gin.H{
 				{
 					"title":        title,
-					"price":        price,
-					"count":        count,
+					"price":        amount,
+					"count":        1,
 					"code":         "10318001001000000",
 					"package_code": "1501319",
 					"vat_percent":  0,

@@ -9,7 +9,7 @@ var Help = map[string]string{
 /language - Tilni o'zgartirish
 /examples - Foydalanish misollari
 /premium - Qo'shimcha funksiyalar
-/image - Tasvir generatsiyasi
+/image - Rasm generatsiyasi
 
 Komandalarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishingiz mumkin`,
 

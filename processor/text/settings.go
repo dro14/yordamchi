@@ -3,7 +3,7 @@ package text
 var Settings1 = map[string]string{
 	"uz": `Tarif: bepul
 Versiya: GPT-3.5
-Suratni tushunish: mavjud emas 🚫
+Rasmni tushunish: mavjud emas 🚫
 So'rovlar soni: %s
 Tugash muddati: %s
 
@@ -29,7 +29,7 @@ Want to try GPT-4 that understands images? Then become a premium user!`,
 var Settings2 = map[string]string{
 	"uz": `Tarif: premium ⭐️
 Versiya: GPT-4 & GPT-4 Vision
-Suratni tushunish: mavjud ✅
+Rasmni tushunish: mavjud ✅
 So'rovlar soni: cheklanmagan
 Tugash muddati: %s`,
 
