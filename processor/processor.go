@@ -66,22 +66,20 @@ func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
 		return
 	}
 
-	switch p.redis.UserStatus(ctx) {
-	case redis.GPT4Status:
-		if p.redis.GPT4Tokens(ctx) > 0 {
-			p.Process(ctx, message, models.GPT4)
-		} else {
-			p.gpt4(ctx)
+	switch ctx.Value("user_status") {
+	case redis.StatusPremium:
+		ctx = context.WithValue(ctx, "model", models.GPT4)
+		if message.Text != "" || message.Photo != nil {
+			p.Process(ctx, message, "true")
 		}
-	case redis.PremiumStatus:
-		p.Process(ctx, message, "true")
-	case redis.FreeStatus:
-		if message.Photo == nil {
+	case redis.StatusFree:
+		ctx = context.WithValue(ctx, "model", models.GPT3)
+		if message.Text != "" {
 			p.Process(ctx, message, "false")
-		} else {
-			p.premium(ctx)
+		} else if message.Photo != nil {
+			p.premiumFeature(ctx)
 		}
-	case redis.ExhaustedStatus:
+	case redis.StatusExhausted:
 		p.exhausted(ctx)
 	default:
 		log.Println("unknown user status:", message.From.ID)
@@ -95,15 +93,15 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 
 	switch callbackQuery.Data {
 	case "new_chat":
-		p.newChat(ctx)
-	case "examples":
-		p.examplesCallback(ctx, callbackQuery.Message.MessageID)
+		p.newChatCallback(ctx)
 	case "help":
-		p.helpCallback(ctx, callbackQuery.Message.MessageID)
-	case models.GPT3, models.GPT4:
-		p.model(ctx, callbackQuery.Message.MessageID, callbackQuery.Data)
+		p.helpCallback(ctx, callbackQuery)
+	case "settings":
+		p.settingsCallback(ctx, callbackQuery)
 	case "uz", "ru", "en":
-		p.languageCallback(ctx, callbackQuery.Message, callbackQuery.Data)
+		p.languageCallback(ctx, callbackQuery)
+	case "examples":
+		p.examplesCallback(ctx, callbackQuery)
 	default:
 		log.Println("unknown callback data:", callbackQuery.Data)
 	}

@@ -22,8 +22,8 @@ func main() {
 		port = "8000"
 	}
 
-	recover.Init()
-	utils.SendInfoMessage("@yordamchi_ai_bot restarted")
+	recover.Start()
+	utils.SendInfoMessage(-1001924963699, 35)
 	err := handlers.New().Run(port)
 	if err != nil {
 		log.Fatal("can't run server:", err)

@@ -11,14 +11,14 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, stats *postgres.Stats, channel chan<- string) {
+func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
 	defer utils.RecoverIfPanic()
-	messages := o.redis.ConversationHistory(ctx, prompt)
+	ctx, messages := o.redis.ConversationHistory(ctx, prompt)
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
 Retry:
-	stats.Attempts++
+	msg.Attempts++
 	response, err := o.Completions(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
@@ -28,27 +28,27 @@ Retry:
 		} else if strings.Contains(errMsg, "context deadline exceeded") {
 			retryDelay = 0
 		}
-		if stats.Attempts < utils.RetryAttempts {
+		if msg.Attempts < utils.RetryAttempts {
 			utils.Sleep(&retryDelay)
 			goto Retry
 		} else {
-			log.Printf("%q failed after %d attempts", errMsg, stats.Attempts)
+			log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
 			channel <- text.RequestFailed[lang(ctx)]
 			return
 		}
-	} else if stats.Attempts > 1 {
-		log.Printf("%q was handled after %d attempts", errMsg, stats.Attempts)
+	} else if msg.Attempts > 1 {
+		log.Printf("%q was handled after %d attempts", errMsg, msg.Attempts)
 	}
 
-	stats.FinishReason = response.Choices[0].FinishReason
-	stats.PromptTokens = o.countTokens(messages)
-	stats.PromptLength = length(messages)
+	msg.FinishReason = response.Choices[0].FinishReason
+	msg.PromptTokens = o.countTokens(messages)
+	msg.PromptLength = length(messages)
 
 	completion := response.Choices[0].Message.Content.(string)
-	stats.CompletionTokens = o.countTokens(completion)
-	stats.CompletionLength = len(completion)
+	msg.CompletionTokens = o.countTokens(completion)
+	msg.CompletionLength = len(completion)
 
-	o.redis.StoreHistory(ctx, messages, completion)
+	o.redis.StoreHistory(ctx, prompt, completion)
 	time.Sleep(utils.RequestInterval)
 	channel <- completion
 }

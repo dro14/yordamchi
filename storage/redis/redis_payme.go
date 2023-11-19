@@ -2,23 +2,23 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
-func (r *Redis) PerformTransaction(ctx context.Context, amount int, Type string) {
-	if Type == "gpt-4" {
-		tokens, _ := r.client.Get(ctx, "gpt-4:"+id(ctx)).Int()
-		tokens += amount / 100
-		r.client.Set(ctx, "gpt-4:"+id(ctx), tokens, 0)
-	} else {
-		var expiration time.Time
-		switch Type {
-		case "weekly":
-			expiration = time.Now().AddDate(0, 0, 7)
-		case "monthly":
-			expiration = time.Now().AddDate(0, 1, 0)
-		}
-		expirationDate := expiration.Format("15:04:05 02.01.2006")
-		r.client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
+func (r *Redis) PerformTransaction(ctx context.Context, Type string) error {
+	var expiration time.Time
+	switch Type {
+	case "daily:gpt-4":
+		expiration = time.Now().AddDate(0, 0, 1)
+	case "weekly:gpt-4":
+		expiration = time.Now().AddDate(0, 0, 7)
+	case "monthly:gpt-4":
+		expiration = time.Now().AddDate(0, 1, 0)
+	default:
+		return fmt.Errorf("invalid transaction type: %s", Type)
 	}
+	expirationDate := expiration.Format("02.01.2006 15:04:05")
+	r.client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
+	return nil
 }

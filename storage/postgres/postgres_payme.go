@@ -119,9 +119,9 @@ func (p *Postgres) PerformTransaction(params *types.Params) (gin.H, int) {
 		result["state"] = 2
 		result["perform_time"] = time.Now().UnixMilli()
 	} else if result["state"] == 2 {
-		log.Println("transaction already performed:", params.ID)
+		log.Printf("transaction %s already performed", params.ID)
 	} else {
-		log.Println("invalid state:", result["state"])
+		log.Printf("invalid state of transaction %s: %s", params.ID, result["state"])
 		return nil, -31008
 	}
 
@@ -130,35 +130,31 @@ func (p *Postgres) PerformTransaction(params *types.Params) (gin.H, int) {
 	var orderID int
 	err := p.queryPayme(query, args, &orderID)
 	if err != nil {
-		log.Println("can't perform transaction:", err)
+		log.Printf("can't perform transaction %s: %s", params.ID, err)
 		return nil, -32400
 	}
 
-	query = "UPDATE orders_test SET updated_at = $1 WHERE id = $2 RETURNING user_id, amount, type;"
+	query = "UPDATE orders_test SET updated_at = $1 WHERE id = $2 RETURNING user_id, type;"
 	args = []any{time.Now().Format(time.DateTime), orderID}
 	var userID int64
-	var amount int
 	var Type string
-	err = p.queryPayme(query, args, &userID, &amount, &Type)
+	err = p.queryPayme(query, args, &userID, &Type)
 	if err != nil {
-		log.Println("can't update order:", err)
+		log.Printf("can't update order %d: %s", orderID, err)
 		return nil, -32400
-	}
-
-	query = "SELECT language_code FROM users WHERE id = $1;"
-	args = []any{userID}
-	var languageCode string
-	err = p.queryPayme(query, args, &languageCode)
-	if err != nil {
-		log.Println("can't get language_code:", err)
-		languageCode = "uz"
 	}
 
 	ctx := context.WithValue(context.Background(), "user_id", userID)
-	p.redis.PerformTransaction(ctx, amount, Type)
-	_, err = p.telegram.SendMessage(ctx, text.Success[languageCode], 0, nil)
+	err = p.redis.PerformTransaction(ctx, Type)
 	if err != nil {
-		log.Println("can't send success message:", err)
+		log.Printf("user %d: can't perform transaction: %s", userID, err)
+		return nil, -32400
+	}
+
+	ctx, _ = p.redis.Lang(ctx, "uz")
+	_, err = p.telegram.SendMessage(ctx, text.Success[lang(ctx)], 0, nil)
+	if err != nil {
+		log.Printf("user %d: can't send success message: %s", userID, err)
 	}
 
 	delete(result, "create_time")

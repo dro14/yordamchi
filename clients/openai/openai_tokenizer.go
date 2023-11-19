@@ -7,19 +7,14 @@ import (
 func (o *OpenAI) countTokens(input any) int {
 	switch input.(type) {
 	case []types.Message:
-		messages := input.([]types.Message)
 		tokens := 0
-		for i := range messages {
-			content, ok := messages[i].Content.([]types.Content)
+		for _, message := range input.([]types.Message) {
+			content, ok := message.Content.([]types.Content)
 			if ok {
-				if len(content) == 2 {
-					messages[i].Content = content[1].Text
-				} else {
-					messages[i].Content = ""
-				}
+				message.Content = content[0].Text
 			}
-			tokens += len(o.tkm.Encode(messages[i].Content.(string), nil, nil))
-			tokens += len(o.tkm.Encode(messages[i].Role, nil, nil))
+			tokens += len(o.tkm.Encode(message.Content.(string), nil, nil))
+			tokens += len(o.tkm.Encode(message.Role, nil, nil))
 			tokens += 3
 		}
 		tokens += 3

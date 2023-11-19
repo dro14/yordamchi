@@ -1,64 +1,47 @@
 package text
 
 var Settings1 = map[string]string{
-
-	"uz": `Tarif: %s
+	"uz": `Tarif: bepul
+Versiya: GPT-3.5
+Suratni tushunish: mavjud emas 🚫
 So'rovlar soni: %s
 Tugash muddati: %s
 
-Cheksiz so'rovlar kerakmi? Unda premium foydalanuvchi bo'ling!`,
+Suratni tushunadigan GPT-4 ni ishlatib ko'rmoqchimisiz? Unda premium foydalanuvchi bo'ling!`,
 
-	"ru": `Тариф: %s
+	"ru": `Подписка: бесплатная
+Версия: GPT-3.5
+Понимание изображений: недоступно 🚫
 Количество запросов: %s
 Срок истечения: %s
 
-Нужны безлимитные запросы? Тогда станьте премиум-пользователем!`,
+Хотите попробовать GPT-4, который понимает изображения? Тогда станьте премиум-пользователем!`,
 
-	"en": `Tariff: %s
+	"en": `Subscription: free
+Version: GPT-3.5
+Image understanding: unavailable 🚫
 Number of requests: %s
 Expiration date: %s
 
-Need unlimited requests? Then become a premium user!`,
-}
-
-var FreeTariff = map[string]string{
-	"uz": "oddiy",
-	"ru": "обычный",
-	"en": "free",
-}
-
-var PremiumTariff = map[string]string{
-	"uz": "premium",
-	"ru": "премиум",
-	"en": "premium",
-}
-
-var Unlimited = map[string]string{
-	"uz": "cheklanmagan",
-	"ru": "не ограничено",
-	"en": "unlimited",
+Want to try GPT-4 that understands images? Then become a premium user!`,
 }
 
 var Settings2 = map[string]string{
+	"uz": `Tarif: premium ⭐️
+Versiya: GPT-4 & GPT-4 Vision
+Suratni tushunish: mavjud ✅
+So'rovlar soni: cheklanmagan
+Tugash muddati: %s`,
 
-	"uz": `Mavjud tokenlar: %d
+	"ru": `Подписка: премиум ⭐️
+Версия: GPT-4 & GPT-4 Vision
+Понимание изображений: доступно ✅
+Количество запросов: не ограничено
+Срок истечения: %s`,
 
-GPT-4 tokenlari kerakmi?
-Ularni quyidagi komanda orqali sotib olishingiz mumkin:
-
-👉 /gpt4 👈`,
-
-	"ru": `Доступно токенов: %d
-
-Нужны токены GPT-4?
-Их можно купить с помощью следующей команды:
-
-👉 /gpt4 👈`,
-
-	"en": `Available tokens: %d
-
-Need GPT-4 tokens?
-You can buy them using the following command:
-
-👉 /gpt4 👈`,
+	"en": `Subscription: premium ⭐️
+Version: GPT-4 & GPT-4 Vision
+Image understanding: available ✅
+Number of requests: unlimited
+Expiration date: %s`,
 }

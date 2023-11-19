@@ -4,12 +4,11 @@ import (
 	"context"
 	"log"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) newChat(ctx context.Context) {
+func (p *Processor) newChatCallback(ctx context.Context) {
 	p.redis.DeleteHistory(ctx)
 	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
@@ -17,40 +16,33 @@ func (p *Processor) newChat(ctx context.Context) {
 	}
 }
 
-func (p *Processor) examplesCallback(ctx context.Context, messageID int) {
-	err := p.telegram.EditMessage(ctx, text.Examples[lang(ctx)], messageID, p.examplesButton(lang(ctx)))
-	if err != nil {
-		log.Println("can't edit examples callback")
-	}
-}
-
-func (p *Processor) helpCallback(ctx context.Context, messageID int) {
-	err := p.telegram.EditMessage(ctx, text.Help[lang(ctx)], messageID, nil)
+func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	err := p.telegram.EditMessage(ctx, text.Help[lang(ctx)], callbackQuery.Message.MessageID, nil)
 	if err != nil {
 		log.Println("can't edit help callback")
 	}
 }
 
-func (p *Processor) model(ctx context.Context, messageID int, model string) {
-	if model == p.redis.Model(ctx) {
-		return
-	} else if model == models.GPT4 {
-		p.redis.GPT4(ctx)
-	} else {
-		p.redis.GPT3(ctx)
-	}
-	err := p.telegram.EditMessage(ctx, p.msg(ctx), messageID, p.settingsButtons(ctx))
+func (p *Processor) settingsCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	err := p.telegram.EditMessage(ctx, text.Premium[lang(ctx)], callbackQuery.Message.MessageID, p.premiumButtons(ctx))
 	if err != nil {
-		log.Println("can't edit model callback")
+		log.Println("can't edit settings callback")
 	}
 }
 
-func (p *Processor) languageCallback(ctx context.Context, message *tgbotapi.Message, lang string) {
-	ctx = context.WithValue(ctx, "language_code", lang)
+func (p *Processor) languageCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	ctx = context.WithValue(ctx, "language_code", callbackQuery.Data)
 	p.redis.SetLang(ctx)
 	p.redis.DeleteHistory(ctx)
 	p.telegram.SetCommands(ctx)
-	p.postgres.SetLang(ctx, message.From)
-	p.start(ctx, message)
-	p.telegram.DeleteMessage(ctx, message.MessageID)
+	p.postgres.SetLang(ctx, callbackQuery.From)
+	p.start(ctx, callbackQuery.From)
+	p.telegram.DeleteMessage(ctx, callbackQuery.Message.MessageID)
+}
+
+func (p *Processor) examplesCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	err := p.telegram.EditMessage(ctx, text.Examples[lang(ctx)], callbackQuery.Message.MessageID, p.examplesButton(ctx))
+	if err != nil {
+		log.Println("can't edit examples callback")
+	}
 }

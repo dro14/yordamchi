@@ -5,46 +5,38 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-redis/redis/v8"
 )
 
 func (r *Redis) UserStatus(ctx context.Context) UserStatus {
-	_, err := r.client.Get(ctx, "model:"+id(ctx)).Result()
+	_, err := r.client.Get(ctx, "premium:"+id(ctx)).Result()
 	if err == nil {
-		return GPT4Status
-	} else if !errors.Is(err, redis.Nil) {
-		log.Printf("user %s: can't check whether status is gpt-4: %s", id(ctx), err)
-		return UnknownStatus
-	}
-
-	_, err = r.client.Get(ctx, "premium:"+id(ctx)).Result()
-	if err == nil {
-		return PremiumStatus
+		return StatusPremium
 	} else if !errors.Is(err, redis.Nil) {
 		log.Printf("user %s: can't check whether status is premium: %s", id(ctx), err)
-		return UnknownStatus
+		return StatusUnknown
 	}
 
 	requests, err := r.client.Get(ctx, "free:"+id(ctx)).Int()
 	if err == nil {
 		if requests > 0 && requests <= utils.NumOfFreeRequests {
-			return FreeStatus
+			return StatusFree
 		} else if requests != 0 {
 			log.Printf("user %s: invalid number of requests: %d", id(ctx), requests)
-			return UnknownStatus
+			return StatusUnknown
 		}
 	} else if errors.Is(err, redis.Nil) {
 		r.client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeRequests, untilMidnight())
-		return FreeStatus
+		return StatusFree
 	} else {
 		log.Printf("user %s: can't check whether status is free: %s", id(ctx), err)
-		return UnknownStatus
+		return StatusUnknown
 	}
 
-	return ExhaustedStatus
+	return StatusExhausted
 }
 
 func (r *Redis) Expiration(ctx context.Context) string {
@@ -64,24 +56,8 @@ func (r *Redis) Requests(ctx context.Context) string {
 	return fmt.Sprintf("%d/%d", requests, utils.NumOfFreeRequests)
 }
 
-func (r *Redis) Decrement(ctx context.Context, used int) {
-	switch ctx.Value("model") {
-	case models.GPT4, models.GPT4V:
-		available, err := r.client.Get(ctx, "gpt-4:"+id(ctx)).Int()
-		if err != nil {
-			log.Printf("can't get %q: %s", "gpt-4:"+id(ctx), err)
-			return
-		}
-		if available <= used {
-			r.client.Del(ctx, "gpt-4:"+id(ctx))
-		} else {
-			r.client.Set(ctx, "gpt-4:"+id(ctx), available-used, 0)
-		}
-	default:
-		_, err := r.client.Get(ctx, "premium:"+id(ctx)).Result()
-		if err == nil {
-			return
-		}
+func (r *Redis) DecrementRequests(ctx context.Context) {
+	if ctx.Value("user_status") == StatusFree {
 		requests, err := r.client.Get(ctx, "free:"+id(ctx)).Int()
 		if err != nil {
 			log.Printf("can't get %q: %s", "free:"+id(ctx), err)
@@ -113,26 +89,5 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 }
 
 func (r *Redis) SetLang(ctx context.Context) {
-	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), 0)
-}
-
-func (r *Redis) GPT3(ctx context.Context) {
-	r.client.Del(ctx, "model:"+id(ctx))
-}
-
-func (r *Redis) GPT4(ctx context.Context) {
-	r.client.Set(ctx, "model:"+id(ctx), models.GPT4, 0)
-}
-
-func (r *Redis) Model(ctx context.Context) string {
-	_, err := r.client.Get(ctx, "model:"+id(ctx)).Result()
-	if err != nil {
-		return models.GPT3
-	}
-	return models.GPT4
-}
-
-func (r *Redis) GPT4Tokens(ctx context.Context) int {
-	tokens, _ := r.client.Get(ctx, "gpt-4:"+id(ctx)).Int()
-	return tokens
+	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), 30*24*time.Hour)
 }

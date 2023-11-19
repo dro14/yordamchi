@@ -14,6 +14,8 @@ import (
 )
 
 func (o *OpenAI) send(ctx context.Context, request any) (*http.Response, error) {
+	fmt.Printf("%+v\n", request)
+
 	resp, err := o.makeRequest(ctx, request)
 	if err != nil {
 		return nil, err

@@ -8,7 +8,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Postgres) JoinUser(ctx context.Context, user *tgbotapi.User, joinedBy int64) {
+func (p *Postgres) JoinUser(ctx context.Context, user *tgbotapi.User) {
 	query := "INSERT INTO users (id, first_name, last_name, username, language_code) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;"
 	args := []any{user.ID, user.FirstName, user.LastName, user.UserName, lang(ctx)}
 	err := p.execTelegram(ctx, user, query, args)
@@ -17,8 +17,8 @@ func (p *Postgres) JoinUser(ctx context.Context, user *tgbotapi.User, joinedBy i
 		return
 	}
 
-	query = "INSERT INTO user_configs (id, joined_by, is_active, joined_at) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;"
-	args = []any{user.ID, joinedBy, true, time.Unix(date(ctx), 0).Format(time.DateTime)}
+	query = "INSERT INTO user_configs (id, is_active, joined_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;"
+	args = []any{user.ID, true, time.Now().Format(time.DateTime)}
 	err = p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to activate user: %s", user.ID, err)
@@ -29,9 +29,9 @@ func (p *Postgres) JoinUser(ctx context.Context, user *tgbotapi.User, joinedBy i
 	}
 }
 
-func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, stats *Stats) {
+func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Message) {
 	query := "INSERT INTO messages (user_id, is_premium, created_on, prompted_at, completed_at, first_send, last_edit, prompt_tokens, prompt_length, completion_tokens, completion_length, activity, requests, attempts, finish_reason, language_code) VAlUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);"
-	args := []any{user.ID, stats.IsPremium, time.Unix(date(ctx), 0).Format(time.DateOnly), time.Unix(date(ctx), 0).Format(time.TimeOnly), time.Unix(stats.CompletedAt, 0).Format(time.TimeOnly), stats.FirstSend, stats.LastEdit, stats.PromptTokens, stats.PromptLength, stats.CompletionTokens, stats.CompletionLength, stats.Activity, stats.Requests, stats.Attempts, stats.FinishReason, lang(ctx)}
+	args := []any{user.ID, msg.IsPremium, msg.CreatedOn, msg.PromptedAt, msg.CompletedAt, msg.FirstSend, msg.LastEdit, msg.PromptTokens, msg.PromptLength, msg.CompletionTokens, msg.CompletionLength, msg.Activity, msg.Requests, msg.Attempts, msg.FinishReason, lang(ctx)}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to save message: %s", user.ID, err)
@@ -44,7 +44,7 @@ func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, stats *
 
 func (p *Postgres) DeactivateUser(ctx context.Context, user *tgbotapi.User) {
 	query := "UPDATE user_configs SET is_active = $1, deactivated_at = $2 WHERE id = $3;"
-	args := []any{false, time.Unix(date(ctx), 0).Format(time.DateTime), user.ID}
+	args := []any{false, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to deactivate user: %s", user.ID, err)
@@ -53,7 +53,7 @@ func (p *Postgres) DeactivateUser(ctx context.Context, user *tgbotapi.User) {
 
 func (p *Postgres) RejoinUser(ctx context.Context, user *tgbotapi.User) {
 	query := "UPDATE user_configs SET is_active = $1, rejoined_at = $2 WHERE id = $3;"
-	args := []any{true, time.Unix(date(ctx), 0).Format(time.DateTime), user.ID}
+	args := []any{true, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to rejoin user: %s", user.ID, err)

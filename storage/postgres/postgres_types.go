@@ -1,11 +1,21 @@
 package postgres
 
-type Stats struct {
-	IsPremium                          string
-	CompletedAt                        int64
-	FirstSend, LastEdit                int64
-	PromptTokens, PromptLength         int
-	CompletionTokens, CompletionLength int
-	Activity, Requests, Attempts       int
-	FinishReason                       string
+type Message struct {
+	ID               int
+	UserID           int64
+	IsPremium        string
+	CreatedOn        string
+	PromptedAt       string
+	CompletedAt      string
+	FirstSend        int
+	LastEdit         int
+	PromptTokens     int
+	PromptLength     int
+	CompletionTokens int
+	CompletionLength int
+	Activity         int
+	Requests         int
+	Attempts         int
+	FinishReason     string
+	LanguageCode     string
 }

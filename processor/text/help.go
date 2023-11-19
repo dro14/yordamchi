@@ -1,40 +1,39 @@
 package text
 
 var Help = map[string]string{
-
-	"uz": `Bu Telegram bot ChatGPTga ulangan - OpenAIning inson tilini qayta ishlay oladigan sin'iy intellekti. Bot so'rovni tahlil qiladi va ehtimoli eng yuqori bo'lgan javobni qaytaradi. Foydalanish uchun quyidagi buyruqlarni mavjud:
+	"uz": `Botdan foydalanish uchun quyidagi komandalar mavjud:
 
 /start - Botni ishga tushirish
 /help - Bot haqida ma'lumot
 /settings - Botning sozlamalari
 /language - Tilni o'zgartirish
 /examples - Foydalanish misollari
-/premium - Cheksiz so'rovlar
-/gpt4 - Eng kuchlisi
+/premium - Qo'shimcha funksiyalar
+/image - Tasvir generatsiyasi
 
-Buyruqlarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishingiz mumkin.`,
+Komandalarni chap pastki burchakdagi ko'k menu tugmachasi orqali ham ishlatishingiz mumkin`,
 
-	"ru": `Этот Telegram бот подключён к ChatGPT - искусственный интеллект от OpenAI, способный обрабатывать человеческий язык. Бот анализирует запрос и дает наиболее вероятный ответ. Для использования доступны следующие команды:
+	"ru": `Чтобы использовать бота доступны следующие команды:
 
 /start - Запуск бота
 /help - Информация о боте
 /settings - Настройки бота
 /language - Поменять язык
 /examples - Примеры использования
-/premium - Неограниченные запросы
-/gpt4 - Самый мощный
+/premium - Дополнительные функции
+/image - Генерация изображений
 
-Команды также можно использовать с помощью синей кнопки меню в нижнем левом углу.`,
+Командами также можно воспользоваться с помощью синей кнопки меню в нижнем левом углу`,
 
-	"en": `This Telegram bot is powered by ChatGPT - artificial intelligence by OpenAI, that is capable of processing natural language. Bot understands human language and gives the most likely answer. To use, the following commands are available:
+	"en": `To use the bot, the following commands are available:
 
 /start - Start the bot
 /help - Information about the bot
 /settings - Bot settings
 /language - Change the language
 /examples - Examples of usage
-/premium - Unlimited requests
-/gpt4 - The most powerful
+/premium - Additional features
+/image - Image generation
 
-You can also use these commands with via the blue menu button in the lower left corner.`,
+You can also use these commands via the blue menu button on the bottom left`,
 }

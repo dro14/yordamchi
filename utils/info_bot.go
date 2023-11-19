@@ -8,12 +8,9 @@ import (
 
 var bot *tgbotapi.BotAPI
 
-func SendInfoMessage(text string) {
-	config := tgbotapi.NewMessage(1331278972, "")
-	config.ParseMode = tgbotapi.ModeMarkdownV2
-	slices := Slice(text)
-	for _, slice := range slices {
-		config.Text = MarkdownV2(slice)
+func SendInfoMessage(fromChatID int64, messageID int) {
+	if fromChatID == 1792604195 || fromChatID == -1001924963699 {
+		config := tgbotapi.NewCopyMessage(1331278972, fromChatID, messageID)
 		_, err := bot.Request(config)
 		if err != nil {
 			log.Println("can't send info message:", err)

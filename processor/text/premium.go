@@ -1,31 +1,36 @@
 package text
 
 var Premium = map[string]string{
-
 	"uz": `Botning to'liq imkoniyatlarini ochish uchun premium foydalanuvchiga aylaning.
 
-Cheksiz haftalik tarif - 10,000 so'm
-Cheksiz oylik tarif - 30,000 so'm
+Premium tarifda:
+• Eng kuchli sun'iy intellekt - GPT-4 ✅
+• Suratni tushunish - GPT-4 Vision ✅
+• Cheksiz so'rovlar soni ✅
 
-To‘lanadigan pul server, ma’lumotlar bazasi va API xarajatlarini qoplash uchun sarflanadi. Shu bilan birga, Siz botning rivojlanishiga o'z hissangizni qo'shgan bo'lasiz.
+Biz foydalanuvchilarimizga eng qulay interfeys yaratishga intilamiz, va doimiy yangi funktsiyalar ustida ishlaymiz.
 
 Millionlar ishongan servis - Payme orqali to'lang`,
 
 	"ru": `Откройте полный потенциал бота, став премиум пользователем.
 
-Безлимитный недельный тариф - 10,000 сум
-Безлимитный месячный тариф - 30,000 сум
+В премиум тарифе:
+• Самый мощный искусственный интеллект - GPT-4 ✅
+• Понимание изображений - GPT-4 Vision ✅
+• Неограниченное количество запросов ✅
 
-Оплачиваемые деньги будут использоваться для покрытия расходов на сервер, базу данных и API. Кроме того, этим Вы поддержите развитие бота.
+Мы стремимся создать для наших пользователей максимально удобный интерфейс, и постоянно работаем над новыми функциями.
 
 Оплатите через Payme - доверянный миллионами сервис`,
 
 	"en": `Unlock full potential of the bot by becoming a premium user.
 
-Unlimited weekly tariff - 10,000 sum
-Unlimited monthly tariff - 30,000 sum
+In premium tariff:
+• Most powerful artificial intelligence - GPT-4 ✅
+• Image understanding - GPT-4 Vision ✅
+• Unlimited number of requests ✅
 
-Paid money will be used to cover server, database and API expenses. In addition, You will contribute to the development of the bot.
+We strive to create the most convenient user interface and smooth user experience, and constantly work on new features.
 
 Pay via Payme - service trusted by millions`,
 }

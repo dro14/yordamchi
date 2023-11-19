@@ -13,9 +13,8 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Botning sozlamalari"},
 		{Command: "language", Description: "Tilni o'zgartirish"},
 		{Command: "examples", Description: "Foydalanish misollari"},
-		{Command: "premium", Description: "Cheksiz so'rovlar"},
-		{Command: "gpt4", Description: "Eng kuchlisi"},
-		{Command: "image", Description: "Rasm generatsiyasi"},
+		{Command: "premium", Description: "Qo'shimcha funksiyalar"},
+		{Command: "image", Description: "Tasvir generatsiyasi"},
 	},
 	"ru": {
 		{Command: "start", Description: "Запустить бота"},
@@ -23,8 +22,7 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Настройки бота"},
 		{Command: "language", Description: "Изменить язык"},
 		{Command: "examples", Description: "Примеры использования"},
-		{Command: "premium", Description: "Безлимитные запросы"},
-		{Command: "gpt4", Description: "Самый мощный"},
+		{Command: "premium", Description: "Дополнительные функции"},
 		{Command: "image", Description: "Генерация изображений"},
 	},
 	"en": {
@@ -33,8 +31,7 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Bot settings"},
 		{Command: "language", Description: "Change language"},
 		{Command: "examples", Description: "Usage examples"},
-		{Command: "premium", Description: "Unlimited requests"},
-		{Command: "gpt4", Description: "The most powerful"},
+		{Command: "premium", Description: "Additional features"},
 		{Command: "image", Description: "Image generation"},
 	},
 }

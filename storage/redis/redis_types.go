@@ -3,11 +3,10 @@ package redis
 type UserStatus int
 
 const (
-	UnknownStatus UserStatus = iota
-	GPT4Status
-	PremiumStatus
-	FreeStatus
-	ExhaustedStatus
+	StatusUnknown UserStatus = iota
+	StatusExhausted
+	StatusFree
+	StatusPremium
 )
 
 type Activity struct {

@@ -20,7 +20,7 @@ Retry:
 	if err != nil {
 		log.Printf("%s\nuser %d: %s\n", query, user.ID, err)
 		if errors.Is(err, sql.ErrNoRows) || strings.Contains(err.Error(), "violates foreign key constraint") {
-			p.JoinUser(ctx, user, 0)
+			p.JoinUser(ctx, user)
 			goto Retry
 		} else if attempts < utils.RetryAttempts {
 			utils.Sleep(&retryDelay)
@@ -41,7 +41,7 @@ Retry:
 	if err != nil {
 		log.Printf("%s\nuser %d: %s\n", query, user.ID, err)
 		if errors.Is(err, sql.ErrNoRows) {
-			p.JoinUser(ctx, user, 0)
+			p.JoinUser(ctx, user)
 			goto Retry
 		} else if attempts < utils.RetryAttempts {
 			utils.Sleep(&retryDelay)
