@@ -1,9 +1,10 @@
 package redis
 
 import (
-	"github.com/go-redis/redis/v8"
 	"log"
 	"os"
+
+	"github.com/go-redis/redis/v8"
 )
 
 type Redis struct {

@@ -1,3 +1,7 @@
 package text
 
-var Language = "Botning tilini tanlang:\n\nВыберите язык бота:\n\nChoose the language of the bot:"
+var Language = `Bot qayta ishga tushdi. Iltimos, botning tilini tanlang:
+
+Бот перезапустился. Пожалуйста, выберите язык бота:
+
+The bot has restarted. Please, choose the language of the bot:`
