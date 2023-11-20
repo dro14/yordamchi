@@ -98,7 +98,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 			time.Sleep(utils.RequestInterval)
 
 			switch completion {
-			case text.RequestFailed[lang(ctx)]:
+			case text.BadRequest[lang(ctx)], text.RequestFailed[lang(ctx)]:
 				return
 			case text.Error[lang(ctx)]:
 				i = 0

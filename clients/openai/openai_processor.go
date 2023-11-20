@@ -22,7 +22,10 @@ Retry:
 	response, err := o.Completions(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
-		if strings.Contains(errMsg, "stream error") {
+		if strings.Contains(errMsg, "400 Bad Request") {
+			channel <- text.BadRequest[lang(ctx)]
+			return
+		} else if strings.Contains(errMsg, "stream error") {
 			channel <- text.Error[lang(ctx)]
 			retryDelay = 0
 		} else if strings.Contains(errMsg, "context deadline exceeded") {

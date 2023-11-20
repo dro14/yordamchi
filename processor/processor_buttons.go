@@ -59,7 +59,7 @@ func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboard
 	args := make([]string, 6)
 	args[0] = p.payme.CheckoutURL(ctx, 1000000, "daily:gpt-4")
 	args[1] = p.payme.CheckoutURL(ctx, 5000000, "weekly:gpt-4")
-	args[2] = p.payme.CheckoutURL(ctx, 12000000, "monthly:gpt-4")
+	args[2] = p.payme.CheckoutURL(ctx, 15000000, "monthly:gpt-4")
 	args[3] = text[lang(ctx)][0]
 	args[4] = text[lang(ctx)][1]
 	args[5] = text[lang(ctx)][2]

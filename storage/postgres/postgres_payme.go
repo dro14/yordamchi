@@ -43,11 +43,11 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	var title string
 	switch Type {
 	case "daily:gpt-4":
-		title = fmt.Sprintf("Дневная подписка GPT-4 для пользователя %d", userID)
+		title = fmt.Sprintf("Подписка GPT-4: дневная\nID пользователя: %d", userID)
 	case "weekly:gpt-4":
-		title = fmt.Sprintf("Недельная подписка GPT-4 для пользователя %d", userID)
+		title = fmt.Sprintf("Подписка GPT-4: недельная\nID пользователя: %d", userID)
 	case "monthly:gpt-4":
-		title = fmt.Sprintf("Месячная подписка GPT-4 для пользователя %d", userID)
+		title = fmt.Sprintf("Подписка GPT-4: месячная\nID пользователя: %d", userID)
 	default:
 		log.Println("invalid order type:", Type)
 		return nil, -31052
