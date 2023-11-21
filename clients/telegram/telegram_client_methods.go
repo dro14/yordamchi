@@ -122,3 +122,11 @@ func (t *Telegram) SendFile(ctx context.Context, filepath string) {
 		log.Printf("user %d: can't send file", id(ctx))
 	}
 }
+
+func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
+	config := tgbotapi.NewCallback(ID, text)
+	_, err := t.makeRequest(ctx, config)
+	if err != nil {
+		log.Printf("user %d: can't answer callback query", id(ctx))
+	}
+}

@@ -93,7 +93,7 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 
 	switch callbackQuery.Data {
 	case "new_chat":
-		p.newChatCallback(ctx)
+		p.newChatCallback(ctx, callbackQuery)
 	case "help":
 		p.helpCallback(ctx, callbackQuery)
 	case "settings":

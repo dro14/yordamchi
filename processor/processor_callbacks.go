@@ -8,12 +8,13 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) newChatCallback(ctx context.Context) {
+func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	p.redis.DeleteHistory(ctx)
 	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
 		log.Println("can't send new chat callback")
 	}
+	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.NewChatAnswer[lang(ctx)])
 }
 
 func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
