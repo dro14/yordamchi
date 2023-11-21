@@ -8,12 +8,31 @@ import (
 
 var bot *tgbotapi.BotAPI
 
-func SendInfoMessage(fromChatID int64, messageID int) {
-	if fromChatID == 1792604195 || fromChatID == -1001924963699 {
-		config := tgbotapi.NewCopyMessage(1331278972, fromChatID, messageID)
-		_, err := bot.Request(config)
-		if err != nil {
-			log.Println("can't send info message:", err)
+func SendInfoMessage(text string, message *tgbotapi.Message) {
+	if message != nil {
+		if message.Photo != nil {
+			photo := message.Photo[len(message.Photo)-1]
+			file := tgbotapi.FileID(photo.FileID)
+			config := tgbotapi.NewPhoto(1331278972, file)
+			config.Caption = message.Caption
+			_, err := bot.Request(config)
+			if err != nil {
+				log.Println("can't send info message:", err)
+			}
+		} else {
+			text = message.Text
+		}
+	}
+	if text != "" {
+		config := tgbotapi.NewMessage(1331278972, "")
+		config.ParseMode = tgbotapi.ModeMarkdownV2
+		slices := Slice(text, 4096)
+		for _, slice := range slices {
+			config.Text = MarkdownV2(slice)
+			_, err := bot.Request(config)
+			if err != nil {
+				log.Println("can't send info message:", err)
+			}
 		}
 	}
 }

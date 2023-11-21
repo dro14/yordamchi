@@ -66,7 +66,7 @@ func (o *APIs) Vision(ctx context.Context, photoURL, caption string) string {
 }
 
 func (o *APIs) Translate(sl, tl, q string) string {
-	qs := utils.Slice(q)
+	qs := utils.Slice(q, 5000)
 
 	for i := range qs {
 		retryDelay := utils.RetryDelay

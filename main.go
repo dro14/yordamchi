@@ -23,7 +23,7 @@ func main() {
 	}
 
 	recover.Start()
-	utils.SendInfoMessage(-1001924963699, 35)
+	utils.SendInfoMessage("@yordamchi_ai_bot restarted", nil)
 	err := handlers.New().Run(port)
 	if err != nil {
 		log.Fatal("can't run server:", err)

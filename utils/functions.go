@@ -14,12 +14,12 @@ func Sleep(retryDelay *time.Duration) {
 	}
 }
 
-func Slice(completion string) []string {
+func Slice(completion string, maxLen int) []string {
 	var completions []string
-	for len(completion) > 4096 {
+	for len(completion) > maxLen {
 		cutIndex := 0
 	Loop:
-		for i := 4096; i >= 0; i-- {
+		for i := maxLen; i >= 0; i-- {
 			switch completion[i] {
 			case ' ', '\n', '\t', '\r':
 				cutIndex = i

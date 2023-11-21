@@ -15,7 +15,7 @@ import (
 )
 
 func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
-	utils.SendInfoMessage(message.From.ID, message.MessageID)
+	utils.SendInfoMessage("", message)
 	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Println("can't send loading message")
@@ -54,7 +54,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
 		completion = p.apis.Translate("auto", "uz", completion)
-		completions = utils.Slice(completion)
+		completions = utils.Slice(completion, 4096)
 
 		var replyMarkup *tgbotapi.InlineKeyboardMarkup
 		if len(completions) == 1 {
@@ -83,7 +83,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	} else {
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		for completion = range channel {
-			completions = utils.Slice(completion)
+			completions = utils.Slice(completion, 4096)
 			if i >= len(completions) {
 				i = len(completions) - 1
 			}
@@ -131,5 +131,5 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	msg.PromptedAt = time.Unix(int64(message.Date), 0).Format(time.TimeOnly)
 	msg.CompletedAt = time.Now().Format(time.TimeOnly)
 	p.postgres.SaveMessage(ctx, message.From, msg)
-	utils.SendInfoMessage(message.From.ID, messageID)
+	utils.SendInfoMessage(completion, nil)
 }
