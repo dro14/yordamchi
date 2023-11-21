@@ -15,7 +15,9 @@ import (
 )
 
 func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
-	utils.SendInfoMessage("", message)
+	if message.From.ID == 1792604195 {
+		utils.SendInfoMessage("", message)
+	}
 	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Println("can't send loading message")
@@ -131,5 +133,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	msg.PromptedAt = time.Unix(int64(message.Date), 0).Format(time.TimeOnly)
 	msg.CompletedAt = time.Now().Format(time.TimeOnly)
 	p.postgres.SaveMessage(ctx, message.From, msg)
-	utils.SendInfoMessage(completion, nil)
+	if message.From.ID == 1792604195 {
+		utils.SendInfoMessage(completion, nil)
+	}
 }
