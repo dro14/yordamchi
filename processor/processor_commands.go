@@ -76,6 +76,13 @@ func (p *Processor) premium(ctx context.Context) {
 	}
 }
 
+func (p *Processor) image(ctx context.Context) {
+	_, err := p.telegram.SendMessage(ctx, text.Image[lang(ctx)], 0, p.imageButtons(ctx))
+	if err != nil {
+		log.Println("can't send image command")
+	}
+}
+
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")
 	prompt = strings.TrimSpace(prompt)

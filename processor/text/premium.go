@@ -1,7 +1,7 @@
 package text
 
 var Premium = map[string]string{
-	"uz": `Botning to'liq imkoniyatlarini ochish uchun premium foydalanuvchiga aylaning.
+	"uz": `So'nggi texnologik rivojlanish qay darajaga yetganini ko'rmoqchimisiz? Unda premium foydalanuvchiga bo'ling.
 
 Premium tarifda:
 • Cheksiz so'rovlar soni ✅
@@ -14,7 +14,7 @@ Premium tarifda:
 
 Millionlar ishongan servis - Payme orqali to'lang`,
 
-	"ru": `Откройте полный потенциал бота, став премиум пользователем.
+	"ru": `Хотите увидеть, насколько далеко продвинулся последний технологический прогресс? Тогда станьте премиум-пользователем.
 
 В премиум подписке:
 • Неограниченное количество запросов ✅
@@ -27,7 +27,7 @@ Millionlar ishongan servis - Payme orqali to'lang`,
 
 Оплатите через Payme - доверянный миллионами сервис`,
 
-	"en": `Unlock full potential of the bot by becoming a premium user.
+	"en": `Want to see how far the latest technological progress has come? Then become a premium user.
 
 In premium subscription:
 • Unlimited number of requests ✅

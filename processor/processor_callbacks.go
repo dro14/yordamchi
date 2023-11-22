@@ -2,7 +2,6 @@ package processor
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/utils"
 	"log"
 	"strings"
 
@@ -51,7 +50,7 @@ func (p *Processor) examplesCallback(ctx context.Context, callbackQuery *tgbotap
 }
 
 func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	style, prompt, found := strings.Cut(callbackQuery.Data, utils.Delimiter)
+	style, prompt, found := strings.Cut(callbackQuery.Data, "|")
 	if !found {
 		log.Println("unknown callback data:", callbackQuery.Data)
 		return
