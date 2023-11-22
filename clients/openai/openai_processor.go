@@ -56,7 +56,7 @@ Retry:
 	channel <- completion
 }
 
-func (o *OpenAI) ProcessGenerations(ctx context.Context, prompt string) (string, error) {
+func (o *OpenAI) ProcessGenerations(ctx context.Context, prompt string) (string, string) {
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
 	var attempts int
@@ -65,7 +65,9 @@ Retry:
 	response, err := o.Generations(ctx, prompt)
 	if err != nil {
 		errMsg = err.Error()
-		if strings.Contains(errMsg, "context deadline exceeded") {
+		if strings.Contains(errMsg, "400 Bad Request") {
+			return "", text.BadRequest[lang(ctx)]
+		} else if strings.Contains(errMsg, "context deadline exceeded") {
 			retryDelay = 0
 		}
 		if attempts < utils.RetryAttempts {
@@ -73,11 +75,11 @@ Retry:
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, attempts)
-			return text.RequestFailed[lang(ctx)], err
+			return "", text.RequestFailed[lang(ctx)]
 		}
 	} else if attempts > 1 {
 		log.Printf("%q was handled after %d attempts", errMsg, attempts)
 	}
 
-	return response.Data[0].URL, nil
+	return response.Data[0].URL, response.Data[0].RevisedPrompt
 }

@@ -103,7 +103,7 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 	case "examples":
 		p.examplesCallback(ctx, callbackQuery)
 	default:
-		log.Println("unknown callback data:", callbackQuery.Data)
+		p.generateCallback(ctx, callbackQuery)
 	}
 }
 

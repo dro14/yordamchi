@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -64,6 +65,26 @@ func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboard
 	args[4] = text[lang(ctx)][1]
 	args[5] = text[lang(ctx)][2]
 	return url(args...)
+}
+
+func (p *Processor) generateButtons(ctx context.Context, prompt string) *tgbotapi.InlineKeyboardMarkup {
+	vividText := map[string]string{
+		"uz": "yorqin",
+		"ru": "яркий",
+		"en": "vivid",
+	}
+	naturalText := map[string]string{
+		"uz": "tabiiy",
+		"ru": "натуральный",
+		"en": "natural",
+	}
+	vividData := "vivid" + utils.Delimiter + prompt
+	naturalData := "natural" + utils.Delimiter + prompt
+	row := [][]tgbotapi.InlineKeyboardButton{{
+		{Text: vividText[lang(ctx)], CallbackData: &vividData},
+		{Text: naturalText[lang(ctx)], CallbackData: &naturalData},
+	}}
+	return &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: row}
 }
 
 func data(args ...string) *tgbotapi.InlineKeyboardMarkup {

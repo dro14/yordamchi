@@ -4,33 +4,39 @@ var Premium = map[string]string{
 	"uz": `Botning to'liq imkoniyatlarini ochish uchun premium foydalanuvchiga aylaning.
 
 Premium tarifda:
+• Cheksiz so'rovlar soni ✅
 • Eng kuchli sun'iy intellekt - GPT-4 ✅
 • Rasmni tushunish - GPT-4 Vision ✅
-• Cheksiz so'rovlar soni ✅
 
-Biz foydalanuvchilarimizga eng qulay interfeys yaratishga intilamiz, va doimiy yangi funktsiyalar ustida ishlaymiz.
+ 10 000 so'm - Kunlik
+ 50 000 so'm - Haftalik
+150 000 so'm - Oylik
 
 Millionlar ishongan servis - Payme orqali to'lang`,
 
 	"ru": `Откройте полный потенциал бота, став премиум пользователем.
 
-В премиум тарифе:
+В премиум подписке:
+• Неограниченное количество запросов ✅
 • Самый мощный искусственный интеллект - GPT-4 ✅
 • Понимание изображений - GPT-4 Vision ✅
-• Неограниченное количество запросов ✅
 
-Мы стремимся создать для наших пользователей максимально удобный интерфейс, и постоянно работаем над новыми функциями.
+ 10 000 сум - Дневная
+ 50 000 сум - Недельная
+150 000 сум - Месячная
 
 Оплатите через Payme - доверянный миллионами сервис`,
 
 	"en": `Unlock full potential of the bot by becoming a premium user.
 
-In premium tariff:
+In premium subscription:
+• Unlimited number of requests ✅
 • Most powerful artificial intelligence - GPT-4 ✅
 • Image understanding - GPT-4 Vision ✅
-• Unlimited number of requests ✅
 
-We strive to create the most convenient user interface and smooth user experience, and constantly work on new features.
+ 10 000 UZS - Daily
+ 50 000 UZS - Weekly
+150 000 UZS - Monthly
 
 Pay via Payme - service trusted by millions`,
 }

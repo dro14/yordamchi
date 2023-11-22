@@ -52,7 +52,7 @@ func (o *OpenAI) Generations(ctx context.Context, prompt string) (*types.Respons
 		Model:   "dall-e-3",
 		Quality: "hd",
 		Size:    "1024x1024",
-		Style:   "vivid",
+		Style:   ctx.Value("style").(string),
 		User:    id(ctx),
 	}
 

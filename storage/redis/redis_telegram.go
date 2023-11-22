@@ -91,3 +91,8 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 func (r *Redis) SetLang(ctx context.Context) {
 	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), 30*24*time.Hour)
 }
+
+func (r *Redis) Images(ctx context.Context) int {
+	images, _ := r.client.Get(ctx, "images:"+id(ctx)).Int()
+	return images
+}

@@ -77,24 +77,13 @@ func (p *Processor) premium(ctx context.Context) {
 }
 
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
-	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
-	if err != nil {
-		log.Println("can't send loading message")
-		return
-	}
-
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")
 	prompt = strings.TrimSpace(prompt)
 	prompt = p.apis.Translate("auto", "en", prompt)
-
-	photoURL, err := p.openai.ProcessGenerations(ctx, prompt)
+	_, err := p.telegram.SendMessage(ctx, text.Generate[lang(ctx)], message.MessageID, p.generateButtons(ctx, prompt))
 	if err != nil {
-		log.Println("can't process generations:", err)
-		return
+		log.Println("can't send generate command")
 	}
-
-	p.telegram.SendPhoto(ctx, photoURL)
-	p.telegram.DeleteMessage(ctx, messageID)
 }
 
 func (p *Processor) logs(ctx context.Context, message *tgbotapi.Message) {
