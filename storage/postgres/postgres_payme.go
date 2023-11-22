@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/payme/types"
@@ -27,9 +29,9 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	query := "SELECT amount, type, user_id FROM orders_test WHERE id = $1;"
 	args := []any{params.Account.OrderID}
 	var amount int
-	var Type string
+	var order string
 	var userID int64
-	err := p.queryPayme(query, args, &amount, &Type, &userID)
+	err := p.queryPayme(query, args, &amount, &order, &userID)
 	if err != nil {
 		log.Println("can't get order:", err)
 		return nil, -31050
@@ -40,16 +42,35 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 		return nil, -31001
 	}
 
+	subscription, orderType, found := strings.Cut(order, ":")
+	if !found {
+		log.Println("invalid order:", order)
+		return nil, -31052
+	}
+
 	var title string
-	switch Type {
-	case "daily:gpt-4":
-		title = fmt.Sprintf("Подписка GPT-4: дневная\n2. ID пользователя: %d", userID)
-	case "weekly:gpt-4":
-		title = fmt.Sprintf("Подписка GPT-4: недельная\n2. ID пользователя: %d", userID)
-	case "monthly:gpt-4":
-		title = fmt.Sprintf("Подписка GPT-4: месячная\n2. ID пользователя: %d", userID)
+	switch orderType {
+	case "gpt-4":
+		switch subscription {
+		case "daily":
+			title = fmt.Sprintf("Подписка GPT-4: дневная\n2. ID пользователя: %d", userID)
+		case "weekly":
+			title = fmt.Sprintf("Подписка GPT-4: недельная\n2. ID пользователя: %d", userID)
+		case "monthly":
+			title = fmt.Sprintf("Подписка GPT-4: месячная\n2. ID пользователя: %d", userID)
+		default:
+			log.Printf("user %d: invalid subscripion: %v", userID, order)
+			return nil, -31052
+		}
+	case "dall-e-3":
+		_, err = strconv.Atoi(subscription)
+		if err != nil {
+			log.Println("invalid number of images:", subscription)
+			return nil, -31052
+		}
+		title = fmt.Sprintf("Генерации DALL-E 3: %s штук\n2. ID пользователя: %d", subscription, userID)
 	default:
-		log.Println("invalid order type:", Type)
+		log.Println("invalid order type:", order)
 		return nil, -31052
 	}
 
