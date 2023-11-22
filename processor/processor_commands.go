@@ -87,7 +87,8 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")
 	prompt = strings.TrimSpace(prompt)
 	prompt = p.apis.Translate("auto", "en", prompt)
-	_, err := p.telegram.SendMessage(ctx, text.Generate[lang(ctx)], message.MessageID, p.generateButtons(ctx, prompt))
+	p.redis.StorePrompt(ctx, prompt)
+	_, err := p.telegram.SendMessage(ctx, text.Generate[lang(ctx)], message.MessageID, p.generateButtons(ctx))
 	if err != nil {
 		log.Println("can't send generate command")
 	}

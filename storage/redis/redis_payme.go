@@ -30,11 +30,12 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 		expirationDate := expiration.Format("02.01.2006 15:04:05")
 		r.client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
 	case "dall-e-3":
-		images, err := strconv.Atoi(subscription)
+		purchased, err := strconv.Atoi(subscription)
 		if err != nil {
-			return fmt.Errorf("invalid number of images to set: %s", subscription)
+			return fmt.Errorf("invalid number of purchased images: %s", subscription)
 		}
-		r.client.Set(ctx, "images:"+id(ctx), images, 0)
+		available, _ := r.client.Get(ctx, "images:"+id(ctx)).Int()
+		r.client.Set(ctx, "images:"+id(ctx), available+purchased, 0)
 	default:
 		return fmt.Errorf("invalid order type: %s", order)
 	}

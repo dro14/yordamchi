@@ -2,11 +2,9 @@ package processor
 
 import (
 	"context"
-	"log"
-	"strings"
-
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
 )
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
@@ -50,14 +48,8 @@ func (p *Processor) examplesCallback(ctx context.Context, callbackQuery *tgbotap
 }
 
 func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	style, prompt, found := strings.Cut(callbackQuery.Data, ":")
-	if !found {
-		log.Println("unknown callback data:", callbackQuery.Data)
-		return
-	}
-
 	messageID := callbackQuery.Message.MessageID
-	ctx = context.WithValue(ctx, "style", style)
+	ctx = context.WithValue(ctx, "style", callbackQuery.Data)
 
 	err := p.telegram.EditMessage(ctx, text.Loading[lang(ctx)], messageID, nil)
 	if err != nil {
@@ -65,6 +57,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		return
 	}
 
+	prompt := p.redis.Prompt(ctx)
 	photoURL, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
 	if photoURL == "" {
 		log.Println("can't process generations:", err)

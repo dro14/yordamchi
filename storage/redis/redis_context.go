@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -12,24 +13,14 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-var systemPromptGPT3 = map[string]string{
-	"uz": "You are a friendly chatbot called Yordamchi, based on GPT-3.5 model architecture. Respond in English, IF NOT stated otherwise.",
-	"ru": "You are a friendly chatbot called Yordamchi, based on GPT-3.5 model architecture. Respond in Russian, IF NOT stated otherwise.",
-	"en": "You are a friendly chatbot called Yordamchi, based on GPT-3.5 model architecture. Respond in English, IF NOT stated otherwise.",
-}
-
-var systemPromptGPT4 = map[string]string{
-	"uz": "You are a friendly chatbot called Yordamchi, based on GPT-4 model architecture. Respond in Uzbek, IF NOT stated otherwise.",
-	"ru": "You are a friendly chatbot called Yordamchi, based on GPT-4 model architecture. Respond in Russian, IF NOT stated otherwise.",
-	"en": "You are a friendly chatbot called Yordamchi, based on GPT-4 model architecture. Respond in English, IF NOT stated otherwise.",
-}
+const template = "You are a friendly chatbot in Telegram called Yordamchi, based on %s model architecture."
 
 func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output context.Context, messages []types.Message) {
 	systemMessage := types.Message{Role: "system"}
 	if ctx.Value("model") == models.GPT3 {
-		systemMessage.Content = systemPromptGPT3[lang(ctx)]
+		systemMessage.Content = fmt.Sprintf(template, "GPT-3.5")
 	} else {
-		systemMessage.Content = systemPromptGPT4[lang(ctx)]
+		systemMessage.Content = fmt.Sprintf(template, "GPT-4")
 	}
 	userMessage := types.Message{Role: "user", Content: prompt}
 

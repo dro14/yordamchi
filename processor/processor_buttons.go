@@ -77,7 +77,7 @@ func (p *Processor) imageButtons(ctx context.Context) *tgbotapi.InlineKeyboardMa
 	return url(args...)
 }
 
-func (p *Processor) generateButtons(ctx context.Context, prompt string) *tgbotapi.InlineKeyboardMarkup {
+func (p *Processor) generateButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	vividText := map[string]string{
 		"uz": "yorqin",
 		"ru": "яркий",
@@ -88,11 +88,11 @@ func (p *Processor) generateButtons(ctx context.Context, prompt string) *tgbotap
 		"ru": "натуральный",
 		"en": "natural",
 	}
-	vividData := "vivid:" + prompt
-	naturalData := "natural:" + prompt
+	vivid := "vivid"
+	natural := "natural"
 	row := [][]tgbotapi.InlineKeyboardButton{{
-		{Text: vividText[lang(ctx)], CallbackData: &vividData},
-		{Text: naturalText[lang(ctx)], CallbackData: &naturalData},
+		{Text: vividText[lang(ctx)], CallbackData: &vivid},
+		{Text: naturalText[lang(ctx)], CallbackData: &natural},
 	}}
 	return &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: row}
 }

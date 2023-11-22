@@ -102,8 +102,10 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 		p.languageCallback(ctx, callbackQuery)
 	case "examples":
 		p.examplesCallback(ctx, callbackQuery)
-	default:
+	case "vivid", "natural":
 		p.generateCallback(ctx, callbackQuery)
+	default:
+		log.Println("unknown callback data:", callbackQuery.Data)
 	}
 }
 
