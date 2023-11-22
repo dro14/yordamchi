@@ -58,6 +58,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	}
 
 	prompt := p.redis.Prompt(ctx)
+	prompt = p.apis.Translate("auto", "en", prompt)
 	photoURL, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
 	if photoURL == "" {
 		log.Println("can't process generations:", err)

@@ -24,7 +24,7 @@ func (p *Processor) doCommand(ctx context.Context, message *tgbotapi.Message) bo
 	case "premium":
 		p.premium(ctx)
 	case "image":
-		// TODO: add image command
+		p.image(ctx)
 	case "generate":
 		p.generate(ctx, message)
 	case "logs":
@@ -86,7 +86,6 @@ func (p *Processor) image(ctx context.Context) {
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")
 	prompt = strings.TrimSpace(prompt)
-	prompt = p.apis.Translate("auto", "en", prompt)
 	p.redis.StorePrompt(ctx, prompt)
 	_, err := p.telegram.SendMessage(ctx, text.Generate[lang(ctx)], message.MessageID, p.generateButtons(ctx))
 	if err != nil {

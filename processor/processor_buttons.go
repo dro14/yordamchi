@@ -80,12 +80,12 @@ func (p *Processor) imageButtons(ctx context.Context) *tgbotapi.InlineKeyboardMa
 func (p *Processor) generateButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	vividText := map[string]string{
 		"uz": "yorqin",
-		"ru": "яркий",
+		"ru": "яркого",
 		"en": "vivid",
 	}
 	naturalText := map[string]string{
 		"uz": "tabiiy",
-		"ru": "натуральный",
+		"ru": "натурального",
 		"en": "natural",
 	}
 	vivid := "vivid"

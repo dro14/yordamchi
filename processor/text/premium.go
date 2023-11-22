@@ -8,8 +8,8 @@ Premium tarifda:
 • Eng kuchli sun'iy intellekt - GPT-4 ✅
 • Rasmni tushunish - GPT-4 Vision ✅
 
- 10 000 so'm - Kunlik
- 50 000 so'm - Haftalik
+  10 000 so'm - Kunlik
+  50 000 so'm - Haftalik
 150 000 so'm - Oylik
 
 Millionlar ishongan servis - Payme orqali to'lang`,
@@ -21,8 +21,8 @@ Millionlar ishongan servis - Payme orqali to'lang`,
 • Самый мощный искусственный интеллект - GPT-4 ✅
 • Понимание изображений - GPT-4 Vision ✅
 
- 10 000 сум - Дневная
- 50 000 сум - Недельная
+  10 000 сум - Дневная
+  50 000 сум - Недельная
 150 000 сум - Месячная
 
 Оплатите через Payme - доверянный миллионами сервис`,
@@ -34,8 +34,8 @@ In premium subscription:
 • Most powerful artificial intelligence - GPT-4 ✅
 • Image understanding - GPT-4 Vision ✅
 
- 10 000 UZS - Daily
- 50 000 UZS - Weekly
+  10 000 UZS - Daily
+  50 000 UZS - Weekly
 150 000 UZS - Monthly
 
 Pay via Payme - service trusted by millions`,

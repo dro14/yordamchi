@@ -3,9 +3,61 @@ package text
 var Image = map[string]string{
 	"uz": `So'zlar rasmga aylanganini ko'rganmisiz? Yo'q bo'lsa, DALL-E 3 ni kutib oling!
 
-DALL-E 3 - bu so'zlarni rasmga aylantiruvchi eng kuchli sun'iy intellektlardan biri. Endi uning yordamida siz aql bovar rasmlar yaratishingiz mumkin. Hattoki storislar uchun yozuvli rasmlar ham yaratish mumkin (faqat ingliz tilida).`,
+DALL-E 3 - bu so'zlar yordamida rasm generatsiya qiladigan eng kuchli sun'iy intellektlardan biri. Endi uning yordamida Siz yuqoridagidek aql bovar qilmas rasmlar yaratishingiz mumkin. Hattoki storislar uchun yozuvli rasmlar ham, faqat yozuvlari ingliz tilida bo'ladi :) 
 
-	"ru": `Вы видели, как слова превращаются в изображение?`,
+Rasm yaratish uchun so'rovingizni quyidagi shaklda yuboring:
 
-	"en": `Have you seen how words turn into an image?`,
+/generate Qumli sokin sohil bo'yida quyosh botyapti. Qayiqda odamlar kechgi ovqatga yig'ilgan. Bayram avjida.
+/generate Ko'prikda turibsiz. Kechki shaharda mayin yomg'ir yog'yapti. Odamlar ishdan qaytyapti. Uyda chiroqlar yoniq.
+/generate "Tezlik" nomli YouTube kanalga banner
+
+Rasmni tavsiflashda qancha ko'p detallari bo'lsa, natija ham shuncha yaxshi bo'ladi. Tabiiy uslubda rasmlar haqiqiy hayotga yaqinroq bo'ladi, yorqin uslubda esa rasmlar ko'proq rang-barang bo'ladi.
+
+Mavjud sor'ovlar soni: %d
+
+  20 000 so'm -  10 ta rasm
+  80 000 so'm -  50 ta rasm
+130 000 so'm - 100 ta rasm
+
+Millionlar ishongan servis - Payme orqali to'lang`,
+
+	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте DALL-E 3!
+
+DALL-E 3 - один из самых мощных искусственных интеллектов, генерирующий изображения из слов. Теперь с его помощью Вы можете создавать ошеломляющие изображения, как те выше. Даже изображения с текстами для сторис, но только тексты будут на английском :)
+
+Для создания изображения отправьте запрос в следующем формате:
+
+/generate Закат солнца за песчаным берегом. На лодке люди собрались на мероприятие. Праздник в разгаре.
+/generate Вы стоите на мосту. Вечерний город затянуло туманом. Люди возвращаются с работы. В домах горят лампочки.
+/generate Баннер для YouTube канала "Скорость"
+
+Чем больше деталей в описании изображения, тем лучше результат. В натуральном стиле изображения будут ближе к реальной жизни, а в ярком стиле - более красочными.
+
+Количество доступных генераций: %d
+
+  20 000 сум -  10 генераций
+  80 000 сум -  50 генераций
+130 000 сум - 100 генераций
+
+Оплатите через Payme - доверянный миллионами сервис`,
+
+	"en": `Have you seen how words turn into images? If not, then meet DALL-E 3!
+
+DALL-E 3 is one of the most powerful artificial intelligences that generates images. Now with its help you can create stunning images, even those with texts for stories, but the texts will be only in English :)
+
+To create an image, send a request in the following format:
+
+/generate Sunset over the sandy beach. People are gathering for an evening meal on a boat. The holiday is in full swing.
+/generate You are standing on a bridge. Evening's city was covered with fog. People are returning from work. In apartments, the lights are on.
+/generate Banner for YouTube channel "Speed"
+
+The more details in the description of the image, the better the result. In the natural style, the images will be closer to real life, while in the vivid style - brighter and more colorful.
+
+Number of available generations: %d
+
+ 20 000 UZS - 10 generations
+ 80 000 UZS - 50 generations
+130 000 UZS - 100 generations
+
+Pay via Payme - service trusted by millions`,
 }
