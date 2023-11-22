@@ -88,8 +88,8 @@ func (p *Processor) generateButtons(ctx context.Context, prompt string) *tgbotap
 		"ru": "натуральный",
 		"en": "natural",
 	}
-	vividData := "vivid|" + prompt
-	naturalData := "natural|" + prompt
+	vividData := "vivid:" + prompt
+	naturalData := "natural:" + prompt
 	row := [][]tgbotapi.InlineKeyboardButton{{
 		{Text: vividText[lang(ctx)], CallbackData: &vividData},
 		{Text: naturalText[lang(ctx)], CallbackData: &naturalData},
