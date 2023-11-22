@@ -2,6 +2,7 @@ package processor
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -77,13 +78,18 @@ func (p *Processor) premium(ctx context.Context) {
 }
 
 func (p *Processor) image(ctx context.Context) {
-	_, err := p.telegram.SendMessage(ctx, text.Image[lang(ctx)], 0, p.imageButtons(ctx))
-	if err != nil {
-		log.Println("can't send image command")
-	}
+	userID := ctx.Value("user_id").(int64)
+	config := tgbotapi.NewCopyMessage(userID, -1001924963699, 49)
+	config.Caption = fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
+	config.ReplyMarkup = p.imageButtons(ctx)
+	p.telegram.CopyMessage(ctx, &config)
 }
 
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
+	if p.redis.Images(ctx) == 0 {
+		p.image(ctx)
+		return
+	}
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")
 	prompt = strings.TrimSpace(prompt)
 	p.redis.StorePrompt(ctx, prompt)

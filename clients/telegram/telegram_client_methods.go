@@ -131,3 +131,10 @@ func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 		log.Printf("user %d: can't answer callback query", id(ctx))
 	}
 }
+
+func (t *Telegram) CopyMessage(ctx context.Context, config *tgbotapi.CopyMessageConfig) {
+	_, err := t.makeRequest(ctx, config)
+	if err != nil {
+		log.Printf("user %d: can't copy message", id(ctx))
+	}
+}
