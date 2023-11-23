@@ -7,9 +7,9 @@ DALL-E 3 - bu so'zlar yordamida rasm generatsiya qiladigan eng kuchli sun'iy int
 
 Rasm yaratish uchun so'rovingizni quyidagi shaklda yuboring:
 
-/generate Qumli sokin sohil bo'yida quyosh botyapti. Qayiqda odamlar kechgi ovqatga yig'ilgan. Bayram avjida.
+/generate Qumli sokin sohil bo'yida quyosh botyapti. Qayiqda odamlar kechgi ovqatga yig'ilgan.
 
-/generate Ko'prikda turibsiz. Kechki shaharda mayin yomg'ir yog'yapti. Odamlar ishdan qaytyapti. Uyda chiroqlar yoniq.
+/generate Ko'prikda turibsiz. Kechki shaharda mayin yomg'ir yog'yapti. Odamlar ishdan qaytyapti.
 
 /generate "Tezlik" nomli YouTube kanalga banner
 
@@ -19,9 +19,7 @@ Mavjud generatsiyalar soni: %d
 
   20 000 so'm -  10 ta generatsiya
   80 000 so'm -  50 ta generatsiya
-130 000 so'm - 100 ta generatsiya
-
-Millionlar ishongan servis - Payme orqali to'lang`,
+130 000 so'm - 100 ta generatsiya`,
 
 	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте DALL-E 3!
 
@@ -29,9 +27,9 @@ DALL-E 3 - один из самых мощных искусственных ин
 
 Для создания изображения отправьте запрос в следующем формате:
 
-/generate Закат солнца за песчаным берегом. На лодке люди собрались на мероприятие. Праздник в разгаре.
+/generate Закат солнца за песчаным берегом. На лодке люди собрались на мероприятие.
 
-/generate Вы стоите на мосту. Вечерний город затянуло туманом. Люди возвращаются с работы. В домах горят лампочки.
+/generate Вы стоите на мосту. Вечерний город затянуло туманом. Люди возвращаются с работы.
 
 /generate Баннер для YouTube канала "Скорость"
 
@@ -41,9 +39,7 @@ DALL-E 3 - один из самых мощных искусственных ин
 
   20 000 сум -  10 генераций
   80 000 сум -  50 генераций
-130 000 сум - 100 генераций
-
-Оплатите через Payme - доверянный миллионами сервис`,
+130 000 сум - 100 генераций`,
 
 	"en": `Have you seen how words turn into images? If not, then meet DALL-E 3!
 
@@ -63,7 +59,5 @@ Number of available generations: %d
 
   20 000 UZS -  10 generations
   80 000 UZS -  50 generations
-130 000 UZS - 100 generations
-
-Pay via Payme - service trusted by millions`,
+130 000 UZS - 100 generations`,
 }
