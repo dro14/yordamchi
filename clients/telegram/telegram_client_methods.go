@@ -108,7 +108,7 @@ func (t *Telegram) PhotoURL(ctx context.Context, message *tgbotapi.Message) (str
 func (t *Telegram) SendPhoto(ctx context.Context, photoURL, caption string) {
 	photo := tgbotapi.FileURL(photoURL)
 	config := tgbotapi.NewPhoto(id(ctx), photo)
-	config.Caption = caption
+	config.Caption = utils.Slice(caption, 1024)[0]
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't send photo", id(ctx))

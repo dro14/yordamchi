@@ -72,4 +72,5 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	revisedPrompt = p.apis.Translate("en", lang(ctx), revisedPrompt)
 	p.telegram.SendPhoto(ctx, photoURL, revisedPrompt)
 	p.telegram.DeleteMessage(ctx, messageID)
+	p.redis.DecrementImages(ctx)
 }

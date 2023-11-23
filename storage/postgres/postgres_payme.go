@@ -70,7 +70,7 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 		}
 		title = fmt.Sprintf("Генерации DALL-E 3: %s штук\n2. ID пользователя: %d", subscription, userID)
 	default:
-		log.Println("invalid order type:", order)
+		log.Println("invalid order type:", orderType)
 		return nil, -31052
 	}
 
