@@ -67,13 +67,18 @@ func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboard
 }
 
 func (p *Processor) imageButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
+	text := map[string][]string{
+		"uz": {"⭐️ 10 ta generatsiya ⭐️", "🔥 50 ta generatsiya 🔥", "🚀 100 ta generatsiya 🚀"},
+		"ru": {"⭐️ 10 генераций ⭐️", "🔥 50 генераций 🔥", "🚀 100 генераций 🚀"},
+		"en": {"⭐️ 10 generations ⭐️", "🔥 50 generations 🔥", "🚀 100 generations 🚀"},
+	}
 	args := make([]string, 6)
 	args[0] = p.payme.CheckoutURL(ctx, 2000000, "10:dall-e-3")
 	args[1] = p.payme.CheckoutURL(ctx, 8000000, "50:dall-e-3")
 	args[2] = p.payme.CheckoutURL(ctx, 13000000, "100:dall-e-3")
-	args[3] = "⭐️ 10 ⭐️"
-	args[4] = "🔥 50 🔥"
-	args[5] = "🚀 100 🚀"
+	args[3] = text[lang(ctx)][0]
+	args[4] = text[lang(ctx)][1]
+	args[5] = text[lang(ctx)][2]
 	return url(args...)
 }
 
