@@ -9,19 +9,12 @@ import (
 )
 
 func (p *Postgres) JoinUser(ctx context.Context, user *tgbotapi.User) {
-	query := "INSERT INTO users (id, first_name, last_name, username, language_code) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;"
-	args := []any{user.ID, user.FirstName, user.LastName, user.UserName, lang(ctx)}
+	query := "INSERT INTO users (id, first_name, last_name, username, language_code, is_active, started_at) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING;"
+	args := []any{user.ID, user.FirstName, user.LastName, user.UserName, lang(ctx), true, time.Now().Format(time.DateTime)}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to join user: %s", user.ID, err)
 		return
-	}
-
-	query = "INSERT INTO user_configs (id, is_active, joined_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;"
-	args = []any{user.ID, true, time.Now().Format(time.DateTime)}
-	err = p.execTelegram(ctx, user, query, args)
-	if err != nil {
-		log.Printf("user %d: failed to activate user: %s", user.ID, err)
 	}
 
 	if !p.IsActive(ctx, user) {
@@ -43,7 +36,7 @@ func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Me
 }
 
 func (p *Postgres) DeactivateUser(ctx context.Context, user *tgbotapi.User) {
-	query := "UPDATE user_configs SET is_active = $1, deactivated_at = $2 WHERE id = $3;"
+	query := "UPDATE users SET is_active = $1, blocked_at = $2 WHERE id = $3;"
 	args := []any{false, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
@@ -52,7 +45,7 @@ func (p *Postgres) DeactivateUser(ctx context.Context, user *tgbotapi.User) {
 }
 
 func (p *Postgres) RejoinUser(ctx context.Context, user *tgbotapi.User) {
-	query := "UPDATE user_configs SET is_active = $1, rejoined_at = $2 WHERE id = $3;"
+	query := "UPDATE users SET is_active = $1, restarted_at = $2 WHERE id = $3;"
 	args := []any{true, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
@@ -61,7 +54,7 @@ func (p *Postgres) RejoinUser(ctx context.Context, user *tgbotapi.User) {
 }
 
 func (p *Postgres) IsActive(ctx context.Context, user *tgbotapi.User) bool {
-	query := "SELECT is_active FROM user_configs WHERE id = $1;"
+	query := "SELECT is_active FROM users WHERE id = $1;"
 	args := []any{user.ID}
 	var isActive bool
 	err := p.queryTelegram(ctx, user, query, args, &isActive)
