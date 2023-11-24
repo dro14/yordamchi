@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"github.com/dro14/yordamchi/clients/other"
 	"log"
 	"os"
 
@@ -9,6 +10,7 @@ import (
 
 type Redis struct {
 	client *redis.Client
+	apis   *other.APIs
 }
 
 func New() *Redis {
@@ -27,5 +29,6 @@ func New() *Redis {
 			Addr:     url,
 			Password: password,
 		}),
+		apis: other.New(),
 	}
 }

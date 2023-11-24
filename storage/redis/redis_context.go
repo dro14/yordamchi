@@ -13,20 +13,22 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-const template = "You are a friendly chatbot in Telegram called Yordamchi, based on %s model architecture."
-
 func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output context.Context, messages []types.Message) {
-	systemMessage := types.Message{Role: "system"}
+	sysPrompt := "You are a friendly chatbot in Telegram called Yordamchi, based on %s model architecture."
 	if ctx.Value("model") == models.GPT3 {
-		systemMessage.Content = fmt.Sprintf(template, "GPT-3.5")
+		sysPrompt = fmt.Sprintf(sysPrompt, "GPT-3.5")
 	} else {
-		systemMessage.Content = fmt.Sprintf(template, "GPT-4")
+		sysPrompt = fmt.Sprintf(sysPrompt, "GPT-4")
 	}
-	userMessage := types.Message{Role: "user", Content: prompt}
+	if !strings.Contains(prompt, utils.Delimiter) {
+		sysPrompt += fmt.Sprintf(" The following are the relevant search results provided by Google:\n\n%s", r.apis.Search(ctx, prompt))
+	}
+	system := types.Message{Role: "system", Content: sysPrompt}
+	user := types.Message{Role: "user", Content: prompt}
 
 	defer func() {
-		messages = append([]types.Message{systemMessage}, messages...)
-		messages = append(messages, userMessage)
+		messages = append([]types.Message{system}, messages...)
+		messages = append(messages, user)
 		for i := range messages {
 			URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delimiter)
 			if !found {
