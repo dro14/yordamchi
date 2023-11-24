@@ -20,7 +20,7 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 	} else {
 		sysPrompt = fmt.Sprintf(sysPrompt, "GPT-4")
 	}
-	if !strings.Contains(prompt, utils.Delimiter) {
+	if ctx.Value("user_status") == StatusPremium && !strings.Contains(prompt, utils.Delimiter) {
 		sysPrompt += fmt.Sprintf(" The following are the relevant search results provided by Google:\n\n%s", r.apis.Search(ctx, prompt))
 	}
 	system := types.Message{Role: "system", Content: sysPrompt}
