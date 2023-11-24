@@ -7,6 +7,7 @@ Premium tarifda:
 • Cheksiz so'rovlar soni ✅
 • Eng kuchli sun'iy intellekt - GPT-4 ✅
 • Rasmni tushunish - GPT-4 Vision ✅
+• Googledan yangiliklar va so'nggi ma'lumotlarni olish ✅
 
   10 000 so'm - Kunlik
   50 000 so'm - Haftalik
@@ -20,6 +21,7 @@ Millionlar ishongan servis - Payme orqali to'lang`,
 • Неограниченное количество запросов ✅
 • Самый мощный искусственный интеллект - GPT-4 ✅
 • Понимание изображений - GPT-4 Vision ✅
+• Доступ к новостям и последним данным с Google ✅
 
   10 000 сум - Дневная
   50 000 сум - Недельная
@@ -33,6 +35,7 @@ In premium subscription:
 • Unlimited number of requests ✅
 • Most powerful artificial intelligence - GPT-4 ✅
 • Image understanding - GPT-4 Vision ✅
+• Access to news and up-to-date information from Google ✅
 
   10 000 UZS - Daily
   50 000 UZS - Weekly
