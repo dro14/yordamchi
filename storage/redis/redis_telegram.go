@@ -11,6 +11,15 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+type UserStatus int
+
+const (
+	StatusUnknown UserStatus = iota
+	StatusExhausted
+	StatusFree
+	StatusPremium
+)
+
 func (r *Redis) UserStatus(ctx context.Context) UserStatus {
 	_, err := r.client.Get(ctx, "premium:"+id(ctx)).Result()
 	if err == nil {

@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"log"
+	"sync/atomic"
 
 	"github.com/dro14/yordamchi/clients/openai"
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -22,6 +23,7 @@ type Processor struct {
 	redis    *redis.Redis
 	payme    *payme.Payme
 	apis     *other.APIs
+	activity atomic.Int64
 }
 
 func New() *Processor {

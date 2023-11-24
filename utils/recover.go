@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 )
 
-func Main(sigChan chan os.Signal) {
+func LogShutdown(sigChan chan os.Signal) {
 	sig := <-sigChan
 	log.Printf("Received %v, initiating shutdown...", sig)
 	SendLogFile("yordamchi.log")

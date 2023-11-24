@@ -43,8 +43,8 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 		}
 	}
 
-	msg.Activity = p.redis.IncrementActivity(ctx, message, isPremium)
-	defer p.redis.DecrementActivity(ctx)
+	msg.Activity = int(p.activity.Add(1))
+	defer p.activity.Add(-1)
 
 	i := 0
 	var completion string

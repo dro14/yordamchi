@@ -2,10 +2,10 @@ package openai
 
 import (
 	"fmt"
-	"github.com/dro14/yordamchi/storage/redis"
 	"log"
 	"os"
 
+	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/pkoukk/tiktoken-go"
 )
 
