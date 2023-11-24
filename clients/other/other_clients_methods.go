@@ -114,7 +114,11 @@ func (o *APIs) Translate(sl, tl, q string) string {
 
 func (o *APIs) Search(ctx context.Context, query string) string {
 	var buffer bytes.Buffer
-	request := map[string]string{"query": query}
+	request := map[string]any{
+		"query":   query,
+		"lang":    ctx.Value("language_code").(string),
+		"user_id": ctx.Value("user_id").(int64),
+	}
 	err := json.NewEncoder(&buffer).Encode(request)
 	if err != nil {
 		log.Println("can't encode request:", err)

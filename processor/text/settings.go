@@ -3,27 +3,30 @@ package text
 var Settings1 = map[string]string{
 	"uz": `Tarif: bepul
 Versiya: GPT-3.5
-Rasmni tushunish: mavjud emas 🚫
 So'rovlar soni: %s
 Tugash muddati: %s
+Rasmni tushunish: mavjud emas 🚫
+Googleda qidirish: mavjud emas 🚫
 
-Rasmni tushunadigan GPT-4 ni ishlatib ko'rmoqchimisiz? Unda premium foydalanuvchi bo'ling!`,
+Qo'shimcha funksiyalarni sinab ko'rmoqchimisiz? Unda premium foydalanuvchi bo'ling!`,
 
 	"ru": `Подписка: бесплатная
 Версия: GPT-3.5
-Понимание изображений: недоступно 🚫
 Количество запросов: %s
 Срок истечения: %s
+Понимание изображений: недоступно 🚫
+Google поиск: недоступно 🚫
 
-Хотите попробовать GPT-4, который понимает изображения? Тогда станьте премиум-пользователем!`,
+Хотите попробовать дополнительные функции? Тогда станьте премиум-пользователем!`,
 
 	"en": `Subscription: free
 Version: GPT-3.5
-Image understanding: unavailable 🚫
 Number of requests: %s
 Expiration date: %s
+Image understanding: unavailable 🚫
+Google search: unavailable 🚫
 
-Want to try GPT-4 that understands images? Then become a premium user!`,
+Want to try additional features? Then become a premium user!`,
 }
 
 var Settings2 = map[string]string{
