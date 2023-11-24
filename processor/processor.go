@@ -116,9 +116,9 @@ func (p *Processor) MyChatMember(ctx context.Context, chatMemberUpdated *tgbotap
 
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
-		p.postgres.DeactivateUser(ctx, &chatMemberUpdated.From)
+		p.postgres.UserBlocked(ctx, &chatMemberUpdated.From)
 	case "member":
-		p.postgres.RejoinUser(ctx, &chatMemberUpdated.From)
+		p.postgres.UserRestarted(ctx, &chatMemberUpdated.From)
 	default:
 		log.Println("unknown chat member status:", chatMemberUpdated.NewChatMember.Status)
 	}

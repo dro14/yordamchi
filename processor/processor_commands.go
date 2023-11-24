@@ -39,7 +39,7 @@ func (p *Processor) start(ctx context.Context, user *tgbotapi.User) {
 	if err != nil {
 		log.Println("can't send start command")
 	}
-	p.postgres.JoinUser(ctx, user)
+	p.postgres.UserStarted(ctx, user)
 }
 
 func (p *Processor) help(ctx context.Context) {

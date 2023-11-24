@@ -61,7 +61,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	prompt = p.apis.Translate("auto", "en", prompt)
 	photoURL, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
 	if photoURL == "" {
-		log.Println("can't process generations:", err)
+		log.Println("can't process generations")
 		err = p.telegram.EditMessage(ctx, revisedPrompt, messageID, nil)
 		if err != nil {
 			log.Println("can't edit error message")
