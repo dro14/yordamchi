@@ -13,27 +13,50 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output context.Context, messages []types.Message) {
-	sysPrompt := "You are a friendly chatbot in Telegram called Yordamchi, based on %s model architecture."
-	if ctx.Value("model") == models.GPT3 {
-		sysPrompt = fmt.Sprintf(sysPrompt, "GPT-3.5")
-	} else {
-		sysPrompt = fmt.Sprintf(sysPrompt, "GPT-4")
-	}
-	if ctx.Value("user_status") == StatusPremium && !strings.Contains(prompt, utils.Delimiter) {
-		sysPrompt += fmt.Sprintf(" The following are the relevant search results provided by Google:\n\n%s", r.apis.Search(ctx, prompt))
-	}
-	system := types.Message{Role: "system", Content: sysPrompt}
-	user := types.Message{Role: "user", Content: prompt}
+var promptTemplate = map[string]string{
+	"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
+	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
+	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
+}
 
-	defer func() {
-		messages = append([]types.Message{system}, messages...)
-		messages = append(messages, user)
-		for i := range messages {
-			URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delimiter)
-			if !found {
-				continue
-			}
+var searchTemplate = map[string]string{
+	"uz": " QUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
+	"ru": " НИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
+	"en": " THE FOLLOWING ARE THE RELEVANT PIECES OF INFORMATION. USE THEM IF HELPFUL.\n\n%s",
+}
+
+func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output context.Context, messages []types.Message) {
+	jsonData, err := r.client.Get(ctx, "context:"+id(ctx)).Bytes()
+	if err == nil {
+		err = json.Unmarshal(jsonData, &messages)
+		if err != nil {
+			log.Printf("can't decode %q: %s", "context:"+id(ctx), err)
+		}
+	}
+
+	var sysPrompt string
+	if ctx.Value("model") == models.GPT4 {
+		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-4")
+	} else {
+		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
+	}
+
+	if ctx.Value("model") == models.GPT4 && !strings.Contains(prompt, utils.Delimiter) {
+		var query string
+		if len(messages) == 2 && !strings.Contains(messages[0].Content.(string), utils.Delimiter) {
+			query = messages[0].Content.(string) + "\n\n" + prompt
+		} else {
+			query = prompt
+		}
+		sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+	}
+
+	messages = append([]types.Message{{Role: "system", Content: sysPrompt}}, messages...)
+	messages = append(messages, types.Message{Role: "user", Content: prompt})
+
+	for i := range messages {
+		URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delimiter)
+		if found {
 			var content []types.Content
 			if len(text) > 0 {
 				content = append(content, types.Content{Type: "text", Text: text})
@@ -42,18 +65,10 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 			messages[i].Content = content
 			output = context.WithValue(ctx, "model", models.GPT4V)
 		}
-		if output == nil {
-			output = ctx
-		}
-	}()
-
-	jsonData, err := r.client.Get(ctx, "context:"+id(ctx)).Bytes()
-	if err != nil {
-		return
 	}
-	err = json.Unmarshal(jsonData, &messages)
-	if err != nil {
-		log.Printf("can't decode %q: %s", "context:"+id(ctx), err)
+
+	if output == nil {
+		output = ctx
 	}
 	return
 }
