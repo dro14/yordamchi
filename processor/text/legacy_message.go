@@ -1,7 +1,6 @@
 package text
 
 var LegacyMessage = map[string]string{
-
 	"uz": `Hurmatli Foydalanuvchi!
 
 Botimizdan foydalanayotganingizdan juda xursandmiz. Lekin kelajakda ChatGPT nomi va logosi bilan bog'liq avtorlik huquqi muammolariga uchramaslik uchun, o'zimizga yangi nom, logo va yuzrneym olishimizga to'gri keldi.
