@@ -22,6 +22,6 @@ func New() *APIs {
 		subscriptionKey: subscriptionKey,
 		visionURL:       "https://yordamchi.cognitiveservices.azure.com/vision/v3.1/ocr",
 		translateURL:    "https://translate.google.com/m?sl=%s&tl=%s&q=%s",
-		searchURL:       "https://google.victoriousriver-fffd2d70.westeurope.azurecontainerapps.io/search",
+		searchURL:       "https://yordamchi-service.victoriousriver-fffd2d70.westeurope.azurecontainerapps.io/search",
 	}
 }
