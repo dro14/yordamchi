@@ -75,9 +75,9 @@ func MarkdownV2(text string) string {
 				isEnd := false
 				for strings.Count(before, Delim) > 0 {
 					if !isEnd {
-						before = strings.ReplaceAll(before, Delim, "*__")
+						before = strings.Replace(before, Delim, "*__", 1)
 					} else {
-						before = strings.ReplaceAll(before, Delim, "__*")
+						before = strings.Replace(before, Delim, "__*", 1)
 					}
 					isEnd = !isEnd
 				}
