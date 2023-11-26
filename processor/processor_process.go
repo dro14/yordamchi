@@ -38,7 +38,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 		if err != nil {
 			message.Text = message.Caption
 		} else {
-			message.Text = message.Text + utils.Delimiter + message.Caption
+			message.Text = message.Text + utils.Delim + message.Caption
 			msg.IsPremium = "vision"
 		}
 	}
@@ -68,7 +68,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 			log.Println("can't add new chat button")
 		}
 		msg.Requests++
-		time.Sleep(utils.RequestInterval)
+		time.Sleep(utils.ReqInterval)
 
 		for i = 1; i < len(completions); i++ {
 			if i == len(completions)-1 {
@@ -80,7 +80,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 				i--
 			}
 			msg.Requests++
-			time.Sleep(utils.RequestInterval)
+			time.Sleep(utils.ReqInterval)
 		}
 	} else {
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
@@ -97,7 +97,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 				i--
 			}
 			msg.Requests++
-			time.Sleep(utils.RequestInterval)
+			time.Sleep(utils.ReqInterval)
 
 			switch completion {
 			case text.BadRequest[lang(ctx)], text.RequestFailed[lang(ctx)]:
@@ -116,7 +116,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 					i--
 				}
 				msg.Requests++
-				time.Sleep(utils.RequestInterval)
+				time.Sleep(utils.ReqInterval)
 			}
 		}
 

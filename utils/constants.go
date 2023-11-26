@@ -3,9 +3,9 @@ package utils
 import "time"
 
 const (
-	NumOfFreeRequests = 5
-	RetryAttempts     = 10
-	RetryDelay        = 1000 * time.Millisecond
-	RequestInterval   = 1000 * time.Millisecond
-	Delimiter         = "\n-\n-\n-\n-\n"
+	NumOfFreeReqs = 5
+	RetryAttempts = 10
+	RetryDelay    = 1000 * time.Millisecond
+	ReqInterval   = 1000 * time.Millisecond
+	Delim         = "\n-\n-\n-\n-\n"
 )

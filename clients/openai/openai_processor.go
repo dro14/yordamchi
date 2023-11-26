@@ -52,7 +52,7 @@ Retry:
 	msg.CompletionLength = len(completion)
 
 	o.redis.StoreHistory(ctx, prompt, completion)
-	time.Sleep(utils.RequestInterval)
+	time.Sleep(utils.ReqInterval)
 	channel <- completion
 }
 

@@ -23,7 +23,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 		stream.Store(true)
 		for stream.Load() {
 			send.Store(true)
-			time.Sleep(utils.RequestInterval)
+			time.Sleep(utils.ReqInterval)
 		}
 	}()
 

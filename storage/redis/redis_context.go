@@ -41,9 +41,9 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
 	}
 
-	if ctx.Value("model") == models.GPT4 && !strings.Contains(prompt, utils.Delimiter) {
+	if ctx.Value("model") == models.GPT4 && !strings.Contains(prompt, utils.Delim) {
 		var query string
-		if len(messages) == 2 && !strings.Contains(messages[0].Content.(string), utils.Delimiter) {
+		if len(messages) == 2 && !strings.Contains(messages[0].Content.(string), utils.Delim) {
 			query = messages[0].Content.(string) + "\n\n" + prompt
 		} else {
 			query = prompt
@@ -55,7 +55,7 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 	messages = append(messages, types.Message{Role: "user", Content: prompt})
 
 	for i := range messages {
-		URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delimiter)
+		URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delim)
 		if found {
 			var content []types.Content
 			if len(text) > 0 {
@@ -85,7 +85,7 @@ func (r *Redis) StoreHistory(ctx context.Context, prompt, completion string) {
 		return
 	}
 	var expiration time.Duration
-	if strings.Contains(prompt, utils.Delimiter) {
+	if strings.Contains(prompt, utils.Delim) {
 		expiration = 1 * time.Hour
 	} else {
 		expiration = 72 * time.Hour
