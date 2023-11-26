@@ -79,14 +79,14 @@ func MarkdownV2(text string) string {
 					before = strings.Replace(before, Delim, "\\*\\_\\_", 1)
 					before = ReverseString(before)
 				}
-				isEnd := false
+				isStart := true
 				for strings.Count(before, Delim) > 0 {
-					if !isEnd {
+					if isStart {
 						before = strings.Replace(before, Delim, "*__", 1)
 					} else {
 						before = strings.Replace(before, Delim, "__*", 1)
 					}
-					isEnd = !isEnd
+					isStart = !isStart
 				}
 				shouldEscape = false
 			}
