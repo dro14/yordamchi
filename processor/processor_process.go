@@ -93,7 +93,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 			err = p.telegram.EditMessage(ctx, completions[i], messageID, nil)
 			if errors.Is(err, telegram.ErrForbidden) {
 				return
-			} else if errors.Is(err, telegram.ErrDeletedMessage) {
+			} else if errors.Is(err, telegram.ErrMessageNotFound) {
 				i--
 			}
 			msg.Requests++

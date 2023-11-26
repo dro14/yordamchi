@@ -71,10 +71,7 @@ func (t *Telegram) SetTyping(ctx context.Context, isTyping *atomic.Bool) {
 
 func (t *Telegram) DeleteMessage(ctx context.Context, messageID int) {
 	config := tgbotapi.NewDeleteMessage(id(ctx), messageID)
-	_, err := t.makeRequest(ctx, config)
-	if err != nil {
-		log.Printf("user %d: can't delete message", id(ctx))
-	}
+	_, _ = t.makeRequest(ctx, config)
 }
 
 func (t *Telegram) SetCommands(ctx context.Context) {
