@@ -61,7 +61,9 @@ func MarkdownV2(text string) string {
 				shouldEscape = false
 			}
 			if shouldEscape {
-				before = strings.ReplaceAll(before, "`", "\\`")
+				before = ReverseString(before)
+				before = strings.Replace(before, "`", "\\`", 1)
+				before = ReverseString(before)
 			}
 		}
 		if strings.Count(before, "*") > 0 {
@@ -70,7 +72,9 @@ func MarkdownV2(text string) string {
 			if doubleAsterisks > 0 && doubleAsterisks%2 == 0 {
 				before = strings.ReplaceAll(before, "**", Delim)
 				if strings.Count(before, "*")%2 != 0 {
-					before = strings.ReplaceAll(before, "*", "\\*")
+					before = ReverseString(before)
+					before = strings.Replace(before, "*", "\\*", 1)
+					before = ReverseString(before)
 				}
 				isEnd := false
 				for strings.Count(before, Delim) > 0 {
@@ -101,4 +105,12 @@ func MarkdownV2(text string) string {
 	}
 
 	return buffer.String()
+}
+
+func ReverseString(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
 }
