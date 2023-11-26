@@ -69,10 +69,6 @@ func (o *APIs) Translate(sl, tl, q string) string {
 	qs := utils.Slice(q, 5000)
 
 	for i := range qs {
-		retryDelay := utils.RetryDelay
-		attempts := 0
-	Retry:
-		attempts++
 		resp, err := http.Get(fmt.Sprintf(o.translateURL, sl, tl, url.QueryEscape(qs[i])))
 		if err != nil {
 			log.Println("can't do request:", err)
@@ -81,10 +77,6 @@ func (o *APIs) Translate(sl, tl, q string) string {
 
 		if resp.StatusCode != http.StatusOK {
 			log.Println("bad status:", resp.Status)
-			if attempts < utils.RetryAttempts {
-				utils.Sleep(&retryDelay)
-				goto Retry
-			}
 			return strings.Join(qs, " ")
 		}
 
