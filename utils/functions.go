@@ -62,7 +62,7 @@ func MarkdownV2(text string) string {
 			}
 			if shouldEscape {
 				before = ReverseString(before)
-				before = strings.Replace(before, "`", "\\`", 1)
+				before = strings.Replace(before, "`", "`\\", 1)
 				before = ReverseString(before)
 			}
 		}
@@ -76,7 +76,7 @@ func MarkdownV2(text string) string {
 				}
 				if doubleAsterisks%2 != 0 {
 					before = ReverseString(before)
-					before = strings.Replace(before, Delim, "\\*\\_\\_", 1)
+					before = strings.Replace(before, Delim, "_\\_\\*\\", 1)
 					before = ReverseString(before)
 				}
 				isStart := true
