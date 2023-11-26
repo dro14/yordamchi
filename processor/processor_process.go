@@ -50,7 +50,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if lang(ctx) == "uz" && isPremium == "false" {
+	if lang(ctx) == "" && isPremium == "false" {
 		message.Text = p.apis.Translate("auto", "en", message.Text)
 		ctx = context.WithValue(ctx, "stream", false)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
