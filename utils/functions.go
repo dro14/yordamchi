@@ -69,8 +69,13 @@ func MarkdownV2(text string) string {
 		if strings.Count(before, "*") > 0 {
 			doubleAsterisks := strings.Count(before, "**")
 			shouldEscape := true
-			if doubleAsterisks > 0 && doubleAsterisks%2 == 0 {
+			if doubleAsterisks > 0 {
 				before = strings.ReplaceAll(before, "**", Delim)
+				if doubleAsterisks%2 != 0 {
+					before = ReverseString(before)
+					before = strings.Replace(before, Delim, "\\*\\_\\_", 1)
+					before = ReverseString(before)
+				}
 				if strings.Count(before, "*")%2 != 0 {
 					before = ReverseString(before)
 					before = strings.Replace(before, "*", "\\*", 1)
