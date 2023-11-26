@@ -61,7 +61,7 @@ func (o *OpenAI) makeRequest(ctx context.Context, request any) (*http.Response, 
 	}
 
 	var client http.Client
-	client.Timeout = 2 * time.Minute
+	client.Timeout = 90 * time.Second
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
