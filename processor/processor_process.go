@@ -77,7 +77,9 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 				replyMarkup = p.newChatButton(ctx)
 			}
 			_, err = p.telegram.SendMessage(ctx, completions[i], 0, replyMarkup)
-			if err != nil {
+			if errors.Is(err, telegram.ErrForbidden) {
+				return
+			} else if err != nil {
 				log.Println("can't send completion")
 				i--
 			}
