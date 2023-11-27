@@ -6,7 +6,7 @@ var Settings1 = map[string]string{
 **So'rovlar soni**: %s
 **Tugash muddati**: %s
 **Rasmni tushunish**: mavjud emas 🚫
-**Googleda qidirish**: mavjud emas 🚫
+**Googledan qidirish**: mavjud emas 🚫
 
 Qo'shimcha funksiyalarni sinab ko'rmoqchimisiz? Unda premium foydalanuvchi bo'ling!`,
 

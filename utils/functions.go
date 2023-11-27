@@ -32,88 +32,61 @@ func Slice(completion string, maxLen int) []string {
 	return append(completions, completion)
 }
 
-func MarkdownV2(text string) string {
+func MarkdownV2(s string) string {
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		char := string(escapeChars[i])
 		escape := "\\" + char
-		text = strings.ReplaceAll(text, char, escape)
+		s = strings.ReplaceAll(s, char, escape)
 	}
 
-	block := "```"
-	blocks := strings.Count(text, block)
-	if blocks%2 != 0 {
-		text += block
+	if strings.Count(s, "```")%2 != 0 {
+		s += "```"
 	}
 
-	var (
-		found  bool
-		before string
-		buffer strings.Builder
-	)
+	var found1 bool
+	var found2 bool
+	var before1 string
+	var before2 string
+	var buffer strings.Builder
 
 	for {
-		before, text, found = strings.Cut(text, block)
-		if strings.Count(before, "`") > 0 {
-			backticks := strings.Count(before, "`")
-			shouldEscape := true
-			if backticks%2 == 0 {
-				shouldEscape = false
-			}
-			if shouldEscape {
-				before = ReverseString(before)
-				before = strings.Replace(before, "`", "`\\", 1)
-				before = ReverseString(before)
-			}
+		before1, s, found1 = strings.Cut(s, "```")
+		if strings.Count(before1, "**")%2 != 0 {
+			before1 += "**"
 		}
-		if strings.Count(before, "*") > 0 {
-			doubleAsterisks := strings.Count(before, "**")
-			shouldEscape := true
-			if doubleAsterisks > 0 {
-				before = strings.ReplaceAll(before, "**", Delim)
-				if strings.Count(before, "*")%2 != 0 {
-					before = strings.ReplaceAll(before, "*", "\\*")
-				}
-				if doubleAsterisks%2 != 0 {
-					before = ReverseString(before)
-					before = strings.Replace(before, Delim, "_\\_\\*\\", 1)
-					before = ReverseString(before)
-				}
-				isStart := true
-				for strings.Count(before, Delim) > 0 {
-					if isStart {
-						before = strings.Replace(before, Delim, "*__", 1)
-					} else {
-						before = strings.Replace(before, Delim, "__*", 1)
-					}
-					isStart = !isStart
-				}
-				shouldEscape = false
+
+		for {
+			before2, before1, found2 = strings.Cut(before1, "**")
+			if strings.Count(before2, "`")%2 != 0 {
+				before2 = strings.ReplaceAll(before2, "`", "\\`")
 			}
-			if shouldEscape {
-				before = strings.ReplaceAll(before, "*", "\\*")
+			if strings.Count(before2, "*")%2 != 0 {
+				before2 = strings.ReplaceAll(before2, "*", "\\*")
 			}
+			buffer.WriteString(before2)
+			if !found2 {
+				break
+			}
+			buffer.WriteString("*__")
+
+			before2, before1, _ = strings.Cut(before1, "**")
+			before2 = strings.ReplaceAll(before2, "`", "\\`")
+			before2 = strings.ReplaceAll(before2, "*", "\\*")
+			buffer.WriteString(before2)
+			buffer.WriteString("__*")
 		}
-		buffer.WriteString(before)
-		if !found {
+		if !found1 {
 			break
 		}
-		buffer.WriteString(block)
+		buffer.WriteString("```")
 
-		before, text, _ = strings.Cut(text, block)
-		before = strings.ReplaceAll(before, "`", "\\`")
-		before = strings.ReplaceAll(before, "*", "\\*")
-		buffer.WriteString(before)
-		buffer.WriteString(block)
+		before1, s, _ = strings.Cut(s, "```")
+		before1 = strings.ReplaceAll(before1, "`", "\\`")
+		before1 = strings.ReplaceAll(before1, "*", "\\*")
+		buffer.WriteString(before1)
+		buffer.WriteString("```")
 	}
 
 	return buffer.String()
-}
-
-func ReverseString(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
 }
