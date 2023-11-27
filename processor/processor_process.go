@@ -64,13 +64,15 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 		}
 
 		err = p.telegram.EditMessage(ctx, completions[i], messageID, replyMarkup)
-		if err != nil {
-			log.Println("can't add new chat button")
+		if errors.Is(err, telegram.ErrForbidden) {
+			return
+		} else if errors.Is(err, telegram.ErrMessageNotFound) {
+			i--
 		}
 		msg.Requests++
 		time.Sleep(utils.ReqInterval)
 
-		for i = 1; i < len(completions); i++ {
+		for i++; i < len(completions); i++ {
 			if i == len(completions)-1 {
 				replyMarkup = p.newChatButton(ctx)
 			}
