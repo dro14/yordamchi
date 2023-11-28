@@ -5,12 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dro14/yordamchi/clients/openai/types"
 	"io"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/dro14/yordamchi/clients/openai/types"
 )
 
 func (o *OpenAI) send(ctx context.Context, request any) (*http.Response, error) {
@@ -61,7 +60,7 @@ func (o *OpenAI) makeRequest(ctx context.Context, request any) (*http.Response, 
 	}
 
 	var client http.Client
-	client.Timeout = 60 * time.Second
+	client.Timeout = 2 * time.Minute
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

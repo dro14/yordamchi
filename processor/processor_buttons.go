@@ -58,10 +58,10 @@ func (p *Processor) unlimitedButtons(ctx context.Context) *tgbotapi.InlineKeyboa
 		"en": {"⭐️ Weekly ⭐️", "🔥 Monthly 🔥"},
 	}
 	args := make([]string, 4)
-	args[1] = p.payme.CheckoutURL(ctx, 1000000, "weekly:unlimited")
-	args[2] = p.payme.CheckoutURL(ctx, 3000000, "monthly:unlimited")
-	args[3] = text[lang(ctx)][0]
-	args[4] = text[lang(ctx)][1]
+	args[0] = p.payme.CheckoutURL(ctx, 1000000, "weekly:unlimited")
+	args[1] = p.payme.CheckoutURL(ctx, 3000000, "monthly:unlimited")
+	args[2] = text[lang(ctx)][0]
+	args[3] = text[lang(ctx)][1]
 	return url(args...)
 }
 
