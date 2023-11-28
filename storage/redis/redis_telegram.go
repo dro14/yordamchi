@@ -17,6 +17,7 @@ const (
 	StatusUnknown UserStatus = iota
 	StatusExhausted
 	StatusFree
+	StatusUnlimited
 	StatusPremium
 )
 
@@ -26,6 +27,14 @@ func (r *Redis) UserStatus(ctx context.Context) UserStatus {
 		return StatusPremium
 	} else if !errors.Is(err, redis.Nil) {
 		log.Printf("user %s: can't check whether status is premium: %s", id(ctx), err)
+		return StatusUnknown
+	}
+
+	_, err = r.client.Get(ctx, "unlimited:"+id(ctx)).Result()
+	if err == nil {
+		return StatusUnlimited
+	} else if !errors.Is(err, redis.Nil) {
+		log.Printf("user %s: can't check whether status is unlimited: %s", id(ctx), err)
 		return StatusUnknown
 	}
 

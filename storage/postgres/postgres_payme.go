@@ -50,7 +50,7 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 
 	var title string
 	switch orderType {
-	case "gpt-4":
+	case "premium", "gpt-4":
 		switch subscription {
 		case "daily":
 			title = fmt.Sprintf("Подписка GPT-4: дневная\n2. ID пользователя: %d", userID)
@@ -62,7 +62,17 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 			log.Printf("user %d: invalid subscripion: %v", userID, order)
 			return nil, -31052
 		}
-	case "dall-e-3":
+	case "unlimited":
+		switch subscription {
+		case "weekly":
+			title = fmt.Sprintf("Подписка GPT-3.5: недельная\n2. ID пользователя: %d", userID)
+		case "monthly":
+			title = fmt.Sprintf("Подписка GPT-3.5: месячная\n2. ID пользователя: %d", userID)
+		default:
+			log.Printf("user %d: invalid subscripion: %v", userID, order)
+			return nil, -31052
+		}
+	case "images", "dall-e-3":
 		_, err = strconv.Atoi(subscription)
 		if err != nil {
 			log.Println("invalid number of images:", subscription)

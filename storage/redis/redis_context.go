@@ -35,20 +35,30 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 	}
 
 	var sysPrompt string
-	if ctx.Value("model") == models.GPT4 {
-		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-4")
+	if ctx.Value("model") == models.GPT3 {
+		if lang(ctx) == "uz" {
+			sysPrompt = fmt.Sprintf(promptTemplate["en"], "GPT-3.5")
+		} else {
+			sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
+		}
 	} else {
-		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
+		sysPrompt = fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-4")
 	}
 
-	if ctx.Value("model") == models.GPT4 && !strings.Contains(prompt, utils.Delim) {
+	if ctx.Value("user_status") != StatusFree && !strings.Contains(prompt, utils.Delim) {
 		var query string
 		if len(messages) == 2 && !strings.Contains(messages[0].Content.(string), utils.Delim) {
 			query = messages[0].Content.(string) + "\n\n" + prompt
 		} else {
 			query = prompt
 		}
-		sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+		if ctx.Value("model") == models.GPT3 && lang(ctx) == "uz" {
+			ctx = context.WithValue(ctx, "language_code", "en")
+			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+			ctx = context.WithValue(ctx, "language_code", "uz")
+		} else {
+			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+		}
 	}
 
 	messages = append([]types.Message{{Role: "system", Content: sysPrompt}}, messages...)

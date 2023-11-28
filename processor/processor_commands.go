@@ -22,10 +22,12 @@ func (p *Processor) doCommand(ctx context.Context, message *tgbotapi.Message) bo
 		p.language(ctx)
 	case "examples":
 		p.examples(ctx)
+	case "unlimited":
+		p.unlimited(ctx)
 	case "premium":
 		p.premium(ctx)
-	case "image":
-		p.image(ctx)
+	case "images":
+		p.images(ctx)
 	case "generate":
 		p.generate(ctx, message)
 	case "logs":
@@ -70,6 +72,13 @@ func (p *Processor) examples(ctx context.Context) {
 	}
 }
 
+func (p *Processor) unlimited(ctx context.Context) {
+	_, err := p.telegram.SendMessage(ctx, text.Unlimited[lang(ctx)], 0, p.unlimitedButtons(ctx))
+	if err != nil {
+		log.Println("can't send unlimited command")
+	}
+}
+
 func (p *Processor) premium(ctx context.Context) {
 	_, err := p.telegram.SendMessage(ctx, text.Premium[lang(ctx)], 0, p.premiumButtons(ctx))
 	if err != nil {
@@ -77,7 +86,7 @@ func (p *Processor) premium(ctx context.Context) {
 	}
 }
 
-func (p *Processor) image(ctx context.Context) {
+func (p *Processor) images(ctx context.Context) {
 	userID := ctx.Value("user_id").(int64)
 	config := tgbotapi.NewCopyMessage(userID, -1001924963699, 49)
 	config.Caption = fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
@@ -87,7 +96,7 @@ func (p *Processor) image(ctx context.Context) {
 
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 	if p.redis.Images(ctx) == 0 {
-		p.image(ctx)
+		p.images(ctx)
 		return
 	}
 	prompt := strings.ReplaceAll(message.Text, "/generate", "")

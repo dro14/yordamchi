@@ -72,12 +72,17 @@ func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
 	case redis.StatusPremium:
 		ctx = context.WithValue(ctx, "model", models.GPT4)
 		if message.Text != "" || message.Photo != nil {
-			p.Process(ctx, message, "true")
+			p.Process(ctx, message, "premium")
+		}
+	case redis.StatusUnlimited:
+		ctx = context.WithValue(ctx, "model", models.GPT3)
+		if message.Text != "" || message.Photo != nil {
+			p.Process(ctx, message, "unlimited")
 		}
 	case redis.StatusFree:
 		ctx = context.WithValue(ctx, "model", models.GPT3)
 		if message.Text != "" {
-			p.Process(ctx, message, "false")
+			p.Process(ctx, message, "free")
 		} else if message.Photo != nil {
 			p.premiumFeature(ctx)
 		}
@@ -98,7 +103,7 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 		p.newChatCallback(ctx, callbackQuery)
 	case "help":
 		p.helpCallback(ctx, callbackQuery)
-	case "settings":
+	case "settings1", "settings2":
 		p.settingsCallback(ctx, callbackQuery)
 	case "uz", "ru", "en":
 		p.languageCallback(ctx, callbackQuery)

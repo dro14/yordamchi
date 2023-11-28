@@ -3,7 +3,7 @@ package postgres
 type Message struct {
 	ID               int
 	UserID           int64
-	IsPremium        string
+	Type             string
 	CreatedOn        string
 	PromptedAt       string
 	CompletedAt      string

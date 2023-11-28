@@ -13,8 +13,9 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Botning sozlamalari"},
 		{Command: "language", Description: "Tilni o'zgartirish"},
 		{Command: "examples", Description: "Foydalanish misollari"},
+		{Command: "unlimited", Description: "Cheksiz so'rovlar"},
 		{Command: "premium", Description: "Qo'shimcha funksiyalar"},
-		{Command: "image", Description: "Tasvir generatsiyasi"},
+		{Command: "images", Description: "Tasvir generatsiyasi"},
 	},
 	"ru": {
 		{Command: "start", Description: "Запустить бота"},
@@ -22,8 +23,9 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Настройки бота"},
 		{Command: "language", Description: "Изменить язык"},
 		{Command: "examples", Description: "Примеры использования"},
+		{Command: "unlimited", Description: "Неограниченные запросы"},
 		{Command: "premium", Description: "Дополнительные функции"},
-		{Command: "image", Description: "Генерация изображений"},
+		{Command: "images", Description: "Генерация изображений"},
 	},
 	"en": {
 		{Command: "start", Description: "Start the bot"},
@@ -31,8 +33,9 @@ var commands = map[string][]tgbotapi.BotCommand{
 		{Command: "settings", Description: "Bot settings"},
 		{Command: "language", Description: "Change language"},
 		{Command: "examples", Description: "Usage examples"},
+		{Command: "unlimited", Description: "Unlimited requests"},
 		{Command: "premium", Description: "Additional features"},
-		{Command: "image", Description: "Image generation"},
+		{Command: "images", Description: "Image generation"},
 	},
 }
 

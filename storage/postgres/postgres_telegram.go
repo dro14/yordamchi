@@ -23,8 +23,8 @@ func (p *Postgres) UserStarted(ctx context.Context, user *tgbotapi.User) {
 }
 
 func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Message) {
-	query := "INSERT INTO messages (user_id, is_premium, created_on, prompted_at, completed_at, first_send, last_edit, prompt_tokens, prompt_length, completion_tokens, completion_length, activity, requests, attempts, finish_reason, language_code) VAlUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);"
-	args := []any{user.ID, msg.IsPremium, msg.CreatedOn, msg.PromptedAt, msg.CompletedAt, msg.FirstSend, msg.LastEdit, msg.PromptTokens, msg.PromptLength, msg.CompletionTokens, msg.CompletionLength, msg.Activity, msg.Requests, msg.Attempts, msg.FinishReason, lang(ctx)}
+	query := "INSERT INTO messages (user_id, type, created_on, prompted_at, completed_at, first_send, last_edit, prompt_tokens, prompt_length, completion_tokens, completion_length, activity, requests, attempts, finish_reason, language_code) VAlUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);"
+	args := []any{user.ID, msg.Type, msg.CreatedOn, msg.PromptedAt, msg.CompletedAt, msg.FirstSend, msg.LastEdit, msg.PromptTokens, msg.PromptLength, msg.CompletionTokens, msg.CompletionLength, msg.Activity, msg.Requests, msg.Attempts, msg.FinishReason, lang(ctx)}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to save message: %s", user.ID, err)

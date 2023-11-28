@@ -31,7 +31,7 @@ Millionlar ishongan servis - Payme orqali to'lang`,
 
 	"en": `Want to see how far the latest technological progress has come? Then become a premium user.
 
-In premium subscription:
+In the premium subscription:
 • Unlimited number of requests ✅
 • Most powerful artificial intelligence - GPT-4 ✅
 • Image understanding - GPT-4 Vision ✅

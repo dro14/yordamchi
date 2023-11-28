@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
@@ -14,7 +15,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPremium string) {
+func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, Type string) {
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage("", message)
 	}
@@ -29,7 +30,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	go p.telegram.SetTyping(ctx, isTyping)
 	defer isTyping.Store(false)
 
-	msg := &postgres.Message{IsPremium: isPremium}
+	msg := &postgres.Message{Type: Type}
 	msg.Requests++
 	msg.FirstSend = int(time.Since(start(ctx)).Milliseconds())
 
@@ -37,9 +38,12 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 		message.Text, err = p.telegram.PhotoURL(ctx, message)
 		if err != nil {
 			message.Text = message.Caption
+		} else if ctx.Value("user_status") == models.GPT3 {
+			message.Text = p.apis.Vision(ctx, message.Text, message.Caption)
+			msg.Type = "ocr"
 		} else {
 			message.Text = message.Text + utils.Delim + message.Caption
-			msg.IsPremium = "vision"
+			msg.Type = "vision"
 		}
 	}
 
@@ -50,7 +54,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, isPr
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if lang(ctx) == "uz" && isPremium == "false" {
+	if lang(ctx) == "uz" && Type == "free" {
 		message.Text = p.apis.Translate("auto", "en", message.Text)
 		ctx = context.WithValue(ctx, "stream", false)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)

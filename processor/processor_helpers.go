@@ -49,11 +49,15 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 }
 
 func (p *Processor) msg(ctx context.Context) string {
-	if ctx.Value("user_status") == redis.StatusPremium {
+	switch ctx.Value("user_status") {
+	case redis.StatusPremium:
 		template := text.Settings2[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Expiration(ctx))
-	} else {
+	case redis.StatusUnlimited:
 		template := text.Settings1[lang(ctx)]
+		return fmt.Sprintf(template, p.redis.Expiration(ctx))
+	default:
+		template := text.Settings[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Requests(ctx), p.redis.Expiration(ctx))
 	}
 }
