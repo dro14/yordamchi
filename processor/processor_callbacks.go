@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -77,6 +78,8 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		}
 		return
 	}
+
+	time.Sleep(30 * time.Second)
 
 	revisedPrompt = p.apis.Translate("en", lang(ctx), revisedPrompt)
 	p.telegram.SendPhoto(ctx, photoURL, revisedPrompt)
