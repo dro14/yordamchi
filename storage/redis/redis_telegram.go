@@ -113,7 +113,8 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 }
 
 func (r *Redis) SetLang(ctx context.Context) {
-	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), 30*24*time.Hour)
+	monthLater := time.Now().AddDate(0, 1, 0)
+	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(monthLater))
 }
 
 func (r *Redis) Images(ctx context.Context) int {
