@@ -36,7 +36,7 @@ func (h *Handler) Run(port string) error {
 }
 
 func (h *Handler) Root(c *gin.Context) {
-	c.JSON(200, gin.H{"success": true, "message": "Hello, Yordmachi service!"})
+	c.JSON(200, gin.H{"success": true, "message": "Hello, World!"})
 }
 
 func (h *Handler) Main(c *gin.Context) {
