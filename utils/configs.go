@@ -58,7 +58,7 @@ func keepServiceAlive() {
 			continue
 		}
 
-		if response["success"] == true && response["message"] != "Hello, Yordamchi!" {
+		if response["success"] == true && response["message"] != "Hello, World!" {
 			log.Println("Yordamchi service is not alive!")
 		}
 		time.Sleep(1 * time.Minute)
