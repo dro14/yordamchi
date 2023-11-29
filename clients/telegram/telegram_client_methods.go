@@ -102,9 +102,9 @@ func (t *Telegram) PhotoURL(ctx context.Context, message *tgbotapi.Message) (str
 	return file.Link(t.token), nil
 }
 
-func (t *Telegram) SendPhoto(ctx context.Context, photoURL, caption string) {
-	photo := tgbotapi.FileURL(photoURL)
-	config := tgbotapi.NewPhoto(id(ctx), photo)
+func (t *Telegram) SendPhoto(ctx context.Context, photoPath, caption string) {
+	file := tgbotapi.FilePath(photoPath)
+	config := tgbotapi.NewPhoto(id(ctx), file)
 	config.Caption = utils.Slice(caption, 1024)[0]
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {

@@ -2,11 +2,9 @@ package processor
 
 import (
 	"context"
-	"log"
-	"time"
-
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
 )
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
@@ -69,8 +67,8 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 
 	prompt := p.redis.Prompt(ctx)
 	prompt = p.apis.Translate("auto", "en", prompt)
-	photoURL, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
-	if photoURL == "" {
+	photoPath, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
+	if photoPath == "" {
 		log.Println("can't process generations")
 		err = p.telegram.EditMessage(ctx, revisedPrompt, messageID, nil)
 		if err != nil {
@@ -79,10 +77,8 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		return
 	}
 
-	time.Sleep(30 * time.Second)
-
 	revisedPrompt = p.apis.Translate("en", lang(ctx), revisedPrompt)
-	p.telegram.SendPhoto(ctx, photoURL, revisedPrompt)
+	p.telegram.SendPhoto(ctx, photoPath, revisedPrompt)
 	p.telegram.DeleteMessage(ctx, messageID)
 	p.redis.DecrementImages(ctx)
 }

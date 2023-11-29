@@ -2,7 +2,10 @@ package openai
 
 import (
 	"context"
+	"io"
 	"log"
+	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -81,5 +84,39 @@ Retry:
 		log.Printf("%q was handled after %d attempts", errMsg, attempts)
 	}
 
-	return response.Data[0].URL, response.Data[0].RevisedPrompt
+	photoURL := response.Data[0].URL
+	photoPath, _, found := strings.Cut(photoURL, ".png")
+	if !found {
+		log.Printf("user %s: can't find .png in %q", id(ctx), photoURL)
+		return "", text.RequestFailed[lang(ctx)]
+	}
+
+	_, photoPath, found = strings.Cut(photoPath, "img-")
+	if !found {
+		log.Printf("user %s: can't find img- in %q", id(ctx), photoPath)
+		return "", text.RequestFailed[lang(ctx)]
+	}
+	photoPath = "img-" + photoPath + ".png"
+
+	resp, err := http.Get(photoURL)
+	if err != nil {
+		log.Printf("user %s: can't get image: %s", id(ctx), err)
+		return "", text.RequestFailed[lang(ctx)]
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	out, err := os.Create(photoPath)
+	if err != nil {
+		log.Printf("user %s: can't create image: %s", id(ctx), err)
+		return "", text.RequestFailed[lang(ctx)]
+	}
+	defer func() { _ = out.Close() }()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		log.Printf("user %s: can't write image: %s", id(ctx), err)
+		return "", text.RequestFailed[lang(ctx)]
+	}
+
+	return photoPath, response.Data[0].RevisedPrompt
 }

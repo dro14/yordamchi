@@ -16,20 +16,21 @@ func Sleep(retryDelay *time.Duration) {
 
 func Slice(completion string, maxLen int) []string {
 	var completions []string
-	for len(completion) > maxLen {
+	runes := []rune(completion)
+	for len(runes) > maxLen {
 		cutIndex := 0
 	Loop:
 		for i := maxLen; i >= 0; i-- {
-			switch completion[i] {
+			switch runes[i] {
 			case ' ', '\n', '\t', '\r':
 				cutIndex = i
 				break Loop
 			}
 		}
-		completions = append(completions, completion[:cutIndex])
-		completion = completion[cutIndex:]
+		completions = append(completions, string(runes[:cutIndex]))
+		runes = runes[cutIndex:]
 	}
-	return append(completions, completion)
+	return append(completions, string(runes))
 }
 
 func MarkdownV2(s string) string {
