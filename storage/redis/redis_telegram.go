@@ -59,10 +59,16 @@ func (r *Redis) UserStatus(ctx context.Context) UserStatus {
 
 func (r *Redis) Expiration(ctx context.Context) string {
 	expirationDate, err := r.client.Get(ctx, "premium:"+id(ctx)).Result()
-	if err != nil {
-		return midnight()
+	if err == nil {
+		return expirationDate
 	}
-	return expirationDate
+
+	expirationDate, err = r.client.Get(ctx, "unlimited:"+id(ctx)).Result()
+	if err == nil {
+		return expirationDate
+	}
+
+	return midnight()
 }
 
 func (r *Redis) Requests(ctx context.Context) string {
