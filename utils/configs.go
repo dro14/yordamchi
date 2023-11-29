@@ -46,6 +46,7 @@ func keepServiceAlive() {
 		resp, err := http.Get("https://yordamchi-service.victoriousriver-fffd2d70.westeurope.azurecontainerapps.io")
 		if err != nil {
 			log.Println("can't ping service:", err)
+			time.Sleep(1 * time.Minute)
 			continue
 		}
 
@@ -53,6 +54,7 @@ func keepServiceAlive() {
 		err = json.NewDecoder(resp.Body).Decode(&response)
 		if err != nil {
 			log.Println("can't decode response:", err)
+			time.Sleep(1 * time.Minute)
 			continue
 		}
 
