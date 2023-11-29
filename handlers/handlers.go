@@ -28,10 +28,15 @@ func New() *Handler {
 }
 
 func (h *Handler) Run(port string) error {
+	h.router.GET("/", h.Root)
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
 	return h.router.Run(":" + port)
+}
+
+func (h *Handler) Root(c *gin.Context) {
+	c.JSON(200, gin.H{"success": true, "message": "Hello, Yordmachi service!"})
 }
 
 func (h *Handler) Main(c *gin.Context) {
