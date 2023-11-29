@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -36,31 +34,5 @@ func SetConfigs() {
 	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Fatal("can't initialize info bot:", err)
-	}
-
-	go keepServiceAlive()
-}
-
-func keepServiceAlive() {
-	for {
-		resp, err := http.Get("https://yordamchi-service.victoriousriver-fffd2d70.westeurope.azurecontainerapps.io")
-		if err != nil {
-			log.Println("can't ping service:", err)
-			time.Sleep(1 * time.Minute)
-			continue
-		}
-
-		response := make(map[string]any)
-		err = json.NewDecoder(resp.Body).Decode(&response)
-		if err != nil {
-			log.Println("can't decode response:", err)
-			time.Sleep(1 * time.Minute)
-			continue
-		}
-
-		if response["success"] == true && response["message"] != "Hello, World!" {
-			log.Println("Yordamchi service is not alive!")
-		}
-		time.Sleep(1 * time.Minute)
 	}
 }
