@@ -2,9 +2,10 @@ package processor
 
 import (
 	"context"
+	"log"
+
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
 )
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {

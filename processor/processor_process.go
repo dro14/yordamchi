@@ -15,7 +15,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, Type string) {
+func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type string) {
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage("", message)
 	}
@@ -38,7 +38,7 @@ func (p *Processor) Process(ctx context.Context, message *tgbotapi.Message, Type
 		message.Text, err = p.telegram.PhotoURL(ctx, message)
 		if err != nil {
 			message.Text = message.Caption
-		} else if ctx.Value("user_status") == models.GPT3 {
+		} else if ctx.Value("model") == models.GPT3 {
 			message.Text = p.apis.Vision(ctx, message.Text, message.Caption)
 			msg.Type = "ocr"
 		} else {

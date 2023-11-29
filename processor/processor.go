@@ -42,17 +42,17 @@ func (p *Processor) Update(update *tgbotapi.Update) {
 	ctx := context.Background()
 	switch {
 	case update.Message != nil:
-		p.Message(ctx, update.Message)
+		p.message(ctx, update.Message)
 	case update.CallbackQuery != nil:
-		p.CallbackQuery(ctx, update.CallbackQuery)
+		p.callbackQuery(ctx, update.CallbackQuery)
 	case update.MyChatMember != nil:
-		p.MyChatMember(ctx, update.MyChatMember)
+		p.myChatMember(ctx, update.MyChatMember)
 	default:
 		log.Printf("unknown update type:\n%+v", update)
 	}
 }
 
-func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
+func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	ctx, allowed, foundLang := p.messageUpdate(ctx, message)
 	if !allowed || !foundLang {
 		if !foundLang {
@@ -72,19 +72,23 @@ func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
 	case redis.StatusPremium:
 		ctx = context.WithValue(ctx, "model", models.GPT4)
 		if message.Text != "" || message.Photo != nil {
-			p.Process(ctx, message, "premium")
+			p.process(ctx, message, "premium")
+		} else if message.Document != nil {
+			p.processFile(ctx, message)
 		}
 	case redis.StatusUnlimited:
 		ctx = context.WithValue(ctx, "model", models.GPT3)
 		if message.Text != "" || message.Photo != nil {
-			p.Process(ctx, message, "unlimited")
+			p.process(ctx, message, "unlimited")
+		} else if message.Document != nil {
+			p.processFile(ctx, message)
 		}
 	case redis.StatusFree:
 		ctx = context.WithValue(ctx, "model", models.GPT3)
 		if message.Text != "" {
-			p.Process(ctx, message, "free")
-		} else if message.Photo != nil {
-			p.premiumFeature(ctx)
+			p.process(ctx, message, "free")
+		} else if message.Photo != nil || message.Document != nil {
+			p.paidFeature(ctx)
 		}
 	case redis.StatusExhausted:
 		p.exhausted(ctx)
@@ -93,7 +97,7 @@ func (p *Processor) Message(ctx context.Context, message *tgbotapi.Message) {
 	}
 }
 
-func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = p.redis.Lang(ctx, callbackQuery.From.LanguageCode)
@@ -116,7 +120,7 @@ func (p *Processor) CallbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 	}
 }
 
-func (p *Processor) MyChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
+func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
 	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
 	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = p.redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
