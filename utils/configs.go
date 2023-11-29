@@ -50,7 +50,7 @@ func keepServiceAlive() {
 			continue
 		}
 
-		response := make(map[string]string)
+		response := make(map[string]any)
 		err = json.NewDecoder(resp.Body).Decode(&response)
 		if err != nil {
 			log.Println("can't decode response:", err)
@@ -58,7 +58,7 @@ func keepServiceAlive() {
 			continue
 		}
 
-		if response["message"] != "Hello, Yordamchi!" {
+		if response["success"] == true && response["message"] != "Hello, Yordamchi!" {
 			log.Println("Yordamchi service is not alive!")
 		}
 		time.Sleep(1 * time.Minute)
