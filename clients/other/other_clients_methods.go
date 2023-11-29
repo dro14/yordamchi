@@ -133,12 +133,16 @@ func (o *APIs) Search(ctx context.Context, query string) string {
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	response := make(map[string]string)
+	response := make(map[string]any)
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		log.Println("can't decode response:", err)
 		return ""
 	}
 
-	return response["results"]
+	if response["success"] == false {
+		return ""
+	}
+
+	return response["results"].(string)
 }
