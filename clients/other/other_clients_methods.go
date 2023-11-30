@@ -15,7 +15,7 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (o *APIs) Vision(ctx context.Context, photoURL, caption string) string {
+func (o *APIs) OCR(ctx context.Context, photoURL, caption string) string {
 	var buffer bytes.Buffer
 	request := map[string]string{"url": photoURL}
 	err := json.NewEncoder(&buffer).Encode(request)
@@ -24,7 +24,7 @@ func (o *APIs) Vision(ctx context.Context, photoURL, caption string) string {
 		return caption
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, o.visionURL, &buffer)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, o.ocrURL, &buffer)
 	if err != nil {
 		log.Println("can't create request:", err)
 		return caption

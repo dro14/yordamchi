@@ -8,6 +8,7 @@ import (
 	"github.com/dro14/yordamchi/clients/openai"
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/other"
+	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/storage/postgres"
@@ -22,6 +23,7 @@ type Processor struct {
 	openai   *openai.OpenAI
 	redis    *redis.Redis
 	payme    *payme.Payme
+	service  *service.Service
 	apis     *other.APIs
 	activity atomic.Int64
 }
@@ -33,6 +35,7 @@ func New() *Processor {
 		openai:   openai.New(),
 		redis:    redis.New(),
 		payme:    payme.New(),
+		service:  service.New(),
 		apis:     other.New(),
 	}
 }

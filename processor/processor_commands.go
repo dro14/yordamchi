@@ -20,6 +20,8 @@ func (p *Processor) doCommand(ctx context.Context, message *tgbotapi.Message) bo
 		p.settings(ctx)
 	case "language":
 		p.language(ctx)
+	case "memory":
+		p.memory(ctx)
 	case "examples":
 		p.examples(ctx)
 	case "unlimited":
@@ -63,6 +65,10 @@ func (p *Processor) language(ctx context.Context) {
 	if err != nil {
 		log.Println("can't send language command")
 	}
+}
+
+func (p *Processor) memory(ctx context.Context) {
+
 }
 
 func (p *Processor) examples(ctx context.Context) {

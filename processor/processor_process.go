@@ -39,7 +39,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		if err != nil {
 			message.Text = message.Caption
 		} else if ctx.Value("model") == models.GPT3 {
-			message.Text = p.apis.Vision(ctx, message.Text, message.Caption)
+			message.Text = p.apis.OCR(ctx, message.Text, message.Caption)
 			msg.Type = "ocr"
 		} else {
 			message.Text = message.Text + utils.Delim + message.Caption

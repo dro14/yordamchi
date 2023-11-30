@@ -7,9 +7,8 @@ import (
 
 type APIs struct {
 	subscriptionKey string
-	visionURL       string
+	ocrURL          string
 	translateURL    string
-	searchURL       string
 }
 
 func New() *APIs {
@@ -20,8 +19,7 @@ func New() *APIs {
 
 	return &APIs{
 		subscriptionKey: subscriptionKey,
-		visionURL:       "https://yordamchi.cognitiveservices.azure.com/vision/v3.1/ocr",
+		ocrURL:          "https://yordamchi.cognitiveservices.azure.com/vision/v3.1/ocr",
 		translateURL:    "https://translate.google.com/m?sl=%s&tl=%s&q=%s",
-		searchURL:       "https://yordamchi-service.victoriousriver-fffd2d70.westeurope.azurecontainerapps.io/search",
 	}
 }
