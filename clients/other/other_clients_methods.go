@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dro14/yordamchi/utils"
 	"html"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/dro14/yordamchi/utils"
 )
 
 func (o *APIs) Vision(ctx context.Context, photoURL, caption string) string {
@@ -48,7 +49,7 @@ func (o *APIs) Vision(ctx context.Context, photoURL, caption string) string {
 	}
 
 	var builder strings.Builder
-	if len(caption) > 0 {
+	if caption != "" {
 		builder.WriteString(caption + ":\n\n")
 	}
 
@@ -102,47 +103,4 @@ func (o *APIs) Translate(sl, tl, q string) string {
 	}
 
 	return strings.Join(qs, " ")
-}
-
-func (o *APIs) Search(ctx context.Context, query string) string {
-	var buffer bytes.Buffer
-	request := map[string]any{
-		"query":   query,
-		"lang":    ctx.Value("language_code").(string),
-		"user_id": ctx.Value("user_id").(int64),
-	}
-	err := json.NewEncoder(&buffer).Encode(request)
-	if err != nil {
-		log.Println("can't encode request:", err)
-		return ""
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, o.searchURL, &buffer)
-	if err != nil {
-		log.Println("can't create request:", err)
-		return ""
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Println("can't do request:", err)
-		return ""
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	response := make(map[string]any)
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		log.Println("can't decode response:", err)
-		return ""
-	}
-
-	if response["success"] == false {
-		return ""
-	}
-
-	return response["results"].(string)
 }

@@ -54,10 +54,10 @@ func (r *Redis) ConversationHistory(ctx context.Context, prompt string) (output 
 		}
 		if ctx.Value("model") == models.GPT3 && lang(ctx) == "uz" {
 			ctx = context.WithValue(ctx, "language_code", "en")
-			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.service.Search(ctx, query))
 			ctx = context.WithValue(ctx, "language_code", "uz")
 		} else {
-			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.apis.Search(ctx, query))
+			sysPrompt += fmt.Sprintf(searchTemplate[lang(ctx)], r.service.Search(ctx, query))
 		}
 	}
 
