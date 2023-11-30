@@ -21,7 +21,7 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) error {
 		return err
 	}
 	if response["success"] == false {
-		log.Println("can't load file:", response["message"])
+		log.Println("can't load file:", response["error"])
 		return ErrUnsupportedFormat
 	}
 	return nil

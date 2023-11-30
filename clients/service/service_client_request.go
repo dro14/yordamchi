@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 )
 
 func (s *Service) makeRequest(ctx context.Context, request map[string]any, url string) (map[string]any, error) {
@@ -26,7 +25,6 @@ func (s *Service) makeRequest(ctx context.Context, request map[string]any, url s
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
-	client.Timeout = 1 * time.Minute
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("can't do request:", err)
