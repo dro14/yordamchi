@@ -8,7 +8,7 @@ import (
 )
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	p.redis.DeleteHistory(ctx)
+	p.redis.DeleteContext(ctx)
 	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
 	if err != nil {
 		log.Println("can't send new chat callback")
@@ -41,7 +41,7 @@ func (p *Processor) settingsCallback(ctx context.Context, callbackQuery *tgbotap
 func (p *Processor) languageCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	ctx = context.WithValue(ctx, "language_code", callbackQuery.Data)
 	p.redis.SetLang(ctx)
-	p.redis.DeleteHistory(ctx)
+	p.redis.DeleteContext(ctx)
 	p.telegram.SetCommands(ctx)
 	p.postgres.SetLang(ctx, callbackQuery.From)
 	p.start(ctx, callbackQuery.From)
@@ -65,7 +65,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		return
 	}
 
-	prompt := p.redis.Prompt(ctx)
+	prompt := p.redis.Generate(ctx)
 	prompt = p.apis.Translate("auto", "en", prompt)
 	photoPath, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
 	if photoPath == "" {

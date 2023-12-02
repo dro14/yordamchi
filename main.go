@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/dro14/yordamchi/handlers"
+	"github.com/dro14/yordamchi/handler"
 	"github.com/dro14/yordamchi/utils"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	}
 
 	utils.SendInfoMessage("@yordamchi_ai_bot restarted", nil)
-	err := handlers.New().Run(port)
+	err := handler.New().Run(port)
 	if err != nil {
 		log.Fatal("can't run server:", err)
 	}

@@ -67,7 +67,7 @@ func (o *APIs) OCR(ctx context.Context, photoURL, caption string) string {
 }
 
 func (o *APIs) Translate(sl, tl, q string) string {
-	qs := utils.Slice(q, 5000)
+	qs := utils.Slice(q, 4000)
 
 	for i := range qs {
 		resp, err := http.Get(fmt.Sprintf(o.translateURL, sl, tl, url.QueryEscape(qs[i])))

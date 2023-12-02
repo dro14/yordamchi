@@ -28,12 +28,20 @@ func unblockUser(userID int64) {
 	blockedUsers.Delete(userID)
 }
 
+func start(ctx context.Context) time.Time {
+	return ctx.Value("start").(time.Time)
+}
+
+func userStatus(ctx context.Context) redis.UserStatus {
+	return ctx.Value("user_status").(redis.UserStatus)
+}
+
 func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func start(ctx context.Context) time.Time {
-	return ctx.Value("start").(time.Time)
+func model(ctx context.Context) string {
+	return ctx.Value("model").(string)
 }
 
 func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
@@ -49,7 +57,7 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 }
 
 func (p *Processor) msg(ctx context.Context) string {
-	switch ctx.Value("user_status") {
+	switch userStatus(ctx) {
 	case redis.StatusPremium:
 		template := text.Settings2[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Expiration(ctx))

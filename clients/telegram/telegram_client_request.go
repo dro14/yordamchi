@@ -26,30 +26,31 @@ Retry:
 	attempts++
 	resp, err := t.bot.Request(request)
 	if err != nil {
-		log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
-		is := func(s string) bool {
-			return strings.Contains(resp.Description, s)
+		if resp != nil {
+			log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
+			is := func(s string) bool {
+				return strings.Contains(resp.Description, s)
+			}
+			switch {
+			case is("Forbidden"):
+				return nil, ErrForbidden
+			case is("message") && is("not found"):
+				return nil, ErrMessageNotFound
+			case is("can't parse entities"):
+				return nil, ErrMarkdown
+			case is("Bad Request"):
+				log.Printf("%+v", request)
+				return nil, fmt.Errorf("400 %w", err)
+			case is("Too Many Requests"):
+				retryDelay = time.Duration(resp.Parameters.RetryAfter) * time.Second
+				fallthrough
+			case attempts < utils.RetryAttempts:
+				utils.Sleep(&retryDelay)
+				goto Retry
+			}
 		}
-		switch {
-		case is("Forbidden"):
-			return nil, ErrForbidden
-		case is("message") && is("not found"):
-			return nil, ErrMessageNotFound
-		case is("can't parse entities"):
-			return nil, ErrMarkdown
-		case is("Bad Request"):
-			log.Printf("%+v", request)
-			return nil, fmt.Errorf("400 %w", err)
-		case is("Too Many Requests"):
-			retryDelay = time.Duration(resp.Parameters.RetryAfter) * time.Second
-			fallthrough
-		case attempts < utils.RetryAttempts:
-			utils.Sleep(&retryDelay)
-			goto Retry
-		default:
-			log.Printf("user %d: failed after %d attempts: %d %s", id(ctx), attempts, resp.ErrorCode, resp.Description)
-			return nil, ErrRequestFailed
-		}
+		log.Printf("user %d: failed after %d attempts: %d %s", id(ctx), attempts, resp.ErrorCode, resp.Description)
+		return nil, ErrRequestFailed
 	}
 	return resp, nil
 }

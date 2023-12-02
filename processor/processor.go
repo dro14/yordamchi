@@ -71,7 +71,7 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 		return
 	}
 
-	switch ctx.Value("user_status") {
+	switch userStatus(ctx) {
 	case redis.StatusPremium:
 		ctx = context.WithValue(ctx, "model", models.GPT4)
 		if message.Text != "" || message.Photo != nil {

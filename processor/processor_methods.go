@@ -31,22 +31,19 @@ func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) 
 		return
 	}
 
+	var Text string
 	err = p.service.Load(ctx, message.Document)
 	if errors.Is(err, service.ErrUnsupportedFormat) {
-		err = p.telegram.EditMessage(ctx, text.UnsupportedFormat[lang(ctx)], messageID, nil)
-		if err != nil {
-			log.Println("can't edit message")
-		}
+		Text = text.UnsupportedFormat[lang(ctx)]
 	} else if err != nil {
 		log.Println("can't load file:", err)
-		err = p.telegram.EditMessage(ctx, text.RequestFailed[lang(ctx)], messageID, nil)
-		if err != nil {
-			log.Println("can't edit message")
-		}
+		Text = text.RequestFailed[lang(ctx)]
 	} else {
-		err = p.telegram.EditMessage(ctx, text.Loaded[lang(ctx)], messageID, nil)
-		if err != nil {
-			log.Println("can't edit message")
-		}
+		Text = text.Loaded[lang(ctx)]
+	}
+
+	err = p.telegram.EditMessage(ctx, Text, messageID, nil)
+	if err != nil {
+		log.Println("can't edit process file message")
 	}
 }
