@@ -136,7 +136,7 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 
 func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	switch userStatus(ctx) {
-	case redis.StatusPremium, redis.StatusUnlimited:
+	case redis.StatusFree, redis.StatusExhausted:
 		p.paidFeature(ctx)
 		return
 	}
