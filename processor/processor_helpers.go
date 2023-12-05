@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"sync"
 	"time"
 
@@ -50,8 +51,13 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 	}
 	ctx = context.WithValue(ctx, "start", time.Now())
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
-	ctx = context.WithValue(ctx, "user_status", p.redis.UserStatus(ctx))
 	ctx = context.WithValue(ctx, "stream", true)
+	ctx = context.WithValue(ctx, "user_status", p.redis.UserStatus(ctx))
+	if userStatus(ctx) == redis.StatusPremium {
+		ctx = context.WithValue(ctx, "model", models.GPT4)
+	} else {
+		ctx = context.WithValue(ctx, "model", models.GPT3)
+	}
 	ctx, foundLang := p.redis.Lang(ctx, message.From.LanguageCode)
 	return ctx, false, foundLang
 }

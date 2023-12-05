@@ -72,7 +72,7 @@ func (p *Processor) language(ctx context.Context) {
 
 func (p *Processor) memory(ctx context.Context) {
 	switch userStatus(ctx) {
-	case redis.StatusFree, redis.StatusExhausted:
+	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
 		p.paidFeature(ctx)
 		return
 	}
@@ -136,7 +136,7 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 
 func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	switch userStatus(ctx) {
-	case redis.StatusFree, redis.StatusExhausted:
+	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
 		p.paidFeature(ctx)
 		return
 	}

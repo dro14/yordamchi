@@ -6,7 +6,6 @@ import (
 	"sync/atomic"
 
 	"github.com/dro14/yordamchi/clients/openai"
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/clients/telegram"
@@ -73,21 +72,18 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 
 	switch userStatus(ctx) {
 	case redis.StatusPremium:
-		ctx = context.WithValue(ctx, "model", models.GPT4)
 		if message.Text != "" || message.Photo != nil {
 			p.process(ctx, message, "premium")
 		} else if message.Document != nil {
 			p.processFile(ctx, message)
 		}
 	case redis.StatusUnlimited:
-		ctx = context.WithValue(ctx, "model", models.GPT3)
 		if message.Text != "" || message.Photo != nil {
 			p.process(ctx, message, "unlimited")
 		} else if message.Document != nil {
 			p.processFile(ctx, message)
 		}
 	case redis.StatusFree:
-		ctx = context.WithValue(ctx, "model", models.GPT3)
 		if message.Text != "" {
 			p.process(ctx, message, "free")
 		} else if message.Photo != nil || message.Document != nil {
