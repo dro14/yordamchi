@@ -8,7 +8,7 @@ Tugash muddati: *%s*
 Rasmni tushunish: *mavjud emas* 🚫
 Googledan qidirish: *mavjud emas* 🚫
 
-Qo'shimcha funksiyalarni sinab ko'rmoqchimisiz? Unda pullik tariflarga o'ting!`,
+*Qo'shimcha funksiyalarni* sinab ko'rmoqchimisiz? Unda *pullik tariflarga* o'ting!`,
 
 	"ru": `Подписка: *бесплатная*
 Версия: *GPT-3.5*
@@ -17,7 +17,7 @@ Qo'shimcha funksiyalarni sinab ko'rmoqchimisiz? Unda pullik tariflarga o'ting!`,
 Понимание изображений: *недоступно* 🚫
 Google поиск: *недоступно* 🚫
 
-Хотите попробовать дополнительные функции? Тогда перейдите на платные подписки!`,
+Хотите попробовать *дополнительные функции*? Тогда перейдите на *платные подписки*!`,
 
 	"en": `Subscription: *free*
 Version: *GPT-3.5*
@@ -26,7 +26,7 @@ Expiration date: *%s*
 Image understanding: *unavailable* 🚫
 Google search: *unavailable* 🚫
 
-Want to try additional features? Then switch to the paid subscriptions!`,
+Want to try *additional features*? Then switch to the *paid subscriptions*!`,
 }
 
 var Settings1 = map[string]string{

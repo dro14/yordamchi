@@ -1,7 +1,7 @@
 package text
 
 var Examples = map[string]string{
-	"uz": `Namunaviy so'rovlar:
+	"uz": `*Namunaviy so'rovlar:*
 
 • Quyidagi matnni ingliz (yoki ixtiyoriy) tilga tarjima qilib ber...
 • Dunyo tarixiga oid top o'nta kitobni tavsiya qil
@@ -19,7 +19,7 @@ var Examples = map[string]string{
 
 Xullas, so'rovlarning xilma-xilligi faqat Sizning tasavvuringiz bilan cheklangan. Bot rasm bilan ishlashi uchun esa, rasmni shunchaki unga yuboring va so'rovingizni izoh qilib qo'shing. Botning imkoniyatlari Sizni faqat hayratga soladi 😳`,
 
-	"ru": `Примеры запросов:
+	"ru": `*Примеры запросов:*
 
 • Переведи следующий текст на английский (или же на желаемый) язык...
 • Посоветуй топ десять книг по всемирной истории
@@ -37,7 +37,7 @@ Xullas, so'rovlarning xilma-xilligi faqat Sizning tasavvuringiz bilan cheklangan
 
 Короче, разновидность запросов зависит от Вашего воображения. А чтобы бот работал с изображениями, просто отправьте ему изображение и добавьте свой запрос как подпись. Возможности бота Вас просто удивят 😳`,
 
-	"en": `Example requests:
+	"en": `*Example requests:*
 
 • Translate the following text into English (or any language of choice)...
 • Recommend the top ten books on world history

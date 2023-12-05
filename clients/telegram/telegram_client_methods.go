@@ -58,15 +58,22 @@ Retry:
 	return nil
 }
 
-func (t *Telegram) SetTyping(ctx context.Context, isTyping *atomic.Bool) {
-	config := tgbotapi.NewChatAction(id(ctx), tgbotapi.ChatTyping)
-	for isTyping.Load() {
-		_, err := t.makeRequest(ctx, config)
-		if errors.Is(err, ErrForbidden) {
-			break
+func (t *Telegram) SetTyping(ctx context.Context) *atomic.Bool {
+	isTyping := &atomic.Bool{}
+	isTyping.Store(true)
+
+	go func() {
+		config := tgbotapi.NewChatAction(id(ctx), tgbotapi.ChatTyping)
+		for isTyping.Load() {
+			_, err := t.makeRequest(ctx, config)
+			if errors.Is(err, ErrForbidden) {
+				break
+			}
+			time.Sleep(5800 * time.Millisecond)
 		}
-		time.Sleep(5800 * time.Millisecond)
-	}
+	}()
+
+	return isTyping
 }
 
 func (t *Telegram) DeleteMessage(ctx context.Context, messageID int) {
@@ -75,18 +82,16 @@ func (t *Telegram) DeleteMessage(ctx context.Context, messageID int) {
 }
 
 func (t *Telegram) SetCommands(ctx context.Context) {
-	lang := ctx.Value("language_code").(string)
 	scope := tgbotapi.NewBotCommandScopeChat(id(ctx))
-	config := tgbotapi.NewSetMyCommandsWithScope(scope, commands[lang]...)
+	config := tgbotapi.NewSetMyCommandsWithScope(scope, commands[lang(ctx)]...)
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't set commands", id(ctx))
 	}
 }
 
-func (t *Telegram) PhotoURL(ctx context.Context, message *tgbotapi.Message) (string, error) {
-	photo := message.Photo[len(message.Photo)-1]
-	config := tgbotapi.FileConfig{FileID: photo.FileID}
+func (t *Telegram) PhotoURL(ctx context.Context, photos []tgbotapi.PhotoSize) (string, error) {
+	config := tgbotapi.FileConfig{FileID: photos[len(photos)-1].FileID}
 	resp, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't get photo url", id(ctx))
@@ -102,19 +107,27 @@ func (t *Telegram) PhotoURL(ctx context.Context, message *tgbotapi.Message) (str
 	return file.Link(t.token), nil
 }
 
-func (t *Telegram) SendPhoto(ctx context.Context, photoPath, caption string) {
-	file := tgbotapi.FilePath(photoPath)
-	config := tgbotapi.NewPhoto(id(ctx), file)
-	config.Caption = utils.Slice(caption, 1024)[0]
+func (t *Telegram) SendPhoto(ctx context.Context, photoPath, caption string, replyMarkup *tgbotapi.InlineKeyboardMarkup) error {
+	caption = utils.Slice(caption, 1024)[0]
+	config := tgbotapi.NewPhoto(id(ctx), tgbotapi.FilePath(photoPath))
+	config.Caption = utils.MarkdownV2(caption)
+	config.ReplyMarkup = replyMarkup
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+Retry:
 	_, err := t.makeRequest(ctx, config)
-	if err != nil {
-		log.Printf("user %d: can't send photo", id(ctx))
+	if errors.Is(err, ErrMarkdown) {
+		log.Println(config.Caption)
+		config.Caption = caption
+		config.ParseMode = ""
+		goto Retry
+	} else if err != nil {
+		return err
 	}
+	return nil
 }
 
 func (t *Telegram) SendFile(ctx context.Context, filepath string) {
-	file := tgbotapi.FilePath(filepath)
-	config := tgbotapi.NewDocument(id(ctx), file)
+	config := tgbotapi.NewDocument(id(ctx), tgbotapi.FilePath(filepath))
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't send file", id(ctx))
@@ -126,12 +139,5 @@ func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't answer callback query", id(ctx))
-	}
-}
-
-func (t *Telegram) CopyMessage(ctx context.Context, config *tgbotapi.CopyMessageConfig) {
-	_, err := t.makeRequest(ctx, config)
-	if err != nil {
-		log.Printf("user %d: can't copy message", id(ctx))
 	}
 }

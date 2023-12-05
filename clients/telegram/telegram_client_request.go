@@ -14,6 +14,7 @@ import (
 
 var (
 	ErrMessageNotFound = errors.New("400 Bad Request: message to edit/delete not found")
+	ErrCantDelete      = errors.New("400 Bad Request: message can't be deleted for everyone")
 	ErrMarkdown        = errors.New("400 Bad Request: can't parse entities")
 	ErrForbidden       = errors.New("403 Forbidden: bot was blocked by the user")
 	ErrRequestFailed   = errors.New("request failed")
@@ -36,6 +37,8 @@ Retry:
 				return nil, ErrForbidden
 			case is("message") && is("not found"):
 				return nil, ErrMessageNotFound
+			case is("message can't be deleted for everyone"):
+				return nil, ErrCantDelete
 			case is("can't parse entities"):
 				return nil, ErrMarkdown
 			case is("Bad Request"):
@@ -47,10 +50,14 @@ Retry:
 			case attempts < utils.RetryAttempts:
 				utils.Sleep(&retryDelay)
 				goto Retry
+			default:
+				log.Printf("user %d: failed after %d attempts: %d %s", id(ctx), attempts, resp.ErrorCode, resp.Description)
+				return nil, ErrRequestFailed
 			}
+		} else {
+			log.Printf("user %d: can't make request: %s", id(ctx), err)
+			return nil, err
 		}
-		log.Printf("user %d: failed after %d attempts: %d %s", id(ctx), attempts, resp.ErrorCode, resp.Description)
-		return nil, ErrRequestFailed
 	}
 	return resp, nil
 }

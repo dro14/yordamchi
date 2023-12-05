@@ -6,11 +6,13 @@ import (
 	"log"
 	"strings"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
+	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) doCommand(ctx context.Context, message *tgbotapi.Message) bool {
+func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 	switch message.Command() {
 	case "start":
 		p.start(ctx, message.From)
@@ -32,10 +34,11 @@ func (p *Processor) doCommand(ctx context.Context, message *tgbotapi.Message) bo
 		p.images(ctx)
 	case "generate":
 		p.generate(ctx, message)
+	case "system":
+		p.system(ctx, message)
 	case "logs":
 		p.logs(ctx, message)
 	}
-	return message.IsCommand()
 }
 
 func (p *Processor) start(ctx context.Context, user *tgbotapi.User) {
@@ -68,7 +71,25 @@ func (p *Processor) language(ctx context.Context) {
 }
 
 func (p *Processor) memory(ctx context.Context) {
+	switch userStatus(ctx) {
+	case redis.StatusPremium, redis.StatusUnlimited:
+		p.paidFeature(ctx)
+		return
+	}
 
+	var Text string
+	system, found := strings.CutPrefix(p.redis.System(ctx), "USER: ")
+	if found {
+		Text = fmt.Sprintf(text.MemorySystem[lang(ctx)], system)
+	} else {
+		Text = text.MemoryEmpty[lang(ctx)]
+	}
+	Text = fmt.Sprintf(text.Memory[lang(ctx)], Text, p.service.Memory(ctx))
+
+	_, err := p.telegram.SendMessage(ctx, Text, 0, p.newChatButton(ctx))
+	if err != nil {
+		log.Println("can't send memory command")
+	}
 }
 
 func (p *Processor) examples(ctx context.Context) {
@@ -93,11 +114,11 @@ func (p *Processor) premium(ctx context.Context) {
 }
 
 func (p *Processor) images(ctx context.Context) {
-	userID := ctx.Value("user_id").(int64)
-	config := tgbotapi.NewCopyMessage(userID, -1001924963699, 49)
-	config.Caption = fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
-	config.ReplyMarkup = p.imageButtons(ctx)
-	p.telegram.CopyMessage(ctx, &config)
+	caption := fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
+	err := p.telegram.SendPhoto(ctx, "images.png", caption, p.imageButtons(ctx))
+	if err != nil {
+		log.Println("can't send images command")
+	}
 }
 
 func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
@@ -110,6 +131,27 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 	_, err := p.telegram.SendMessage(ctx, text.Generate[lang(ctx)], message.MessageID, p.generateButtons(ctx))
 	if err != nil {
 		log.Println("can't send generate command")
+	}
+}
+
+func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
+	switch userStatus(ctx) {
+	case redis.StatusPremium, redis.StatusUnlimited:
+		p.paidFeature(ctx)
+		return
+	}
+
+	system, _ := strings.CutPrefix(message.Text, "/system")
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		system = p.apis.Translate("auto", "en", strings.TrimSpace(system))
+	}
+	p.redis.SetSystem(ctx, system)
+	system, _ = strings.CutPrefix(p.redis.System(ctx), "USER: ")
+	Text := fmt.Sprintf(text.System[lang(ctx)], system)
+
+	_, err := p.telegram.SendMessage(ctx, Text, 0, nil)
+	if err != nil {
+		log.Println("can't send system command")
 	}
 }
 

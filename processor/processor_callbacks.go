@@ -65,20 +65,27 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		return
 	}
 
+	isTyping := p.telegram.SetTyping(ctx)
+	defer isTyping.Store(false)
+
 	prompt := p.redis.Generate(ctx)
 	prompt = p.apis.Translate("auto", "en", prompt)
-	photoPath, revisedPrompt := p.openai.ProcessGenerations(ctx, prompt)
+	photoPath, caption := p.openai.ProcessGenerations(ctx, prompt)
 	if photoPath == "" {
 		log.Println("can't process generations")
-		err = p.telegram.EditMessage(ctx, revisedPrompt, messageID, nil)
+		err = p.telegram.EditMessage(ctx, caption, messageID, nil)
 		if err != nil {
 			log.Println("can't edit error message")
 		}
 		return
 	}
 
-	revisedPrompt = p.apis.Translate("en", lang(ctx), revisedPrompt)
-	p.telegram.SendPhoto(ctx, photoPath, revisedPrompt)
+	caption = p.apis.Translate("en", lang(ctx), caption)
+	err = p.telegram.SendPhoto(ctx, photoPath, caption, nil)
+	if err != nil {
+		log.Println("can't send photo")
+		return
+	}
 	p.telegram.DeleteMessage(ctx, messageID)
 	p.redis.DecrementImages(ctx)
 }

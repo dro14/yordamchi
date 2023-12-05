@@ -41,33 +41,28 @@ func (o *APIs) OCR(ctx context.Context, photoURL, caption string) string {
 	}
 	defer func() { _ = resp.Body.Close() }()
 
+	bts, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("can't read body:", err)
+		return caption
+	}
+
 	response := Response{}
-	err = json.NewDecoder(resp.Body).Decode(&response)
+	err = json.Unmarshal(bts, &response)
 	if err != nil {
 		log.Println("can't decode response:", err)
 		return caption
 	}
 
-	var builder strings.Builder
+	var result string
 	if caption != "" {
-		builder.WriteString(caption + ":\n\n")
+		result = caption + ":\n\n"
 	}
-
-	for _, region := range response.Regions {
-		for _, line := range region.Lines {
-			for _, word := range line.Words {
-				builder.WriteString(word.Text + " ")
-			}
-			builder.WriteString("\n")
-		}
-		builder.WriteString("\n\n")
-	}
-
-	return builder.String()
+	return result + response.ReadResult.Content
 }
 
 func (o *APIs) Translate(sl, tl, q string) string {
-	qs := utils.Slice(q, 4000)
+	qs := utils.Slice(q, 5000)
 
 	for i := range qs {
 		resp, err := http.Get(fmt.Sprintf(o.translateURL, sl, tl, url.QueryEscape(qs[i])))

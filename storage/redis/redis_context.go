@@ -14,7 +14,13 @@ import (
 )
 
 func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []types.Message) {
-	system := r.system(ctx)
+	searchTemplate := map[string]string{
+		"uz": "\n\nQUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
+		"ru": "\n\nНИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
+		"en": "\n\nTHE FOLLOWING ARE THE RELEVANT PIECES OF INFORMATION. USE THEM IF HELPFUL.\n\n%s",
+	}
+
+	system := r.System(ctx)
 	messages := r.messages(ctx)
 	if userStatus(ctx) != StatusFree && !strings.Contains(prompt, utils.Delim) {
 		var query string
@@ -80,11 +86,29 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 	}
 }
 
-func (r *Redis) SetSystem(ctx context.Context, system string) {
-	system = strings.TrimSpace(system)
-	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		system = r.apis.Translate("auto", "en", system)
+func (r *Redis) System(ctx context.Context) string {
+	promptTemplate := map[string]string{
+		"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
+		"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
+		"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
 	}
+
+	system, err := r.client.Get(ctx, "system:"+id(ctx)).Result()
+	if err != nil || userStatus(ctx) == StatusFree {
+		if model(ctx) == models.GPT3 {
+			if lang(ctx) == "uz" {
+				return fmt.Sprintf(promptTemplate["en"], "GPT-3.5")
+			} else {
+				return fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
+			}
+		} else {
+			return fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-4")
+		}
+	}
+	return "USER: " + system
+}
+
+func (r *Redis) SetSystem(ctx context.Context, system string) {
 	r.client.Set(ctx, "system:"+id(ctx), system, 0)
 }
 
@@ -100,32 +124,4 @@ func (r *Redis) messages(ctx context.Context) []types.Message {
 		log.Printf("can't decode %q: %s", "context:"+id(ctx), err)
 	}
 	return messages
-}
-
-func (r *Redis) system(ctx context.Context) string {
-	system, err := r.client.Get(ctx, "system:"+id(ctx)).Result()
-	if err != nil {
-		if model(ctx) == models.GPT3 {
-			if lang(ctx) == "uz" {
-				return fmt.Sprintf(promptTemplate["en"], "GPT-3.5")
-			} else {
-				return fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-3.5")
-			}
-		} else {
-			return fmt.Sprintf(promptTemplate[lang(ctx)], "GPT-4")
-		}
-	}
-	return "USER: " + system
-}
-
-var promptTemplate = map[string]string{
-	"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
-	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
-	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
-}
-
-var searchTemplate = map[string]string{
-	"uz": "\n\nQUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
-	"ru": "\n\nНИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
-	"en": "\n\nTHE FOLLOWING ARE THE RELEVANT PIECES OF INFORMATION. USE THEM IF HELPFUL.\n\n%s",
 }

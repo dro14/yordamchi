@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"sync/atomic"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -16,39 +15,41 @@ import (
 )
 
 func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type string) {
-	if message.From.ID == 1792604195 {
-		utils.SendInfoMessage("", message)
-	}
 	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Println("can't send loading message")
 		return
 	}
 
-	isTyping := &atomic.Bool{}
-	isTyping.Store(true)
-	go p.telegram.SetTyping(ctx, isTyping)
+	isTyping := p.telegram.SetTyping(ctx)
 	defer isTyping.Store(false)
 
 	msg := &postgres.Message{Type: Type}
 	msg.Requests++
 	msg.FirstSend = int(time.Since(start(ctx)).Milliseconds())
-
-	if message.Photo != nil {
-		message.Text, err = p.telegram.PhotoURL(ctx, message)
-		if err != nil {
-			message.Text = message.Caption
-		} else if ctx.Value("model") == models.GPT3 {
-			message.Text = p.apis.OCR(ctx, message.Text, message.Caption)
-			msg.Type = "ocr"
-		} else {
-			message.Text = message.Text + utils.Delim + message.Caption
-			msg.Type = "vision"
-		}
-	}
-
 	msg.Activity = int(p.activity.Add(1))
 	defer p.activity.Add(-1)
+
+	if message.Photo != nil {
+		var photoURL string
+		photoURL, err = p.telegram.PhotoURL(ctx, message.Photo)
+		if err != nil {
+			message.Text = message.Caption
+		} else if model(ctx) == models.GPT3 {
+			message.Text = p.apis.OCR(ctx, photoURL, message.Caption)
+			msg.Type = "ocr"
+		} else {
+			message.Text = photoURL + utils.Delim + message.Caption
+			msg.Type = "vision"
+		}
+		if message.From.ID == 1792604195 {
+			utils.SendInfoMessage(message.Caption, photoURL)
+		}
+	} else {
+		if message.From.ID == 1792604195 {
+			utils.SendInfoMessage(message.Text, "")
+		}
+	}
 
 	i := 0
 	var completion string
@@ -142,6 +143,6 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	msg.CompletedAt = time.Now().Format(time.TimeOnly)
 	p.postgres.SaveMessage(ctx, message.From, msg)
 	if message.From.ID == 1792604195 {
-		utils.SendInfoMessage(completion, nil)
+		utils.SendInfoMessage(completion, "")
 	}
 }

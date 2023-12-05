@@ -2,15 +2,13 @@ package service
 
 import (
 	"context"
-	"errors"
 	"log"
+	"strings"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-var ErrUnsupportedFormat = errors.New("unsupported file format")
-
-func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) error {
+func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string {
 	request := map[string]any{
 		"file_id":   document.FileID,
 		"file_name": document.FileName,
@@ -18,13 +16,14 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) error {
 	}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"load")
 	if err != nil {
-		return err
+		return err.Error()
 	}
 	if response["success"] == false {
-		log.Println("can't load file:", response["error"])
-		return ErrUnsupportedFormat
+		errMsg, supported, _ := strings.Cut(response["error"].(string), "\n")
+		log.Println("can't load file:", errMsg)
+		return supported
 	}
-	return nil
+	return ""
 }
 
 func (s *Service) Search(ctx context.Context, query, lang string) string {

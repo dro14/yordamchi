@@ -56,8 +56,8 @@ func (p *Processor) Update(update *tgbotapi.Update) {
 }
 
 func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
-	ctx, allowed, foundLang := p.messageUpdate(ctx, message)
-	if !allowed || !foundLang {
+	ctx, blocked, foundLang := p.messageUpdate(ctx, message)
+	if blocked || !foundLang {
 		if !foundLang {
 			p.language(ctx)
 			blockedUsers.Delete(message.From.ID)
@@ -66,8 +66,8 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	}
 	defer blockedUsers.Delete(message.From.ID)
 
-	done := p.doCommand(ctx, message)
-	if done {
+	p.command(ctx, message)
+	if message.IsCommand() {
 		return
 	}
 
