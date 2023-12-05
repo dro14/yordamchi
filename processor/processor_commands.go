@@ -72,7 +72,7 @@ func (p *Processor) language(ctx context.Context) {
 
 func (p *Processor) memory(ctx context.Context) {
 	switch userStatus(ctx) {
-	case redis.StatusPremium, redis.StatusUnlimited:
+	case redis.StatusFree, redis.StatusExhausted:
 		p.paidFeature(ctx)
 		return
 	}

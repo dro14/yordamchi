@@ -8,8 +8,8 @@ Premium tarifda:
 • Eng kuchli sun'iy intellekt - *GPT-4* ✅
 • Rasmni tushunish - *GPT-4 Vision* ✅
 • *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
-• Fayllar bilan ishlash ✅
-• Bot xotirasi ✅
+• *Fayllar* bilan ishlash ✅
+• Bot *xotirasi* ✅
 
   10 000 so'm - *Kunlik*
   50 000 so'm - *Haftalik*
@@ -24,8 +24,8 @@ Millionlar ishongan servis - *Payme* orqali to'lang`,
 • Самый мощный искусственный интеллект - *GPT-4* ✅
 • Понимание изображений - *GPT-4 Vision* ✅
 • Доступ к новостям и последним данным с *Google* ✅
-• Работа с файлами ✅
-• Память бота ✅
+• Работа с *файлами* ✅
+• *Память* бота ✅
 
   10 000 сум - *Дневная*
   50 000 сум - *Недельная*
@@ -40,8 +40,8 @@ In the premium subscription:
 • Most powerful artificial intelligence - *GPT-4* ✅
 • Image understanding - *GPT-4 Vision* ✅
 • Access to news and up-to-date information from *Google* ✅
-• Working with files ✅
-• Bot memory ✅
+• Working with *files* ✅
+• Bot *memory* ✅
 
   10 000 UZS - *Daily*
   50 000 UZS - *Weekly*
