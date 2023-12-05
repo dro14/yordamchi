@@ -84,28 +84,28 @@ Retry:
 		log.Printf("%q was handled after %d attempts", errMsg, attempts)
 	}
 
-	photoURL := response.Data[0].URL
-	photoPath, _, found := strings.Cut(photoURL, ".png")
+	URL := response.Data[0].URL
+	path, _, found := strings.Cut(URL, ".png")
 	if !found {
-		log.Printf("user %s: can't find .png in %q", id(ctx), photoURL)
+		log.Printf("user %s: can't find .png in %q", id(ctx), URL)
 		return "", text.RequestFailed[lang(ctx)]
 	}
 
-	_, photoPath, found = strings.Cut(photoPath, "img-")
+	_, path, found = strings.Cut(path, "img-")
 	if !found {
-		log.Printf("user %s: can't find img- in %q", id(ctx), photoPath)
+		log.Printf("user %s: can't find img- in %q", id(ctx), path)
 		return "", text.RequestFailed[lang(ctx)]
 	}
-	photoPath = "img-" + photoPath + ".png"
+	path = "img-" + path + ".png"
 
-	resp, err := http.Get(photoURL)
+	resp, err := http.Get(URL)
 	if err != nil {
 		log.Printf("user %s: can't get image: %s", id(ctx), err)
 		return "", text.RequestFailed[lang(ctx)]
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	out, err := os.Create(photoPath)
+	out, err := os.Create(path)
 	if err != nil {
 		log.Printf("user %s: can't create image: %s", id(ctx), err)
 		return "", text.RequestFailed[lang(ctx)]
@@ -118,5 +118,5 @@ Retry:
 		return "", text.RequestFailed[lang(ctx)]
 	}
 
-	return photoPath, response.Data[0].RevisedPrompt
+	return path, response.Data[0].RevisedPrompt
 }

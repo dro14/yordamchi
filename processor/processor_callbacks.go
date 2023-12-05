@@ -70,8 +70,8 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 
 	prompt := p.redis.Generate(ctx)
 	prompt = p.apis.Translate("auto", "en", prompt)
-	photoPath, caption := p.openai.ProcessGenerations(ctx, prompt)
-	if photoPath == "" {
+	path, caption := p.openai.ProcessGenerations(ctx, prompt)
+	if path == "" {
 		log.Println("can't process generations")
 		err = p.telegram.EditMessage(ctx, caption, messageID, nil)
 		if err != nil {
@@ -81,7 +81,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	}
 
 	caption = p.apis.Translate("en", lang(ctx), caption)
-	err = p.telegram.SendPhoto(ctx, photoPath, caption, nil)
+	err = p.telegram.SendPhoto(ctx, path, "", caption, nil)
 	if err != nil {
 		log.Println("can't send photo")
 		return
