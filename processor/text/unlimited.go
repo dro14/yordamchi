@@ -8,6 +8,8 @@ Cheksiz tarifda:
 • ChatGPT - *GPT-3.5* ✅
 • *Rasmni tushunish* (faqat rasmdagi matnlarni) ✅
 • *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
+• *Fayllar* bilan ishlash ✅
+• Bot *xotirasi* ✅
 
 10 000 so'm - *Haftalik*
 30 000 so'm - *Oylik*
@@ -21,6 +23,8 @@ Millionlar ishongan servis - *Payme* orqali to'lang`,
 • ChatGPT - *GPT-3.5* ✅
 • *Понимание изображений* (только текст в изображениях) ✅
 • Доступ к новостям и последним данным с *Google* ✅
+• Работа с *файлами* ✅
+• *Память* бота ✅
 
 10 000 сум - *Недельная*
 30 000 сум - *Месячная*
@@ -34,6 +38,8 @@ In the unlimited subscription:
 • ChatGPT - *GPT-3.5* ✅
 • *Image understanding* (only text in the images) ✅
 • Access to news and up-to-date information from *Google* ✅
+• Working with *files* ✅
+• Bot *memory* ✅
 
 10 000 UZS - *Weekly*
 30 000 UZS - *Monthly*

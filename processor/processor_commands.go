@@ -146,8 +146,8 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 		system = p.apis.Translate("auto", "en", system)
 	}
-	p.redis.SetSystem(ctx, strings.TrimSpace(system))
-	system, _ = strings.CutPrefix(p.redis.System(ctx), "USER: ")
+	system = strings.TrimSpace(system)
+	p.redis.SetSystem(ctx, system)
 	Text := fmt.Sprintf(text.System[lang(ctx)], system)
 
 	_, err := p.telegram.SendMessage(ctx, Text, 0, nil)

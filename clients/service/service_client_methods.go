@@ -26,10 +26,10 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 	return ""
 }
 
-func (s *Service) Search(ctx context.Context, query, lang string) string {
+func (s *Service) Search(ctx context.Context, query string) string {
 	request := map[string]any{
 		"query":   query,
-		"lang":    lang,
+		"lang":    ctx.Value("language_code").(string),
 		"user_id": ctx.Value("user_id").(int64),
 	}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"search")
