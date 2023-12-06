@@ -47,7 +47,7 @@ func (s *Service) Memory(ctx context.Context) string {
 	if err != nil {
 		return ""
 	}
-	return response["file_name"].(string)
+	return response["source"].(string)
 }
 
 func (s *Service) Delete(ctx context.Context) error {
