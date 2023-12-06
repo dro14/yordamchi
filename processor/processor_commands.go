@@ -144,9 +144,9 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 
 	system, _ := strings.CutPrefix(message.Text, "/system")
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		system = p.apis.Translate("auto", "en", strings.TrimSpace(system))
+		system = p.apis.Translate("auto", "en", system)
 	}
-	p.redis.SetSystem(ctx, system)
+	p.redis.SetSystem(ctx, strings.TrimSpace(system))
 	system, _ = strings.CutPrefix(p.redis.System(ctx), "USER: ")
 	Text := fmt.Sprintf(text.System[lang(ctx)], system)
 
