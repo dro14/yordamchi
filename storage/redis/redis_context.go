@@ -33,11 +33,11 @@ func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []
 		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 			translate := ""
 			if query != prompt {
-				translate += messages[0].Content.(string) + utils.Delim
+				translate += messages[0].Content.(string) + "|||||"
 			}
-			translate += prompt + utils.Delim + results
+			translate += prompt + "|||||" + results
 			translate = r.apis.Translate("auto", "en", translate)
-			translations := strings.Split(translate, utils.Delim)
+			translations := strings.Split(translate, "|||||")
 			if query != prompt {
 				messages[0].Content = translations[len(translations)-3]
 			}
