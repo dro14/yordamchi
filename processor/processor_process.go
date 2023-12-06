@@ -55,7 +55,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if lang(ctx) == "uz" && model(ctx) == models.GPT3 {
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 		ctx = context.WithValue(ctx, "stream", false)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel

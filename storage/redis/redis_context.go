@@ -31,18 +31,11 @@ func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []
 		results := r.service.Search(ctx, query)
 
 		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-			translate := ""
 			if query != prompt {
-				translate += messages[0].Content.(string) + "|||||"
+				messages[0].Content = r.apis.Translate("auto", "en", messages[0].Content.(string))
 			}
-			translate += prompt + "|||||" + results
-			translate = r.apis.Translate("auto", "en", translate)
-			translations := strings.Split(translate, "|||||")
-			if query != prompt {
-				messages[0].Content = translations[len(translations)-3]
-			}
-			prompt = translations[len(translations)-2]
-			results = translations[len(translations)-1]
+			prompt = r.apis.Translate("auto", "en", prompt)
+			results = r.apis.Translate("auto", "en", results)
 			system += fmt.Sprintf(template["en"], results)
 		} else {
 			system += fmt.Sprintf(template[lang(ctx)], results)
