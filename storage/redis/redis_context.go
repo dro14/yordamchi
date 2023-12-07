@@ -13,7 +13,7 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []types.Message) {
+func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, []types.Message) {
 	template := map[string]string{
 		"uz": "\n\nQUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
 		"ru": "\n\nНИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
@@ -23,13 +23,8 @@ func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []
 	system := r.System(ctx)
 	system, _ = strings.CutPrefix(system, "USER: ")
 	messages := r.messages(ctx)
-	if userStatus(ctx) != StatusFree && !strings.Contains(prompt, utils.Delim) {
-		query := prompt
-		if len(messages) == 2 && !strings.Contains(messages[0].Content.(string), utils.Delim) {
-			query = messages[0].Content.(string) + " " + prompt
-		}
-		results := r.service.Search(ctx, query)
-
+	if userStatus(ctx) != StatusFree && !strings.Contains(*prompt, utils.Delim) {
+		results := r.service.Search(ctx, *prompt)
 		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 			results = r.apis.Translate("auto", "en", results)
 			system += fmt.Sprintf(template["en"], results)
@@ -39,14 +34,11 @@ func (r *Redis) Context(ctx context.Context, prompt string) (context.Context, []
 	}
 
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		if len(messages) == 2 {
-			messages[0].Content = r.apis.Translate("auto", "en", messages[0].Content.(string))
-		}
-		prompt = r.apis.Translate("auto", "en", prompt)
+		*prompt = r.apis.Translate("auto", "en", *prompt)
 	}
 
 	messages = append([]types.Message{{Role: "system", Content: system}}, messages...)
-	messages = append(messages, types.Message{Role: "user", Content: prompt})
+	messages = append(messages, types.Message{Role: "user", Content: *prompt})
 
 	for i := range messages {
 		URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delim)

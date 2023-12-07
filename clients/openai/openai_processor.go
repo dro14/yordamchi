@@ -17,7 +17,7 @@ import (
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
 	defer utils.RecoverIfPanic()
-	ctx, messages := o.redis.Context(ctx, prompt)
+	ctx, messages := o.redis.Context(ctx, &prompt)
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
 Retry:
