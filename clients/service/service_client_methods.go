@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -19,9 +20,13 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 		return err.Error()
 	}
 	if response["success"] == false {
-		errMsg, supported, _ := strings.Cut(response["error"].(string), "\n")
+		errMsg, supported, found := strings.Cut(response["error"].(string), utils.Delim)
 		log.Println("can't load file:", errMsg)
-		return supported
+		if found {
+			return supported
+		} else {
+			return errMsg
+		}
 	}
 	return ""
 }
