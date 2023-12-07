@@ -13,11 +13,12 @@ import (
 )
 
 var (
-	ErrMessageNotFound = errors.New("400 Bad Request: message to edit/delete not found")
-	ErrCantDelete      = errors.New("400 Bad Request: message can't be deleted for everyone")
-	ErrMarkdown        = errors.New("400 Bad Request: can't parse entities")
-	ErrForbidden       = errors.New("403 Forbidden: bot was blocked by the user")
-	ErrRequestFailed   = errors.New("request failed")
+	ErrNotFound      = errors.New("400 Bad Request: message to edit/delete not found")
+	ErrNotModified   = errors.New("400 Bad Request: message is not modified")
+	ErrCantDelete    = errors.New("400 Bad Request: message can't be deleted for everyone")
+	ErrMarkdown      = errors.New("400 Bad Request: can't parse entities")
+	ErrForbidden     = errors.New("403 Forbidden: bot was blocked by the user")
+	ErrRequestFailed = errors.New("request failed")
 )
 
 func (t *Telegram) makeRequest(ctx context.Context, request tgbotapi.Chattable) (*tgbotapi.APIResponse, error) {
@@ -36,7 +37,9 @@ Retry:
 			case is("Forbidden"):
 				return nil, ErrForbidden
 			case is("message") && is("not found"):
-				return nil, ErrMessageNotFound
+				return nil, ErrNotFound
+			case is("message is not modified"):
+				return nil, ErrNotModified
 			case is("message can't be deleted for everyone"):
 				return nil, ErrCantDelete
 			case is("can't parse entities"):

@@ -70,7 +70,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		err = p.telegram.EditMessage(ctx, completions[i], messageID, replyMarkup)
 		if errors.Is(err, telegram.ErrForbidden) {
 			return
-		} else if errors.Is(err, telegram.ErrMessageNotFound) {
+		} else if errors.Is(err, telegram.ErrNotFound) {
 			i--
 		}
 		msg.Requests++
@@ -101,7 +101,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 			err = p.telegram.EditMessage(ctx, completions[i], messageID, nil)
 			if errors.Is(err, telegram.ErrForbidden) {
 				return
-			} else if errors.Is(err, telegram.ErrMessageNotFound) {
+			} else if errors.Is(err, telegram.ErrNotFound) {
 				i--
 			}
 			msg.Requests++
