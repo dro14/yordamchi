@@ -90,7 +90,11 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 			p.paidFeature(ctx)
 		}
 	case redis.StatusExhausted:
-		p.exhausted(ctx)
+		if message.Text != "" {
+			p.exhausted(ctx)
+		} else if message.Photo != nil || message.Document != nil {
+			p.paidFeature(ctx)
+		}
 	default:
 		log.Println("unknown user status:", message.From.ID)
 	}

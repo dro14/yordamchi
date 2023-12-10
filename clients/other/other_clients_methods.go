@@ -54,11 +54,10 @@ func (o *APIs) OCR(ctx context.Context, photoURL, caption string) string {
 		return caption
 	}
 
-	var result string
 	if caption != "" {
-		result = caption + ":\n\n"
+		caption = "\n\n" + caption
 	}
-	return result + response.ReadResult.Content
+	return response.ReadResult.Content + caption
 }
 
 func (o *APIs) Translate(sl, tl, q string) string {
