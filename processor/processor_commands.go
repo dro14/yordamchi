@@ -75,6 +75,7 @@ func (p *Processor) memory(ctx context.Context) {
 	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
 		p.paidFeature(ctx)
 		return
+	default:
 	}
 
 	var Text string
@@ -114,9 +115,8 @@ func (p *Processor) premium(ctx context.Context) {
 }
 
 func (p *Processor) images(ctx context.Context) {
-	ID := "AgACAgIAAx0CcrydcwADMWVeRXLI480dpI3Th2d9_1EjLHfpAAJJ0zEbf6jxSuacfSN4d5ooAQADAgADeQADMwQ"
 	caption := fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
-	err := p.telegram.SendPhoto(ctx, "", ID, caption, p.imageButtons(ctx))
+	err := p.telegram.SendPhoto(ctx, "images.png", caption, p.imageButtons(ctx))
 	if err != nil {
 		log.Println("can't send images command")
 	}
@@ -140,6 +140,7 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
 		p.paidFeature(ctx)
 		return
+	default:
 	}
 
 	system, _ := strings.CutPrefix(message.Text, "/system")

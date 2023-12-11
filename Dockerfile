@@ -23,6 +23,7 @@ FROM gcr.io/distroless/base-debian10
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/main /main
+COPY --from=builder /app/images.png /images.png
 
 # Expose port 8000 to the outside world
 EXPOSE 8000

@@ -81,7 +81,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	}
 
 	caption = p.apis.Translate("en", lang(ctx), caption)
-	err = p.telegram.SendPhoto(ctx, path, "", caption, nil)
+	err = p.telegram.SendPhoto(ctx, path, caption, nil)
 	if err != nil {
 		log.Println("can't send photo")
 		return

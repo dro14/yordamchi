@@ -107,15 +107,9 @@ func (t *Telegram) PhotoURL(ctx context.Context, photos []tgbotapi.PhotoSize) (s
 	return file.Link(t.token), nil
 }
 
-func (t *Telegram) SendPhoto(ctx context.Context, path, ID, caption string, replyMarkup *tgbotapi.InlineKeyboardMarkup) error {
+func (t *Telegram) SendPhoto(ctx context.Context, path, caption string, replyMarkup *tgbotapi.InlineKeyboardMarkup) error {
 	caption = utils.Slice(caption, 1024)[0]
-	var file tgbotapi.RequestFileData
-	if path != "" {
-		file = tgbotapi.FilePath(path)
-	} else {
-		file = tgbotapi.FileID(ID)
-	}
-	config := tgbotapi.NewPhoto(id(ctx), file)
+	config := tgbotapi.NewPhoto(id(ctx), tgbotapi.FilePath(path))
 	config.Caption = utils.MarkdownV2(caption)
 	config.ReplyMarkup = replyMarkup
 	config.ParseMode = tgbotapi.ModeMarkdownV2
@@ -132,8 +126,8 @@ Retry:
 	return nil
 }
 
-func (t *Telegram) SendFile(ctx context.Context, filepath string) {
-	config := tgbotapi.NewDocument(id(ctx), tgbotapi.FilePath(filepath))
+func (t *Telegram) SendFile(ctx context.Context, path string) {
+	config := tgbotapi.NewDocument(id(ctx), tgbotapi.FilePath(path))
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't send file", id(ctx))
