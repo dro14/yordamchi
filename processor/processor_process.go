@@ -43,7 +43,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 			msg.Type = "vision"
 		}
 		if message.From.ID == 1792604195 {
-			path := message.Photo[0].FileID + ".jpeg"
+			path := message.Photo[len(message.Photo)-1].FileID + ".jpeg"
 			_ = utils.DownloadFile(photoURL, path)
 			utils.SendInfoMessage(message.Caption, path)
 		}

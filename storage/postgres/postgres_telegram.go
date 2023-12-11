@@ -63,6 +63,10 @@ func (p *Postgres) UpdateUser(ctx context.Context, user *tgbotapi.User) {
 }
 
 func (p *Postgres) PollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
+	if len(pollAnswer.OptionIDs) != 1 {
+		log.Printf("user %d: poll_answer.option_ids length is not 1", pollAnswer.User.ID)
+		return
+	}
 	query := "INSERT INTO poll_answers (poll_id, question, user_id, option_id) VALUES ($1, $2, $3, $4);"
 	args := []any{pollAnswer.PollID, p.redis.PollQuestion(ctx), pollAnswer.User.ID, pollAnswer.OptionIDs[0]}
 	err := p.execTelegram(ctx, &pollAnswer.User, query, args)
