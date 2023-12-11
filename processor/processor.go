@@ -126,6 +126,7 @@ func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 }
 
 func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
+	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = p.redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
