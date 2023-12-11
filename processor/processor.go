@@ -102,6 +102,7 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	default:
 		log.Println("unknown user status:", message.From.ID)
 	}
+	p.postgres.UpdateUser(ctx, message.From)
 }
 
 func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
@@ -125,6 +126,7 @@ func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 	default:
 		log.Println("unknown callback data:", callbackQuery.Data)
 	}
+	p.postgres.UpdateUser(ctx, callbackQuery.From)
 }
 
 func (p *Processor) poll(ctx context.Context, poll *tgbotapi.Poll) {
@@ -133,6 +135,7 @@ func (p *Processor) poll(ctx context.Context, poll *tgbotapi.Poll) {
 
 func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
 	log.Printf("new poll answer:\n%+v", pollAnswer)
+	p.postgres.UpdateUser(ctx, &pollAnswer.User)
 }
 
 func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
@@ -148,4 +151,5 @@ func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotap
 	default:
 		log.Println("unknown chat member status:", chatMemberUpdated.NewChatMember.Status)
 	}
+	p.postgres.UpdateUser(ctx, &chatMemberUpdated.From)
 }

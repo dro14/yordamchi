@@ -15,13 +15,6 @@ func (p *Postgres) UserStarted(ctx context.Context, user *tgbotapi.User) {
 	if err != nil {
 		log.Printf("user %d: failed to join user: %s", user.ID, err)
 	}
-
-	query = "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = true WHERE id = $5;"
-	args = []any{user.FirstName, user.LastName, user.UserName, lang(ctx), user.ID}
-	err = p.execTelegram(ctx, user, query, args)
-	if err != nil {
-		log.Printf("user %d: failed to update user: %s", user.ID, err)
-	}
 }
 
 func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Message) {
@@ -31,10 +24,12 @@ func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Me
 	if err != nil {
 		log.Printf("user %d: failed to save message: %s", user.ID, err)
 	}
+}
 
-	query = "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = true WHERE id = $5;"
-	args = []any{user.FirstName, user.LastName, user.UserName, lang(ctx), user.ID}
-	err = p.execTelegram(ctx, user, query, args)
+func (p *Postgres) UpdateUser(ctx context.Context, user *tgbotapi.User) {
+	query := "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = true WHERE id = $5;"
+	args := []any{user.FirstName, user.LastName, user.UserName, lang(ctx), user.ID}
+	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to update user: %s", user.ID, err)
 	}
