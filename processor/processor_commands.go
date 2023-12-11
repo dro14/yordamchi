@@ -116,7 +116,7 @@ func (p *Processor) premium(ctx context.Context) {
 
 func (p *Processor) images(ctx context.Context) {
 	caption := fmt.Sprintf(text.Image[lang(ctx)], p.redis.Images(ctx))
-	err := p.telegram.SendPhoto(ctx, "images.png", caption, p.imageButtons(ctx))
+	err := p.telegram.SendPhoto(ctx, "images.jpeg", caption, p.imageButtons(ctx))
 	if err != nil {
 		log.Println("can't send images command")
 	}
