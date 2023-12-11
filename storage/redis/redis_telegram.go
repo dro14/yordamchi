@@ -116,3 +116,7 @@ func (r *Redis) SetLang(ctx context.Context) {
 	monthLater := time.Now().AddDate(0, 1, 0)
 	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(monthLater))
 }
+
+func (r *Redis) PollQuestion(ctx context.Context) string {
+	return r.client.Get(ctx, "poll_question").String()
+}

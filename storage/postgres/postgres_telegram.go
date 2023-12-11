@@ -26,15 +26,6 @@ func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Me
 	}
 }
 
-func (p *Postgres) UpdateUser(ctx context.Context, user *tgbotapi.User) {
-	query := "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = true WHERE id = $5;"
-	args := []any{user.FirstName, user.LastName, user.UserName, lang(ctx), user.ID}
-	err := p.execTelegram(ctx, user, query, args)
-	if err != nil {
-		log.Printf("user %d: failed to update user: %s", user.ID, err)
-	}
-}
-
 func (p *Postgres) UserBlocked(ctx context.Context, user *tgbotapi.User) {
 	query := "UPDATE users SET is_active = $1, blocked_at = $2 WHERE id = $3;"
 	args := []any{false, time.Now().Format(time.DateTime), user.ID}
@@ -59,5 +50,23 @@ func (p *Postgres) SetLang(ctx context.Context, user *tgbotapi.User) {
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to set language_code: %s", user.ID, err)
+	}
+}
+
+func (p *Postgres) UpdateUser(ctx context.Context, user *tgbotapi.User) {
+	query := "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = true WHERE id = $5;"
+	args := []any{user.FirstName, user.LastName, user.UserName, lang(ctx), user.ID}
+	err := p.execTelegram(ctx, user, query, args)
+	if err != nil {
+		log.Printf("user %d: failed to update user: %s", user.ID, err)
+	}
+}
+
+func (p *Postgres) PollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
+	query := "INSERT INTO poll_answers (poll_id, question, user_id, option_id) VALUES ($1, $2, $3, $4);"
+	args := []any{pollAnswer.PollID, p.redis.PollQuestion(ctx), pollAnswer.User.ID, pollAnswer.OptionIDs[0]}
+	err := p.execTelegram(ctx, &pollAnswer.User, query, args)
+	if err != nil {
+		log.Printf("user %d: failed to save poll answer: %s", pollAnswer.User.ID, err)
 	}
 }

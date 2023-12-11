@@ -47,12 +47,10 @@ func (p *Processor) Update(update *tgbotapi.Update) {
 		p.message(ctx, update.Message)
 	case update.CallbackQuery != nil:
 		p.callbackQuery(ctx, update.CallbackQuery)
-	case update.Poll != nil:
-		p.poll(ctx, update.Poll)
-	case update.PollAnswer != nil:
-		p.pollAnswer(ctx, update.PollAnswer)
 	case update.MyChatMember != nil:
 		p.myChatMember(ctx, update.MyChatMember)
+	case update.PollAnswer != nil:
+		p.pollAnswer(ctx, update.PollAnswer)
 	default:
 		log.Printf("unknown update type:\n%+v", update)
 	}
@@ -106,10 +104,8 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	ctx = context.WithValue(ctx, "date", callbackQuery.Message.Date)
 	ctx = context.WithValue(ctx, "user_id", callbackQuery.From.ID)
 	ctx, _ = p.redis.Lang(ctx, callbackQuery.From.LanguageCode)
-
 	switch callbackQuery.Data {
 	case "new_chat":
 		p.newChatCallback(ctx, callbackQuery)
@@ -129,20 +125,8 @@ func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 	p.postgres.UpdateUser(ctx, callbackQuery.From)
 }
 
-func (p *Processor) poll(ctx context.Context, poll *tgbotapi.Poll) {
-	log.Printf("new poll:\n%+v", poll)
-}
-
-func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
-	log.Printf("new poll answer:\n%+v", pollAnswer)
-	p.postgres.UpdateUser(ctx, &pollAnswer.User)
-}
-
 func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotapi.ChatMemberUpdated) {
-	ctx = context.WithValue(ctx, "date", chatMemberUpdated.Date)
-	ctx = context.WithValue(ctx, "user_id", chatMemberUpdated.From.ID)
 	ctx, _ = p.redis.Lang(ctx, chatMemberUpdated.From.LanguageCode)
-
 	switch chatMemberUpdated.NewChatMember.Status {
 	case "kicked":
 		p.postgres.UserBlocked(ctx, &chatMemberUpdated.From)
@@ -152,4 +136,10 @@ func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotap
 		log.Println("unknown chat member status:", chatMemberUpdated.NewChatMember.Status)
 	}
 	p.postgres.UpdateUser(ctx, &chatMemberUpdated.From)
+}
+
+func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
+	ctx, _ = p.redis.Lang(ctx, pollAnswer.User.LanguageCode)
+	p.postgres.PollAnswer(ctx, pollAnswer)
+	p.postgres.UpdateUser(ctx, &pollAnswer.User)
 }
