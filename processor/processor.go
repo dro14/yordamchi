@@ -140,6 +140,7 @@ func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotap
 }
 
 func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
+	ctx = context.WithValue(ctx, "user_id", pollAnswer.User.ID)
 	ctx, _ = p.redis.Lang(ctx, pollAnswer.User.LanguageCode)
 	p.postgres.PollAnswer(ctx, pollAnswer)
 	p.postgres.UpdateUser(ctx, &pollAnswer.User)

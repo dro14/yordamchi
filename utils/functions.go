@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"io"
 	"log"
+	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -90,4 +93,27 @@ func MarkdownV2(s string) string {
 	}
 
 	return buffer.String()
+}
+
+func DownloadFile(URL, path string) error {
+	resp, err := http.Get(URL)
+	if err != nil {
+		log.Println("can't get file:", err)
+		return err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	out, err := os.Create(path)
+	if err != nil {
+		log.Println("can't create file:", err)
+		return err
+	}
+	defer func() { _ = out.Close() }()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		log.Println("can't write to file:", err)
+		return err
+	}
+	return nil
 }

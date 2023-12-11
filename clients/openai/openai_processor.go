@@ -2,10 +2,7 @@ package openai
 
 import (
 	"context"
-	"io"
 	"log"
-	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -98,23 +95,9 @@ Retry:
 	}
 	path = "img-" + path + ".png"
 
-	resp, err := http.Get(URL)
+	err = utils.DownloadFile(URL, path)
 	if err != nil {
-		log.Printf("user %s: can't get image: %s", id(ctx), err)
-		return "", text.RequestFailed[lang(ctx)]
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	out, err := os.Create(path)
-	if err != nil {
-		log.Printf("user %s: can't create image: %s", id(ctx), err)
-		return "", text.RequestFailed[lang(ctx)]
-	}
-	defer func() { _ = out.Close() }()
-
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Printf("user %s: can't write image: %s", id(ctx), err)
+		log.Printf("user %s: can't download %q: %s", id(ctx), path, err)
 		return "", text.RequestFailed[lang(ctx)]
 	}
 

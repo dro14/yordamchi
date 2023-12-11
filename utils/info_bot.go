@@ -8,9 +8,9 @@ import (
 
 var bot *tgbotapi.BotAPI
 
-func SendInfoMessage(text, photoURL string) {
-	if photoURL != "" {
-		config := tgbotapi.NewPhoto(1331278972, tgbotapi.FileURL(photoURL))
+func SendInfoMessage(text, path string) {
+	if path != "" {
+		config := tgbotapi.NewPhoto(1331278972, tgbotapi.FilePath(path))
 		config.Caption = text
 		_, err := bot.Request(config)
 		if err != nil {
