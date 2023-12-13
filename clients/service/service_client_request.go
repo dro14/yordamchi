@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 )
@@ -32,10 +33,16 @@ func (s *Service) makeRequest(ctx context.Context, request map[string]any, url s
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	response := make(map[string]any)
-	err = json.NewDecoder(resp.Body).Decode(&response)
+	bts, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("can't decode response:", err)
+		log.Println("can't read response:", err)
+		return nil, err
+	}
+
+	response := make(map[string]any)
+	err = json.Unmarshal(bts, &response)
+	if err != nil {
+		log.Printf("can't decode response: %s\nbody: %s", err, bts)
 		return nil, err
 	}
 
