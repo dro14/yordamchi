@@ -161,5 +161,6 @@ func (p *Processor) logs(ctx context.Context, message *tgbotapi.Message) {
 	if message.From.ID == 1331278972 {
 		p.telegram.SendFile(ctx, "gin.log")
 		p.telegram.SendFile(ctx, "yordamchi.log")
+		p.service.Logs(ctx)
 	}
 }
