@@ -62,5 +62,8 @@ Retry:
 			return nil, err
 		}
 	}
+	if attempts > 1 {
+		log.Printf("user %d: request was handled after %d attempts", id(ctx), attempts)
+	}
 	return resp, nil
 }

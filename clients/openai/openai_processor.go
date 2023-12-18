@@ -22,13 +22,19 @@ Retry:
 	response, err := o.Completions(ctx, messages, channel)
 	if err != nil {
 		errMsg = err.Error()
-		if strings.Contains(errMsg, "400 Bad Request") {
+		is := func(s string) bool {
+			return strings.Contains(errMsg, s)
+		}
+		switch {
+		case is("400 Bad Request"):
 			channel <- text.BadRequest[lang(ctx)]
 			return
-		} else if strings.Contains(errMsg, "stream error") {
+		case is("stream error"):
 			channel <- text.Error[lang(ctx)]
 			retryDelay = 0
-		} else if strings.Contains(errMsg, "context deadline exceeded") {
+		case is("context deadline exceeded"),
+			is("500 Internal Server Error"),
+			is("502 Bad Gateway"):
 			retryDelay = 0
 		}
 		if msg.Attempts < utils.RetryAttempts {
@@ -65,9 +71,15 @@ Retry:
 	response, err := o.Generations(ctx, prompt)
 	if err != nil {
 		errMsg = err.Error()
-		if strings.Contains(errMsg, "400 Bad Request") {
+		is := func(s string) bool {
+			return strings.Contains(errMsg, s)
+		}
+		switch {
+		case is("400 Bad Request"):
 			return "", text.BadRequest[lang(ctx)]
-		} else if strings.Contains(errMsg, "context deadline exceeded") {
+		case is("context deadline exceeded"),
+			is("500 Internal Server Error"),
+			is("502 Bad Gateway"):
 			retryDelay = 0
 		}
 		if attempts < utils.RetryAttempts {

@@ -60,10 +60,10 @@ Retry:
 	attempts++
 	_, err := p.db.Exec(query, args...)
 	if err != nil {
-		log.Printf("%s\n%s\n", query, err)
 		if errors.Is(err, sql.ErrNoRows) {
 			return err
 		} else if attempts < utils.RetryAttempts {
+			log.Printf("%s\n%s\n", query, err)
 			utils.Sleep(&retryDelay)
 			goto Retry
 		} else {
@@ -80,10 +80,10 @@ Retry:
 	attempts++
 	err := p.db.QueryRow(query, args...).Scan(results...)
 	if err != nil {
-		log.Printf("%s\n%s\n", query, err)
 		if errors.Is(err, sql.ErrNoRows) {
 			return err
 		} else if attempts < utils.RetryAttempts {
+			log.Printf("%s\n%s\n", query, err)
 			utils.Sleep(&retryDelay)
 			goto Retry
 		} else {

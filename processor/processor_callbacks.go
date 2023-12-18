@@ -49,10 +49,7 @@ func (p *Processor) languageCallback(ctx context.Context, callbackQuery *tgbotap
 }
 
 func (p *Processor) examplesCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
-	err := p.telegram.EditMessage(ctx, text.Examples[lang(ctx)], callbackQuery.Message.MessageID, p.examplesButton(ctx))
-	if err != nil {
-		log.Println("can't edit examples callback")
-	}
+	_ = p.telegram.EditMessage(ctx, text.Examples[lang(ctx)], callbackQuery.Message.MessageID, p.examplesButton(ctx))
 }
 
 func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {

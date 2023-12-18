@@ -7,8 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/dro14/yordamchi/utils"
 )
 
 func (s *Service) makeRequest(ctx context.Context, request map[string]any, url string) (map[string]any, error) {
@@ -28,10 +26,6 @@ func (s *Service) makeRequest(ctx context.Context, request map[string]any, url s
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
-	retryDelay := utils.RetryDelay
-	attempts := 0
-Retry:
-	attempts++
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("can't do request:", err)
@@ -48,13 +42,7 @@ Retry:
 	response := make(map[string]any)
 	err = json.Unmarshal(bts, &response)
 	if err != nil {
-		log.Printf("can't decode response: %s\nbody: %s", err, bts)
-		if string(bts) == "stream timeout" {
-			if attempts < utils.RetryAttempts {
-				utils.Sleep(&retryDelay)
-				goto Retry
-			}
-		}
+		log.Printf("can't decode response: %s: body: %s", err, bts)
 		return nil, err
 	}
 

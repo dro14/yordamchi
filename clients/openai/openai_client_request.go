@@ -21,7 +21,7 @@ func (o *OpenAI) send(ctx context.Context, request any) (*http.Response, error) 
 	switch resp.StatusCode {
 	case http.StatusOK:
 		return resp, nil
-	case http.StatusBadGateway, http.StatusServiceUnavailable:
+	case http.StatusInternalServerError, http.StatusBadGateway, http.StatusServiceUnavailable:
 		return nil, fmt.Errorf("user %s: %s", id(ctx), resp.Status)
 	default:
 		bts, _ := io.ReadAll(resp.Body)
