@@ -3,13 +3,12 @@ package processor
 import (
 	"context"
 	"fmt"
+	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/utils"
+	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
 	"time"
-
-	"github.com/dro14/yordamchi/processor/text"
-	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func (p *Processor) exhausted(ctx context.Context) {
@@ -61,38 +60,41 @@ func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) 
 }
 
 func (p *Processor) notify(ctx context.Context) {
-	patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
-	for _, pattern := range patterns {
-		for _, userID := range p.redis.SoonExpires(ctx, pattern) {
-			ctx = context.WithValue(ctx, "user_id", userID)
-			ctx, _ = p.redis.Lang(ctx, "uz")
-			name := p.postgres.User(ctx, &tgbotapi.User{ID: userID})
+	for {
+		patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
+		for _, pattern := range patterns {
+			for _, userID := range p.redis.SoonExpires(ctx, pattern) {
+				ctx = context.WithValue(ctx, "user_id", userID)
+				ctx, _ = p.redis.Lang(ctx, "uz")
+				name := p.postgres.User(ctx, &tgbotapi.User{ID: userID})
 
-			var Text string
-			var replyMarkup *tgbotapi.InlineKeyboardMarkup
-			switch pattern {
-			case "lang:*", "context:*":
-				if name == "" {
-					name = text.DearUser[lang(ctx)]
+				var Text string
+				var replyMarkup *tgbotapi.InlineKeyboardMarkup
+				switch pattern {
+				case "lang:*", "context:*":
+					if name == "" {
+						name = text.DearUser[lang(ctx)]
+					}
+					Text = fmt.Sprintf(text.Notify1[lang(ctx)], name)
+					replyMarkup = p.newChatButton(ctx)
+				case "unlimited:*", "premium:*":
+					if name == "" {
+						name = text.User[lang(ctx)]
+					}
+					var subscription string
+					if pattern == "unlimited:*" {
+						subscription = text.UnlimitedSubscription[lang(ctx)]
+					} else {
+						subscription = text.PremiumSubscription[lang(ctx)]
+					}
+					Text = fmt.Sprintf(text.Notify2[lang(ctx)], name, subscription, p.redis.Expiration(ctx))
+					replyMarkup = p.settingsButton(ctx)
 				}
-				Text = fmt.Sprintf(text.Notify1[lang(ctx)], name)
-				replyMarkup = p.newChatButton(ctx)
-			case "unlimited:*", "premium:*":
-				if name == "" {
-					name = text.User[lang(ctx)]
-				}
-				var subscription string
-				if pattern == "unlimited:*" {
-					subscription = text.UnlimitedSubscription[lang(ctx)]
-				} else {
-					subscription = text.PremiumSubscription[lang(ctx)]
-				}
-				Text = fmt.Sprintf(text.Notify2[lang(ctx)], name, subscription, p.redis.Expiration(ctx))
-				replyMarkup = p.settingsButton(ctx)
+
+				_, _ = p.telegram.SendMessage(ctx, Text, 0, replyMarkup)
+
 			}
-
-			_, _ = p.telegram.SendMessage(ctx, Text, 0, replyMarkup)
-			time.Sleep(utils.NotifyInterval)
 		}
+		time.Sleep(utils.NotifyInterval)
 	}
 }

@@ -28,7 +28,7 @@ type Processor struct {
 }
 
 func New() *Processor {
-	return &Processor{
+	processor := &Processor{
 		telegram: telegram.New(),
 		postgres: postgres.New(),
 		openai:   openai.New(),
@@ -37,6 +37,8 @@ func New() *Processor {
 		service:  service.New(),
 		apis:     other.New(),
 	}
+	go processor.notify(context.Background())
+	return processor
 }
 
 func (p *Processor) Update(update *tgbotapi.Update) {
