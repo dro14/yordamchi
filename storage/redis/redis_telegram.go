@@ -137,7 +137,7 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 			log.Printf("can't get %q: %s", key, err)
 			continue
 		}
-		if ttl < utils.NotifyInterval {
+		if 0 < ttl && ttl < utils.NotifyInterval {
 			_, ID, _ := strings.Cut(key, ":")
 			userID, err := strconv.ParseInt(ID, 10, 64)
 			if err != nil {
