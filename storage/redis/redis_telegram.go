@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/utils"
@@ -113,10 +115,38 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 }
 
 func (r *Redis) SetLang(ctx context.Context) {
-	monthLater := time.Now().AddDate(0, 1, 0)
-	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(monthLater))
+	expiration := time.Now().AddDate(0, 1, 0)
+	r.client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(expiration))
 }
 
 func (r *Redis) PollQuestion(ctx context.Context) string {
 	return r.client.Get(ctx, "poll_question").String()
+}
+
+func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
+	var userIDs []int64
+	keys, err := r.client.Keys(ctx, pattern).Result()
+	if err != nil {
+		log.Printf("can't get %q: %s", pattern, err)
+		return userIDs
+	}
+
+	for _, key := range keys {
+		ttl, err := r.client.TTL(ctx, key).Result()
+		if err != nil {
+			log.Printf("can't get %q: %s", key, err)
+			continue
+		}
+		if ttl < utils.NotifyInterval {
+			_, ID, _ := strings.Cut(key, ":")
+			userID, err := strconv.ParseInt(ID, 10, 64)
+			if err != nil {
+				log.Printf("can't parse %q: %s", ID, err)
+				continue
+			}
+			userIDs = append(userIDs, userID)
+		}
+	}
+
+	return userIDs
 }

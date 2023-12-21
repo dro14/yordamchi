@@ -42,11 +42,16 @@ func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func (p *Processor) start(ctx context.Context, user *tgbotapi.User) {
-	_, err := p.telegram.SendMessage(ctx, text.Start[lang(ctx)], 0, p.startButton(ctx))
+	p.postgres.UserStarted(ctx, user)
+	name := p.postgres.User(ctx, user)
+	if name == "" {
+		name = text.DearUser[lang(ctx)]
+	}
+	Text := fmt.Sprintf(text.Start[lang(ctx)], name)
+	_, err := p.telegram.SendMessage(ctx, Text, 0, p.startButton(ctx))
 	if err != nil {
 		log.Println("can't send start command")
 	}
-	p.postgres.UserStarted(ctx, user)
 }
 
 func (p *Processor) help(ctx context.Context) {
@@ -161,6 +166,5 @@ func (p *Processor) logs(ctx context.Context, message *tgbotapi.Message) {
 	if message.From.ID == 1331278972 {
 		p.telegram.SendFile(ctx, "gin.log")
 		p.telegram.SendFile(ctx, "yordamchi.log")
-		p.service.Logs(ctx)
 	}
 }

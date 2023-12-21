@@ -2,7 +2,9 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -73,4 +75,24 @@ func (p *Postgres) PollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnsw
 	if err != nil {
 		log.Printf("user %d: failed to save poll answer: %s", pollAnswer.User.ID, err)
 	}
+}
+
+func (p *Postgres) User(ctx context.Context, user *tgbotapi.User) string {
+	query := "SELECT first_name, last_name, username FROM users WHERE id = $1;"
+	var firstName, lastName, username string
+	args := []any{user.ID}
+	err := p.queryTelegram(ctx, user, query, args, &firstName, &lastName, &username)
+	if err != nil {
+		log.Printf("user %d: failed to get user: %s", user.ID, err)
+		return ""
+	}
+
+	fullName := strings.TrimSpace(fmt.Sprintf("%s %s", firstName, lastName))
+	if fullName != "" {
+		return fullName
+	}
+	if username != "" {
+		return "@" + username
+	}
+	return ""
 }

@@ -65,18 +65,3 @@ func (s *Service) Delete(ctx context.Context) error {
 	}
 	return nil
 }
-
-func (s *Service) Logs(ctx context.Context) {
-	request := map[string]any{
-		"user_id": ctx.Value("user_id").(int64),
-	}
-	response, err := s.makeRequest(ctx, request, s.baseURL+"logs")
-	if err != nil {
-		log.Println("can't get logs:", err)
-		return
-	}
-
-	if response["success"] == false {
-		log.Println("can't get logs:", response["error"])
-	}
-}
