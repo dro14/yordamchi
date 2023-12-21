@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/utils"
@@ -121,32 +119,4 @@ func (r *Redis) SetLang(ctx context.Context) {
 
 func (r *Redis) PollQuestion(ctx context.Context) string {
 	return r.client.Get(ctx, "poll_question").String()
-}
-
-func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
-	var userIDs []int64
-	keys, err := r.client.Keys(ctx, pattern).Result()
-	if err != nil {
-		log.Printf("can't get %q: %s", pattern, err)
-		return userIDs
-	}
-
-	for _, key := range keys {
-		ttl, err := r.client.TTL(ctx, key).Result()
-		if err != nil {
-			log.Printf("can't get %q: %s", key, err)
-			continue
-		}
-		if 0 < ttl && ttl < utils.NotifyInterval {
-			_, ID, _ := strings.Cut(key, ":")
-			userID, err := strconv.ParseInt(ID, 10, 64)
-			if err != nil {
-				log.Printf("can't parse %q: %s", ID, err)
-				continue
-			}
-			userIDs = append(userIDs, userID)
-		}
-	}
-
-	return userIDs
 }

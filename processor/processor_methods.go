@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
@@ -60,10 +59,12 @@ func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) 
 }
 
 func (p *Processor) notify(ctx context.Context) {
+	patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
 	for {
-		patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
+		beginning := time.Now()
+		notifyInterval := p.redis.NotifyInterval(ctx)
 		for _, pattern := range patterns {
-			for _, userID := range p.redis.SoonExpires(ctx, pattern) {
+			for _, userID := range p.redis.SoonExpires(ctx, pattern, notifyInterval) {
 				ctx = context.WithValue(ctx, "user_id", userID)
 				ctx, _ = p.redis.Lang(ctx, "uz")
 				name := p.postgres.User(ctx, &tgbotapi.User{ID: userID})
@@ -92,9 +93,9 @@ func (p *Processor) notify(ctx context.Context) {
 				}
 
 				_, _ = p.telegram.SendMessage(ctx, Text, 0, replyMarkup)
-
 			}
 		}
-		time.Sleep(utils.NotifyInterval)
+		time.Sleep(1 * time.Hour)
+		p.redis.SetNotifyInterval(ctx, time.Since(beginning))
 	}
 }
