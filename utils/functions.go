@@ -90,24 +90,22 @@ func MarkdownV2(s string) string {
 		for {
 			before2, before1, found2 = strings.Cut(before1, "**")
 			if strings.Count(before2, "`")%2 == 0 {
-				re := regexp.MustCompile("`.+?`")
-				matches := re.FindAllString(before2, -1)
+				matches := regexp.MustCompile("`.+?`").FindAllString(before2, -1)
 				for _, match := range matches {
-					escaped := strings.ReplaceAll(match, "*", "\\*")
-					before2 = strings.ReplaceAll(before2, match, escaped)
+					escaped := regexp.MustCompile("\\\\?\\*").ReplaceAllString(match, "\\*")
+					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
-				before2 = strings.ReplaceAll(before2, "`", "\\`")
+				before2 = regexp.MustCompile("\\\\?`").ReplaceAllString(before2, "\\`")
 			}
 			if strings.Count(before2, "*")%2 == 0 {
-				re := regexp.MustCompile(`\*.+?\*`)
-				matches := re.FindAllString(before2, -1)
+				matches := regexp.MustCompile("\\*.+?\\*").FindAllString(before2, -1)
 				for _, match := range matches {
-					escaped := strings.ReplaceAll(match, "`", "\\`")
-					before2 = strings.ReplaceAll(before2, match, escaped)
+					escaped := regexp.MustCompile("\\\\?`").ReplaceAllString(match, "\\`")
+					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
-				before2 = strings.ReplaceAll(before2, "*", "\\*")
+				before2 = regexp.MustCompile("\\\\?\\*").ReplaceAllString(before2, "\\*")
 			}
 			buffer.WriteString(before2)
 			if !found2 {
@@ -138,16 +136,17 @@ func MarkdownV2(s string) string {
 
 func LaTex(s string) string {
 	replacements := [][]string{
-		{`\\left\(`, "("},
-		{`\\right\)`, ")"},
-		{`\\left\[`, "["},
-		{`\\right\]`, "]"},
+		{`\\(?:left|chap)\(`, "("},
+		{`\\(?:right|o'ng)\)`, ")"},
+		{`\\(?:left|chap)\[`, "["},
+		{`\\(?:right|o'ng)\]`, "]"},
 		{`\\ldots`, "..."},
+		{`\\quad`, " "},
 		{`\\,`, " "},
 
 		{`\\cdot`, "·"},
-		{`\\times`, "×"},
-		{`\\approx`, "≈"},
+		{`\\(?:times|marta)`, "×"},
+		{`\\(?:approx|taxminan)`, "≈"},
 		{`\\pm`, "±"},
 		{`\\mp`, "∓"},
 		{`\\neq`, "≠"},
@@ -159,7 +158,7 @@ func LaTex(s string) string {
 		{`\\supset`, "⊃"},
 		{`\\subseteq`, "⊆"},
 		{`\\supseteq`, "⊇"},
-		{`\\sum`, "Σ"},
+		{`\\(?:sum|summa)`, "Σ"},
 		{`\\prod`, "Π"},
 		{`\\infty`, "∞"},
 		{`\\binom`, "C"},
@@ -167,6 +166,8 @@ func LaTex(s string) string {
 		{`\\iint`, "∬"},
 		{`\\partial`, "∂"},
 
+		{`\\%`, "%"},
+		{`\\ln`, "ln"},
 		{`\\sin`, "sin"},
 		{`\\cos`, "cos"},
 		{`\\tan`, "tan"},
@@ -185,7 +186,7 @@ func LaTex(s string) string {
 		{`\\theta`, "θ"},
 		{`\\mu`, "μ"},
 
-		{`\\text{(.+?)}`, "REPLACE"},
+		{`\\(?:text|matn){(.+?)}`, "REPLACE"},
 		{`\\sqrt{(.+?)}`, "√(REPLACE)"},
 		{`\\frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
 		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
