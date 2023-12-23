@@ -133,7 +133,7 @@ func LaTex(s string) string {
 		{`\\cap`, "∩"},
 		{`\\text{(.+?)}`, "REPLACE"},
 		{`\\frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
-		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "REPLACE"},
+		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
 	}
 
 	for i := range replacements {
