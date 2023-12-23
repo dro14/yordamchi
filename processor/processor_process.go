@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -151,8 +152,6 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	if hasLaTeX {
 		re := regexp.MustCompile(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`)
 		matches := re.FindAllString(completion, -1)
-		for _, match := range matches {
-			utils.SendInfoMessage(match, "")
-		}
+		utils.SendInfoMessage(strings.Join(matches, "\n\n"), "")
 	}
 }

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -139,11 +138,10 @@ func LaTex(s string) string {
 	for i := range replacements {
 		latexCmd := replacements[i][0]
 		re := regexp.MustCompile(latexCmd)
-		fmt.Printf("latexCmd: %s, replacement: %s\n", latexCmd, replacements[i][1])
 		for re.FindString(s) != "" {
-			match := re.FindString(s)
 			ascii := replacements[i][1]
-			matches := re.FindStringSubmatch(match)
+			match := re.FindString(s)
+			matches := re.FindStringSubmatch(s)
 			if len(matches) > 1 {
 				for _, m := range matches[1:] {
 					if latexCmd == `\\frac{(.+?)}{(.+?)}` {
@@ -162,7 +160,6 @@ func LaTex(s string) string {
 				}
 			}
 			s = strings.Replace(s, match, ascii, 1)
-			fmt.Printf("match: %s, ascii: %s\n", match, ascii)
 		}
 	}
 
