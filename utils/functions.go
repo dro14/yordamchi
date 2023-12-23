@@ -148,13 +148,33 @@ func LaTex(s string) string {
 		{`\\cdot`, "·"},
 		{`\\times`, "×"},
 		{`\\approx`, "≈"},
+		{`\\pm`, "±"},
+		{`\\mp`, "∓"},
+		{`\\neq`, "≠"},
+		{`\\leq`, "≤"},
+		{`\\geq`, "≥"},
 		{`\\cap`, "∩"},
+		{`\\cup`, "∪"},
+		{`\\subset`, "⊂"},
+		{`\\supset`, "⊃"},
+		{`\\subseteq`, "⊆"},
+		{`\\supseteq`, "⊇"},
 		{`\\sum`, "Σ"},
+		{`\\prod`, "Π"},
 		{`\\infty`, "∞"},
 		{`\\binom`, "C"},
 		{`\\int`, "∫"},
 		{`\\iint`, "∬"},
 		{`\\partial`, "∂"},
+
+		{`\\sin`, "sin"},
+		{`\\cos`, "cos"},
+		{`\\tan`, "tan"},
+		{`\\cot`, "cot"},
+		{`\\arcsin`, "arcsin"},
+		{`\\arccos`, "arccos"},
+		{`\\arctan`, "arctan"},
+		{`\\arccot`, "arccot"},
 
 		{`\\Delta`, "Δ"},
 		{`\\Sigma`, "Σ"},
@@ -162,6 +182,8 @@ func LaTex(s string) string {
 		{`\\pi`, "π"},
 		{`\\chi`, "χ"},
 		{`\\omega`, "ω"},
+		{`\\theta`, "θ"},
+		{`\\mu`, "μ"},
 
 		{`\\text{(.+?)}`, "REPLACE"},
 		{`\\sqrt{(.+?)}`, "√(REPLACE)"},
@@ -173,22 +195,22 @@ func LaTex(s string) string {
 		latexCmd := replacements[i][0]
 		re := regexp.MustCompile(latexCmd)
 		for re.FindString(s) != "" {
-			ascii := replacements[i][1]
-			match := re.FindString(s)
-			matches := re.FindStringSubmatch(s)
-			for _, m := range matches[1:] {
+			unicode := replacements[i][1]
+			subMatches := re.FindStringSubmatch(s)
+			for _, m := range subMatches[1:] {
 				switch latexCmd {
 				case `\\frac{(.+?)}{(.+?)}`, `\\sqrt{(.+?)}`:
 					if !strings.ContainsAny(m, "+-*/^") && len(m) < 10 {
-						ascii = strings.Replace(ascii, "(REPLACE)", m, 1)
-					}
-					if len(ascii) > 20 {
-						ascii = strings.Replace(ascii, "/", " / ", 1)
+						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
+						continue
 					}
 				}
-				ascii = strings.Replace(ascii, "REPLACE", m, 1)
+				unicode = strings.Replace(unicode, "REPLACE", m, 1)
 			}
-			s = strings.Replace(s, match, ascii, 1)
+			if len(unicode) > 20 {
+				unicode = strings.Replace(unicode, "/", " / ", 1)
+			}
+			s = strings.Replace(s, re.FindString(s), unicode, 1)
 		}
 	}
 
