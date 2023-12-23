@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -37,6 +39,10 @@ func Slice(s string, maxLen int) []string {
 }
 
 func MarkdownV2(s string) string {
+	hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, s)
+	if hasLaTeX {
+		s = LaTex(s)
+	}
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		char := string(escapeChars[i])
@@ -116,4 +122,49 @@ func DownloadFile(URL, path string) error {
 		return err
 	}
 	return nil
+}
+
+func LaTex(s string) string {
+	replacements := [][]string{
+		{`\\cdot`, "*"},
+		{`\\times`, "*"},
+		{`\\approx`, "≈"},
+		{`\\ldots`, "..."},
+		{`\\cap`, "∩"},
+		{`\\text{(.+?)}`, "REPLACE"},
+		{`\\frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
+		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "REPLACE"},
+	}
+
+	for i := range replacements {
+		latexCmd := replacements[i][0]
+		re := regexp.MustCompile(latexCmd)
+		fmt.Printf("latexCmd: %s, replacement: %s\n", latexCmd, replacements[i][1])
+		for re.FindString(s) != "" {
+			match := re.FindString(s)
+			ascii := replacements[i][1]
+			matches := re.FindStringSubmatch(match)
+			if len(matches) > 1 {
+				for _, m := range matches[1:] {
+					if latexCmd == `\\frac{(.+?)}{(.+?)}` {
+						is := func(s string) bool {
+							return strings.Contains(m, s)
+						}
+						switch {
+						case is(`+`), is(`-`), is(`*`), is(`/`), is(`^`):
+							ascii = strings.Replace(ascii, "REPLACE", m, 1)
+						default:
+							ascii = strings.Replace(ascii, "(REPLACE)", m, 1)
+						}
+					} else {
+						ascii = strings.Replace(ascii, "REPLACE", m, 1)
+					}
+				}
+			}
+			s = strings.Replace(s, match, ascii, 1)
+			fmt.Printf("match: %s, ascii: %s\n", match, ascii)
+		}
+	}
+
+	return s
 }

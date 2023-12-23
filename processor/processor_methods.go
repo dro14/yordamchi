@@ -77,7 +77,7 @@ func (p *Processor) notify(ctx context.Context) {
 						name = text.DearUser[lang(ctx)]
 					}
 					Text = fmt.Sprintf(text.Notify1[lang(ctx)], name)
-					replyMarkup = p.newChatButton(ctx)
+					replyMarkup = p.startButton(ctx)
 				case "unlimited:*", "premium:*":
 					if name == "" {
 						name = text.User[lang(ctx)]

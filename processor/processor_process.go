@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -145,5 +146,13 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	p.postgres.SaveMessage(ctx, message.From, msg)
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage(completion, "")
+	}
+	hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, completion)
+	if hasLaTeX {
+		re := regexp.MustCompile(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`)
+		matches := re.FindAllString(completion, -1)
+		for _, match := range matches {
+			utils.SendInfoMessage(match, "")
+		}
 	}
 }
