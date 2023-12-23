@@ -37,9 +37,31 @@ func Slice(s string, maxLen int) []string {
 	return append(slices, string(runes))
 }
 
+func DownloadFile(URL, path string) error {
+	resp, err := http.Get(URL)
+	if err != nil {
+		log.Println("can't get file:", err)
+		return err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	out, err := os.Create(path)
+	if err != nil {
+		log.Println("can't create file:", err)
+		return err
+	}
+	defer func() { _ = out.Close() }()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		log.Println("can't write to file:", err)
+		return err
+	}
+	return nil
+}
+
 func MarkdownV2(s string) string {
-	hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, s)
-	if hasLaTeX {
+	if hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?.+?\s?\\[)|\]]`, s); hasLaTeX {
 		s = LaTex(s)
 	}
 	escapeChars := "\\_[]()~>#+-=|{}.!"
@@ -67,10 +89,24 @@ func MarkdownV2(s string) string {
 
 		for {
 			before2, before1, found2 = strings.Cut(before1, "**")
-			if strings.Count(before2, "`")%2 != 0 {
+			if strings.Count(before2, "`")%2 == 0 {
+				re := regexp.MustCompile("`.+?`")
+				matches := re.FindAllString(before2, -1)
+				for _, match := range matches {
+					escaped := strings.ReplaceAll(match, "*", "\\*")
+					before2 = strings.ReplaceAll(before2, match, escaped)
+				}
+			} else {
 				before2 = strings.ReplaceAll(before2, "`", "\\`")
 			}
-			if strings.Count(before2, "*")%2 != 0 {
+			if strings.Count(before2, "*")%2 == 0 {
+				re := regexp.MustCompile(`\*.+?\*`)
+				matches := re.FindAllString(before2, -1)
+				for _, match := range matches {
+					escaped := strings.ReplaceAll(match, "`", "\\`")
+					before2 = strings.ReplaceAll(before2, match, escaped)
+				}
+			} else {
 				before2 = strings.ReplaceAll(before2, "*", "\\*")
 			}
 			buffer.WriteString(before2)
@@ -100,37 +136,35 @@ func MarkdownV2(s string) string {
 	return buffer.String()
 }
 
-func DownloadFile(URL, path string) error {
-	resp, err := http.Get(URL)
-	if err != nil {
-		log.Println("can't get file:", err)
-		return err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	out, err := os.Create(path)
-	if err != nil {
-		log.Println("can't create file:", err)
-		return err
-	}
-	defer func() { _ = out.Close() }()
-
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Println("can't write to file:", err)
-		return err
-	}
-	return nil
-}
-
 func LaTex(s string) string {
 	replacements := [][]string{
-		{`\\cdot`, "*"},
-		{`\\times`, "*"},
-		{`\\approx`, "≈"},
+		{`\\left\(`, "("},
+		{`\\right\)`, ")"},
+		{`\\left\[`, "["},
+		{`\\right\]`, "]"},
 		{`\\ldots`, "..."},
+		{`\\,`, " "},
+
+		{`\\cdot`, "·"},
+		{`\\times`, "×"},
+		{`\\approx`, "≈"},
 		{`\\cap`, "∩"},
+		{`\\sum`, "Σ"},
+		{`\\infty`, "∞"},
+		{`\\binom`, "C"},
+		{`\\int`, "∫"},
+		{`\\iint`, "∬"},
+		{`\\partial`, "∂"},
+
+		{`\\Delta`, "Δ"},
+		{`\\Sigma`, "Σ"},
+		{`\\sigma`, "σ"},
+		{`\\pi`, "π"},
+		{`\\chi`, "χ"},
+		{`\\omega`, "ω"},
+
 		{`\\text{(.+?)}`, "REPLACE"},
+		{`\\sqrt{(.+?)}`, "√(REPLACE)"},
 		{`\\frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
 		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
 	}
@@ -142,22 +176,17 @@ func LaTex(s string) string {
 			ascii := replacements[i][1]
 			match := re.FindString(s)
 			matches := re.FindStringSubmatch(s)
-			if len(matches) > 1 {
-				for _, m := range matches[1:] {
-					if latexCmd == `\\frac{(.+?)}{(.+?)}` {
-						is := func(s string) bool {
-							return strings.Contains(m, s)
-						}
-						switch {
-						case is(`+`), is(`-`), is(`*`), is(`/`), is(`^`):
-							ascii = strings.Replace(ascii, "REPLACE", m, 1)
-						default:
-							ascii = strings.Replace(ascii, "(REPLACE)", m, 1)
-						}
-					} else {
-						ascii = strings.Replace(ascii, "REPLACE", m, 1)
+			for _, m := range matches[1:] {
+				switch latexCmd {
+				case `\\frac{(.+?)}{(.+?)}`, `\\sqrt{(.+?)}`:
+					if !strings.ContainsAny(m, "+-*/^") && len(m) < 10 {
+						ascii = strings.Replace(ascii, "(REPLACE)", m, 1)
+					}
+					if len(ascii) > 20 {
+						ascii = strings.Replace(ascii, "/", " / ", 1)
 					}
 				}
+				ascii = strings.Replace(ascii, "REPLACE", m, 1)
 			}
 			s = strings.Replace(s, match, ascii, 1)
 		}

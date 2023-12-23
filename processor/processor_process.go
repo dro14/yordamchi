@@ -148,9 +148,8 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage(completion, "")
 	}
-	hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, completion)
-	if hasLaTeX {
-		re := regexp.MustCompile(`\\[(|\[]\s?(.+?)\s?\\[)|\]]`)
+	if hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?.+?\s?\\[)|\]]`, completion); hasLaTeX {
+		re := regexp.MustCompile(`\\[(|\[]\s?.+?\s?\\[)|\]]`)
 		matches := re.FindAllString(completion, -1)
 		utils.SendInfoMessage(strings.Join(matches, "\n\n"), "")
 	}
