@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -61,9 +62,8 @@ func DownloadFile(URL, path string) error {
 }
 
 func MarkdownV2(s string) string {
-	if hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?.+?\s?\\[)|\]]`, s); hasLaTeX {
-		s = LaTex(s)
-	}
+	s = LaTex(Tables(s))
+
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		char := string(escapeChars[i])
@@ -92,21 +92,25 @@ func MarkdownV2(s string) string {
 			if strings.Count(before2, "`")%2 == 0 {
 				matches := regexp.MustCompile("`.+?`").FindAllString(before2, -1)
 				for _, match := range matches {
-					escaped := regexp.MustCompile("\\\\?\\*").ReplaceAllString(match, "\\*")
+					escaped := strings.ReplaceAll(match, "*", "\\*")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
-				before2 = regexp.MustCompile("\\\\?`").ReplaceAllString(before2, "\\`")
+				before2 = strings.ReplaceAll(before2, "`", "\\`")
 			}
 			if strings.Count(before2, "*")%2 == 0 {
 				matches := regexp.MustCompile("\\*.+?\\*").FindAllString(before2, -1)
 				for _, match := range matches {
-					escaped := regexp.MustCompile("\\\\?`").ReplaceAllString(match, "\\`")
+					escaped := strings.ReplaceAll(match, "`", "\\`")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
-				before2 = regexp.MustCompile("\\\\?\\*").ReplaceAllString(before2, "\\*")
+				before2 = strings.ReplaceAll(before2, "*", "\\*")
 			}
+			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
+			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
+			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
+			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
 			buffer.WriteString(before2)
 			if !found2 {
 				break
@@ -135,85 +139,98 @@ func MarkdownV2(s string) string {
 }
 
 func LaTex(s string) string {
-	replacements := [][]string{
-		{`\\(?:left|chap)\(`, "("},
-		{`\\(?:right|o'ng)\)`, ")"},
-		{`\\(?:left|chap)\[`, "["},
-		{`\\(?:right|o'ng)\]`, "]"},
-		{`\\ldots`, "..."},
-		{`\\quad`, " "},
-		{`\\,`, " "},
-
-		{`\\cdot`, "·"},
-		{`\\(?:times|marta)`, "×"},
-		{`\\(?:approx|taxminan)`, "≈"},
-		{`\\pm`, "±"},
-		{`\\mp`, "∓"},
-		{`\\neq`, "≠"},
-		{`\\leq`, "≤"},
-		{`\\geq`, "≥"},
-		{`\\cap`, "∩"},
-		{`\\cup`, "∪"},
-		{`\\subset`, "⊂"},
-		{`\\supset`, "⊃"},
-		{`\\subseteq`, "⊆"},
-		{`\\supseteq`, "⊇"},
-		{`\\(?:sum|summa)`, "Σ"},
-		{`\\prod`, "Π"},
-		{`\\infty`, "∞"},
-		{`\\binom`, "C"},
-		{`\\int`, "∫"},
-		{`\\iint`, "∬"},
-		{`\\partial`, "∂"},
-
-		{`\\%`, "%"},
-		{`\\ln`, "ln"},
-		{`\\sin`, "sin"},
-		{`\\cos`, "cos"},
-		{`\\tan`, "tan"},
-		{`\\cot`, "cot"},
-		{`\\arcsin`, "arcsin"},
-		{`\\arccos`, "arccos"},
-		{`\\arctan`, "arctan"},
-		{`\\arccot`, "arccot"},
-
-		{`\\Delta`, "Δ"},
-		{`\\Sigma`, "Σ"},
-		{`\\sigma`, "σ"},
-		{`\\pi`, "π"},
-		{`\\chi`, "χ"},
-		{`\\omega`, "ω"},
-		{`\\theta`, "θ"},
-		{`\\mu`, "μ"},
-
-		{`\\(?:text|matn){(.+?)}`, "REPLACE"},
-		{`\\sqrt{(.+?)}`, "√(REPLACE)"},
-		{`\\frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
-		{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
-	}
-
-	for i := range replacements {
-		latexCmd := replacements[i][0]
+	for i := range LaTeXReplacements {
+		latexCmd := LaTeXReplacements[i][0]
 		re := regexp.MustCompile(latexCmd)
 		for re.FindString(s) != "" {
-			unicode := replacements[i][1]
+			unicode := LaTeXReplacements[i][1]
 			subMatches := re.FindStringSubmatch(s)
 			for _, m := range subMatches[1:] {
 				switch latexCmd {
 				case `\\frac{(.+?)}{(.+?)}`, `\\sqrt{(.+?)}`:
-					if !strings.ContainsAny(m, "+-*/^") && len(m) < 10 {
+					if !strings.ContainsAny(m, "+-*·×/^") && len(m) < 10 {
 						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
 						continue
 					}
 				}
 				unicode = strings.Replace(unicode, "REPLACE", m, 1)
 			}
-			if len(unicode) > 20 {
+			if latexCmd == `\\frac{(.+?)}{(.+?)}` && len(unicode) > 20 {
 				unicode = strings.Replace(unicode, "/", " / ", 1)
 			}
 			s = strings.Replace(s, re.FindString(s), unicode, 1)
 		}
 	}
-
 	return s
+}
+
+func Tables(input string) string {
+	tablesIndexes := TableRgx.FindAllStringIndex(input, -1)
+	start := 0
+	var result strings.Builder
+	for _, loc := range tablesIndexes {
+		result.WriteString(input[start:loc[0]])
+
+		lines := strings.Split(input[loc[0]:loc[1]], "\n")
+		for i := 0; i < len(lines); i++ {
+			lines[i] = strings.TrimSpace(lines[i])
+			if !strings.HasPrefix(lines[i], "|") {
+				lines = append(lines[:i], lines[i+1:]...)
+				i--
+			}
+		}
+		if len(lines) < 2 {
+			log.Println("invalid input: the markdown table must have at least a header and a separator line")
+			result.WriteString(input[loc[0]:loc[1]])
+			continue
+		}
+
+		header := lines[0]
+		headerCols := strings.Split(header, "|")
+		columnWidths := make([]int, len(headerCols))
+		for i, col := range headerCols {
+			headerCols[i] = strings.TrimSpace(col)
+			columnWidths[i] = len(headerCols[i])
+		}
+
+		for _, line := range lines[2:] {
+			rowCols := strings.Split(line, "|")
+			for i, col := range rowCols {
+				trimmedCol := strings.TrimSpace(col)
+				if columnWidths[i] < len(trimmedCol) {
+					columnWidths[i] = len(trimmedCol)
+				}
+			}
+		}
+
+		result.WriteString("```\n")
+		for rowIndex, line := range lines {
+			if rowIndex != 1 {
+				rowCols := strings.Split(line, "|")
+				for i, col := range rowCols {
+					if i > 0 && i < len(rowCols)-1 {
+						format := "%-" + fmt.Sprintf("%d", columnWidths[i]) + "s"
+						if _, err := fmt.Fscanf(strings.NewReader(col), "%d", new(int)); err == nil {
+							format = "%" + fmt.Sprintf("%d", columnWidths[i]) + "s"
+						}
+						result.WriteString("| " + fmt.Sprintf(format, strings.TrimSpace(col)) + " ")
+					}
+				}
+			} else {
+				for i := range columnWidths {
+					if i > 0 && i < len(columnWidths)-1 {
+						result.WriteString("|" + strings.Repeat("-", columnWidths[i]+2))
+					}
+				}
+			}
+
+			result.WriteString("|\n")
+		}
+
+		result.WriteString("```\n\n")
+		start = loc[1]
+	}
+
+	result.WriteString(input[start:])
+	return result.String()
 }

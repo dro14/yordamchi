@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
@@ -148,9 +147,10 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage(completion, "")
 	}
-	if hasLaTeX, _ := regexp.MatchString(`\\[(|\[]\s?.+?\s?\\[)|\]]`, completion); hasLaTeX {
-		re := regexp.MustCompile(`\\[(|\[]\s?.+?\s?\\[)|\]]`)
-		matches := re.FindAllString(completion, -1)
+	latex := utils.LaTeXRgx.FindAllString(completion, -1)
+	table := utils.TableRgx.FindAllString(completion, -1)
+	matches := append(latex, table...)
+	if len(matches) > 0 {
 		utils.SendInfoMessage(strings.Join(matches, "\n\n"), "")
 	}
 }
