@@ -147,7 +147,7 @@ func LaTex(s string) string {
 			subMatches := re.FindStringSubmatch(s)
 			for _, m := range subMatches[1:] {
 				switch latexCmd {
-				case `\\frac{(.+?)}{(.+?)}`, `\\sqrt{(.+?)}`:
+				case `\\\s?d?frac\s?{(.+?)}{(.+?)}`, `\\\s?sqrt\s?{(.+?)}`:
 					if !strings.ContainsAny(m, "+-*·×/^") && len(m) < 10 {
 						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
 						continue
@@ -155,7 +155,7 @@ func LaTex(s string) string {
 				}
 				unicode = strings.Replace(unicode, "REPLACE", m, 1)
 			}
-			if latexCmd == `\\frac{(.+?)}{(.+?)}` && len(unicode) > 20 {
+			if latexCmd == `\\\s?d?frac\s?{(.+?)}{(.+?)}` && len(unicode) > 20 {
 				unicode = strings.Replace(unicode, "/", " / ", 1)
 			}
 			s = strings.Replace(s, re.FindString(s), unicode, 1)

@@ -132,6 +132,8 @@ var LaTeXReplacements = [][]string{
 	{`\\rangle`, "⟩"},
 	{`^\\circ\s?`, "°"},
 	{`\\ldots`, "..."},
+	{`\\|`, "‖"},
+
 	{`\\bar{x}`, "x̄"},
 	{`\\bar{X}`, "X̄"},
 	{`\\bar{y}`, "ȳ"},
@@ -170,8 +172,9 @@ var LaTeXReplacements = [][]string{
 	{`\\arctanh`, "arctanh"},
 	{`\\arccoth`, "arccoth"},
 
-	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
-	{`\\d?frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
-	{`\\(?:text|matn)?{(.+?)}`, "REPLACE"},
+	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
+	{`\\\s?sqrt\s?{(.+?)}`, "√(REPLACE)"},
+	{`\\\s?d?frac\s?{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
 	{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
+	{`{(.+?)}`, "REPLACE"},
 }
