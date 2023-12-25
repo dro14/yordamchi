@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	LaTeXRgx = regexp.MustCompile(`\\[(|\[]\s?.+?\s?\\[)|\]]`)
+	LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?.+?\s?\\[)\]]`)
 	TableRgx = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
@@ -94,6 +94,23 @@ var LaTeXReplacements = [][]string{
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
+	{`\\\s?(?:sum|summa)\s?`, "Σ"},
+	{`\\prod`, "Π"},
+	{`\\binom`, "C"},
+	{`\\int`, "∫"},
+	{`\\iint`, "∬"},
+	{`\\langle`, "⟨"},
+	{`\\rangle`, "⟩"},
+	{`\\pm`, "±"},
+	{`\\mp`, "∓"},
+	{`\\subset`, "⊂"},
+	{`\\supset`, "⊃"},
+	{`\\subseteq`, "⊆"},
+	{`\\supseteq`, "⊇"},
+	{`^\\circ\s?`, "°"},
+	{`\\ldots`, "..."},
+	{`\\|`, "‖"},
+
 	// Binary Operation/Relation Symbols
 	{`\\(?:times|\s?marta)`, "×"},
 	{`\\div`, "÷"},
@@ -116,22 +133,6 @@ var LaTeXReplacements = [][]string{
 	{`\\otimes`, "⊗"},
 	{`\\boxtimes`, "⊠"},
 	{`\\cong`, "≅"},
-
-	{`\\pm`, "±"},
-	{`\\mp`, "∓"},
-	{`\\subset`, "⊂"},
-	{`\\supset`, "⊃"},
-	{`\\subseteq`, "⊆"},
-	{`\\supseteq`, "⊇"},
-	{`\\(?:sum|summa)\s?`, "Σ"},
-	{`\\prod\s?`, "Π"},
-	{`\\binom`, "C"},
-	{`\\int`, "∫"},
-	{`\\iint`, "∬"},
-	{`\\langle`, "⟨"},
-	{`\\rangle`, "⟩"},
-	{`^\\circ\s?`, "°"},
-	{`\\ldots`, "..."},
 
 	{`\\bar{x}`, "x̄"},
 	{`\\bar{X}`, "X̄"},
@@ -175,6 +176,6 @@ var LaTeXReplacements = [][]string{
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{`\\\s?sqrt\s?{(.+?)}`, "√(REPLACE)"},
 	{`\\\s?d?frac\s?{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
-	{`\\[(|\[]\s?(.+?)\s?\\[)|\]]`, "`REPLACE`"},
+	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
 	{`{(.+?)}`, "REPLACE"},
 }
