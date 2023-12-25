@@ -109,6 +109,7 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 		return ctx, false
 	}
 	ctx = context.WithValue(ctx, "language_code", langCode)
+	r.SetLang(ctx)
 	return ctx, true
 }
 
