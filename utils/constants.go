@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	Fraction   = `\\\s?d?frac\s?{(.+?)}{(.+?)}`
+	Fraction   = `\\\s?d?frac\s?{(.+?)(?:{(.+?)})?}(?:{(.+?)})?`
 	SquareRoot = `\\\s?sqrt\s?{(.+?)}`
 )
 
@@ -114,7 +114,7 @@ var LaTeXReplacements = [][]string{
 	{`\\supseteq`, "⊇"},
 	{`^\\circ\s?`, "°"},
 	{`\\ldots`, "..."},
-	//{`\\|`, "‖"},
+	{`\\\|`, "‖"},
 
 	// Binary Operation/Relation Symbols
 	{`\\(?:times|\s?marta)`, "×"},
@@ -185,6 +185,6 @@ var LaTeXReplacements = [][]string{
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{SquareRoot, "√(REPLACE)"},
 	{Fraction, "(REPLACE)/(REPLACE)"},
-	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
 	{`{(.+?)}`, "REPLACE"},
+	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
 }
