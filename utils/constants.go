@@ -132,7 +132,6 @@ var LaTeXReplacements = [][]string{
 	{`\\rangle`, "⟩"},
 	{`^\\circ\s?`, "°"},
 	{`\\ldots`, "..."},
-	{`\\|`, "‖"},
 
 	{`\\bar{x}`, "x̄"},
 	{`\\bar{X}`, "X̄"},
@@ -148,6 +147,7 @@ var LaTeXReplacements = [][]string{
 	{`\\mathbb{R}`, "ℝ"},
 	{`\\mathbb{C}`, "ℂ"},
 
+	{`\\ `, " "},
 	{`\\#`, "#"},
 	{`\\$`, "$"},
 	{`\\%`, "%"},
