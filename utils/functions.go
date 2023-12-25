@@ -62,7 +62,7 @@ func DownloadFile(URL, path string) error {
 }
 
 func MarkdownV2(s string) string {
-	s = LaTex(Tables(s))
+	s = LaTex(Table(s))
 
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
@@ -164,7 +164,7 @@ func LaTex(s string) string {
 	return s
 }
 
-func Tables(input string) string {
+func Table(input string) string {
 	tablesIndexes := TableRgx.FindAllStringIndex(input, -1)
 	start := 0
 	var result strings.Builder
