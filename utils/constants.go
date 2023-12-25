@@ -18,6 +18,11 @@ var (
 	TableRgx = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
+const (
+	Fraction   = `\\\s?d?frac\s?{(.+?)}{(.+?)}`
+	SquareRoot = `\\\s?sqrt\s?{(.+?)}`
+)
+
 var LaTeXReplacements = [][]string{
 	{`\\(?:left|chap|right|o'ng|,|quad|text\s?|limits)`, ""},
 
@@ -109,7 +114,7 @@ var LaTeXReplacements = [][]string{
 	{`\\supseteq`, "⊇"},
 	{`^\\circ\s?`, "°"},
 	{`\\ldots`, "..."},
-	{`\\|`, "‖"},
+	//{`\\|`, "‖"},
 
 	// Binary Operation/Relation Symbols
 	{`\\(?:times|\s?marta)`, "×"},
@@ -178,8 +183,8 @@ var LaTeXReplacements = [][]string{
 	{`\\arccoth`, "arccoth"},
 
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
-	{`\\\s?sqrt\s?{(.+?)}`, "√(REPLACE)"},
-	{`\\\s?d?frac\s?{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
+	{SquareRoot, "√(REPLACE)"},
+	{Fraction, "(REPLACE)/(REPLACE)"},
 	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
 	{`{(.+?)}`, "REPLACE"},
 }
