@@ -148,9 +148,11 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		utils.SendInfoMessage(completion, "")
 	}
 	latex := utils.LaTeXRgx.FindAllString(completion, -1)
+	if len(latex) > 0 {
+		utils.SendInfoMessage(strings.Join(latex, "\n\n"), "")
+	}
 	table := utils.TableRgx.FindAllString(completion, -1)
-	matches := append(latex, table...)
-	if len(matches) > 0 {
-		utils.SendInfoMessage(strings.Join(matches, "\n\n"), "")
+	if len(table) > 0 {
+		utils.SendInfoMessage(strings.Join(table, "----------\n"), "")
 	}
 }
