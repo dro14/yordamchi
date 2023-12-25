@@ -79,10 +79,7 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 func (r *Redis) DeleteContext(ctx context.Context) {
 	r.client.Del(ctx, "context:"+id(ctx))
 	r.client.Del(ctx, "system:"+id(ctx))
-	err := r.service.Delete(ctx)
-	if err != nil {
-		log.Printf("user %s: can't delete file", id(ctx))
-	}
+	r.service.Delete(ctx)
 }
 
 func (r *Redis) System(ctx context.Context) string {

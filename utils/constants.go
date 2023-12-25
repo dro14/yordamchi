@@ -24,7 +24,7 @@ const (
 )
 
 var LaTeXReplacements = [][]string{
-	{`\\(?:left|chap|right|o'ng|,|quad|text\s?|limits)`, ""},
+	{`\\\s?(?:left|chap|right|o'ng|,|quad|text|limits)\s?`, ""},
 
 	// Greek letters
 	{`\\alpha`, "α"},
@@ -83,7 +83,7 @@ var LaTeXReplacements = [][]string{
 	{`\\infty`, "∞"},
 	{`\\Re`, "ℜ"},
 	{`\\nabla`, "∇"},
-	{`\\(?:partial|qisman)`, "∂"},
+	{`\\\s?(?:partial|qisman)\s?`, "∂"},
 	{`\\emptyset`, "∅"},
 	{`\\wp`, "℘"},
 	{`\\neg`, "¬"},
