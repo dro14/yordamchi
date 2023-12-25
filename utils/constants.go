@@ -117,7 +117,7 @@ var LaTeXReplacements = [][]string{
 	{`\\\|`, "‖"},
 
 	// Binary Operation/Relation Symbols
-	{`\\(?:times|\s?marta)`, "×"},
+	{`\\\s?(?:times|marta|qat)`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\leq`, "≤"},
@@ -128,12 +128,12 @@ var LaTeXReplacements = [][]string{
 	{`\\oplus`, "⊕"},
 	{`\\Box`, "□"},
 	{`\\equiv`, "≡"},
-	{`\\(?:cdot|qat)`, "·"},
+	{`\\cdot`, "·"},
 	{`\\cap`, "∩"},
 	{`\\neq`, "≠"},
 	{`\\geq`, "≥"},
 	{`\\perp`, "⊥"},
-	{`\\(?:approx|taxminan)`, "≈"},
+	{`\\\s?(?:approx|taxminan)`, "≈"},
 	{`\\vee`, "∨"},
 	{`\\otimes`, "⊗"},
 	{`\\boxtimes`, "⊠"},
