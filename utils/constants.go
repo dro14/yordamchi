@@ -24,10 +24,6 @@ const (
 )
 
 var LaTeXReplacements = [][]string{
-	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
-	{`\\\s?quad`, "   "},
-	{`\\(?: |,|;|:)`, " "},
-
 	// Greek letters
 	{`\\alpha`, "α"},
 	{`\\beta`, "β"},
@@ -183,8 +179,11 @@ var LaTeXReplacements = [][]string{
 	{`\\arctanh`, "arctanh"},
 	{`\\arccoth`, "arccoth"},
 
+	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{SquareRoot, "√(REPLACE)"},
 	{Fraction, "(REPLACE)/(REPLACE)"},
 	{`{(.+?)}`, "REPLACE"},
+	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
+	{`\\(?: |,|;|:|quad)`, " "},
 	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
 }
