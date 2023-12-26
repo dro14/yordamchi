@@ -158,7 +158,6 @@ func LaTex(s string) string {
 			if latexCmd == Fraction && len(unicode) > 20 {
 				unicode = strings.Replace(unicode, "/", " / ", 1)
 			}
-			unicode = strings.ReplaceAll(unicode, "   ", " ")
 			unicode = strings.ReplaceAll(unicode, "  ", " ")
 			s = strings.Replace(s, re.FindString(s), unicode, 1)
 		}
