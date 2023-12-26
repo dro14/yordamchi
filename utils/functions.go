@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -190,31 +191,32 @@ func Table(input string) string {
 		headerCols := strings.Split(header, "|")
 		columnWidths := make([]int, len(headerCols))
 		for i, col := range headerCols {
-			headerCols[i] = strings.TrimSpace(col)
-			columnWidths[i] = len(headerCols[i])
+			col = strings.TrimSpace(col)
+			columnWidths[i] = len([]rune(col))
 		}
 
 		for _, line := range lines[2:] {
 			rowCols := strings.Split(line, "|")
 			for i, col := range rowCols {
-				trimmedCol := strings.TrimSpace(col)
-				if columnWidths[i] < len(trimmedCol) {
-					columnWidths[i] = len(trimmedCol)
+				col = strings.TrimSpace(col)
+				if columnWidths[i] < len([]rune(col)) {
+					columnWidths[i] = len([]rune(col))
 				}
 			}
 		}
 
 		result.WriteString("```\n")
-		for rowIndex, line := range lines {
-			if rowIndex != 1 {
+		for lineIndex, line := range lines {
+			if lineIndex != 1 {
 				rowCols := strings.Split(line, "|")
 				for i, col := range rowCols {
-					if i > 0 && i < len(rowCols)-1 {
-						format := "%-" + fmt.Sprintf("%d", columnWidths[i]) + "s"
-						if _, err := fmt.Fscanf(strings.NewReader(col), "%d", new(int)); err == nil {
-							format = "%" + fmt.Sprintf("%d", columnWidths[i]) + "s"
+					col = strings.TrimSpace(col)
+					if i > 0 && i < len(columnWidths)-1 {
+						format := "%-" + strconv.Itoa(columnWidths[i]) + "s"
+						if _, err := strconv.ParseFloat(col, 64); err == nil {
+							format = "%" + strconv.Itoa(columnWidths[i]) + "s"
 						}
-						result.WriteString("| " + fmt.Sprintf(format, strings.TrimSpace(col)) + " ")
+						result.WriteString("| " + fmt.Sprintf(format, col) + " ")
 					}
 				}
 			} else {
@@ -224,7 +226,6 @@ func Table(input string) string {
 					}
 				}
 			}
-
 			result.WriteString("|\n")
 		}
 
