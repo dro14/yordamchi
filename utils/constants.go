@@ -182,7 +182,7 @@ var LaTeXReplacements = [][]string{
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{SquareRoot, "√(REPLACE)"},
 	{Fraction, "(REPLACE)/(REPLACE)"},
-	{`{(.+?)}`, "REPLACE"},
+	// {`{(.+?)}`, "REPLACE"},
 	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
