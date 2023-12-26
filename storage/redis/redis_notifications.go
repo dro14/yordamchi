@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"github.com/dro14/yordamchi/utils"
 	"log"
 	"strconv"
 	"strings"
@@ -36,7 +37,7 @@ func (r *Redis) NotifyInterval(ctx context.Context) time.Duration {
 	seconds, err := r.client.Get(ctx, "notify_interval").Float64()
 	if err != nil {
 		log.Printf("can't get %q: %s", "notify_interval", err)
-		seconds = 3600.0
+		seconds = utils.NotifyInterval.Seconds()
 	}
 	return time.Duration(seconds) * time.Second
 }

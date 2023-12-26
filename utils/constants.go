@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	NumOfFreeReqs = 5
-	RetryAttempts = 10
-	RetryDelay    = 1000 * time.Millisecond
-	ReqInterval   = 2000 * time.Millisecond
-	Delim         = "\n-\n-\n-\n-\n"
+	NumOfFreeReqs  = 5
+	RetryAttempts  = 10
+	RetryDelay     = 1000 * time.Millisecond
+	ReqInterval    = 2000 * time.Millisecond
+	NotifyInterval = 12 * time.Hour
+	Delim          = "\n-\n-\n-\n-\n"
 )
 
 var (
@@ -182,7 +183,6 @@ var LaTeXReplacements = [][]string{
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{SquareRoot, "√(REPLACE)"},
 	{Fraction, "(REPLACE)/(REPLACE)"},
-	// {`{(.+?)}`, "REPLACE"},
 	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},

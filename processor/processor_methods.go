@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dro14/yordamchi/processor/text"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
@@ -95,7 +96,7 @@ func (p *Processor) notify(ctx context.Context) {
 				_, _ = p.telegram.SendMessage(ctx, Text, 0, replyMarkup)
 			}
 		}
-		time.Sleep(1 * time.Hour)
+		time.Sleep(utils.NotifyInterval)
 		p.redis.SetNotifyInterval(ctx, time.Since(beginning))
 	}
 }
