@@ -20,20 +20,21 @@ var (
 )
 
 const (
-	Fraction   = `\\\s?d?frac\s?{(.+?)}{(.+?)}`
+	Fraction1  = `\\\s?d?frac\s?{(.+?)[})]{(.+?)}`
+	Fraction2  = `\\\s?d?frac\s?{(.+?){(.+?)}}`
 	SquareRoot = `\\\s?sqrt\s?{(.+?)}`
 )
 
 var LaTeXReplacements = [][]string{
 	// Greek letters
-	{`\\alpha`, "α"},
+	{`\\(?:alpha|alfa)`, "α"},
 	{`\\beta`, "β"},
 	{`\\gamma`, "γ"},
 	{`\\delta`, "δ"},
-	{`\\(var)?epsilon`, "ε"},
+	{`\\(?:var)?epsilon`, "ε"},
 	{`\\zeta`, "ζ"},
 	{`\\eta`, "η"},
-	{`\\(var)?(theta|teta)`, "θ"},
+	{`\\(?:var)?(theta|teta)`, "θ"},
 	{`\\iota`, "ι"},
 	{`\\kappa`, "κ"},
 	{`\\lambda`, "λ"},
@@ -41,11 +42,11 @@ var LaTeXReplacements = [][]string{
 	{`\\nu`, "ν"},
 	{`\\xi`, "ξ"},
 	{`\\pi`, "π"},
-	{`\\(var)?rho`, "ρ"},
+	{`\\(?:var)?rho`, "ρ"},
 	{`\\sigma`, "σ"},
 	{`\\tau`, "τ"},
 	{`\\upsilon`, "υ"},
-	{`\\(var)?phi`, "φ"},
+	{`\\(?:var)?phi`, "φ"},
 	{`\\chi`, "χ"},
 	{`\\psi`, "ψ"},
 	{`\\omega`, "ω"},
@@ -103,6 +104,7 @@ var LaTeXReplacements = [][]string{
 	{`\\binom`, "C"},
 	{`\\int`, "∫"},
 	{`\\iint`, "∬"},
+	{`\\iiint`, "∭"},
 	{`\\langle`, "⟨"},
 	{`\\rangle`, "⟩"},
 	{`\\pm`, "±"},
@@ -111,12 +113,13 @@ var LaTeXReplacements = [][]string{
 	{`\\supset`, "⊃"},
 	{`\\subseteq`, "⊆"},
 	{`\\supseteq`, "⊇"},
-	{`^\\circ\s?`, "°"},
+	{`^\\circ`, "°"},
 	{`\\ldots`, "..."},
 	{`\\\|`, "‖"},
+	{`\\(?:Big\||mid)`, "|"},
 
 	// Binary Operation/Relation Symbols
-	{`\\\s?(?:times|marta|qat)`, "×"},
+	{`\\(?:times|marta|qat)`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\leq`, "≤"},
@@ -132,18 +135,18 @@ var LaTeXReplacements = [][]string{
 	{`\\neq`, "≠"},
 	{`\\geq`, "≥"},
 	{`\\perp`, "⊥"},
-	{`\\\s?(?:approx|taxminan)`, "≈"},
+	{`\\(?:approx|taxminan)`, "≈"},
 	{`\\vee`, "∨"},
 	{`\\otimes`, "⊗"},
 	{`\\boxtimes`, "⊠"},
 	{`\\cong`, "≅"},
 
-	{`\\bar{r}`, "r̄"},
-	{`\\bar{R}`, "R̄"},
 	{`\\bar{x}`, "x̄"},
 	{`\\bar{X}`, "X̄"},
 	{`\\bar{y}`, "ȳ"},
 	{`\\bar{Y}`, "Ȳ"},
+	{`\\hat{p}`, "p̂"},
+	{`\\hat{P}`, "P̂"},
 	{`\\hat{r}`, "r̂"},
 	{`\\hat{R}`, "R̂"},
 	{`\\hat{x}`, "x̂"},
@@ -160,6 +163,8 @@ var LaTeXReplacements = [][]string{
 	{`\\$`, "$"},
 	{`\\%`, "%"},
 	{`\\&`, "&"},
+	{`\\{`, "{"},
+	{`\\}`, "}"},
 	{`\\ln`, "ln"},
 	{`\\log`, "log"},
 	{`\\sin`, "sin"},
@@ -177,7 +182,8 @@ var LaTeXReplacements = [][]string{
 
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
 	{SquareRoot, "√(REPLACE)"},
-	{Fraction, "(REPLACE)/(REPLACE)"},
+	{Fraction1, "(REPLACE)/(REPLACE)"},
+	{Fraction2, "(REPLACE)/(REPLACE)"},
 	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
