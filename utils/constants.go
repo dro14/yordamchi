@@ -20,9 +20,12 @@ var (
 )
 
 const (
-	Fraction1  = `\\\s?d?frac\s?{(.+?)[})]{(.+?)}`
-	Fraction2  = `\\\s?d?frac\s?{(.+?){(.+?)}}`
-	SquareRoot = `\\\s?sqrt\s?{(.+?)}`
+	Fraction1 = `\\\s?d?frac\s?{(.+?)[})]\s?{(.+?)}`
+	Fraction2 = `\\\s?d?frac\s?{(.+?){(.+?)}\s?}`
+	Root2     = `\\\s?sqrt\s?{(.+?)}`
+	Root3     = `\\\s?sqrt\s?[3]\s?{(.+?)}`
+	Root4     = `\\\s?sqrt\s?[4]\s?{(.+?)}`
+	LaTeXExp  = `\\[(\[]\s?(.+?)\s?\\[)\]]`
 )
 
 var LaTeXReplacements = [][]string{
@@ -83,7 +86,7 @@ var LaTeXReplacements = [][]string{
 	{`\\infty`, "∞"},
 	{`\\Re`, "ℜ"},
 	{`\\nabla`, "∇"},
-	{`\\\s?(?:partial|qisman)\s?`, "∂"},
+	{`\\(?:partial|qisman)`, "∂"},
 	{`\\emptyset`, "∅"},
 	{`\\wp`, "℘"},
 	{`\\neg`, "¬"},
@@ -99,7 +102,7 @@ var LaTeXReplacements = [][]string{
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
-	{`\\\s?(?:sum|summa)\s?`, "Σ"},
+	{`\\sum(?:ma)?`, "Σ"},
 	{`\\prod`, "Π"},
 	{`\\binom`, "C"},
 	{`\\int`, "∫"},
@@ -116,10 +119,10 @@ var LaTeXReplacements = [][]string{
 	{`^\\circ`, "°"},
 	{`\\ldots`, "..."},
 	{`\\\|`, "‖"},
-	{`\\(?:Big\||mid)`, "|"},
+	{`\\(?:Bigg?\||mid)`, "|"},
 
 	// Binary Operation/Relation Symbols
-	{`\\(?:times|marta|qat)`, "×"},
+	{`\\?(?:times|marta)`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\leq`, "≤"},
@@ -140,6 +143,10 @@ var LaTeXReplacements = [][]string{
 	{`\\otimes`, "⊗"},
 	{`\\boxtimes`, "⊠"},
 	{`\\cong`, "≅"},
+	{`\\land`, "∧"},
+	{`\\lor`, "∨"},
+	{`\\lnot?`, "¬"},
+	{`\\lxor`, "⊻"},
 
 	{`\\bar{x}`, "x̄"},
 	{`\\bar{X}`, "X̄"},
@@ -181,10 +188,12 @@ var LaTeXReplacements = [][]string{
 	{`\\arccsc`, "arccsc"},
 
 	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
-	{SquareRoot, "√(REPLACE)"},
+	{Root2, "√(REPLACE)"},
+	{Root3, "∛(REPLACE)"},
+	{Root4, "∜(REPLACE)"},
 	{Fraction1, "(REPLACE)/(REPLACE)"},
 	{Fraction2, "(REPLACE)/(REPLACE)"},
 	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
-	{`\\[(\[]\s?(.+?)\s?\\[)\]]`, "`REPLACE`"},
+	{LaTeXExp, "`REPLACE`"},
 }

@@ -63,7 +63,7 @@ func DownloadFile(URL, path string) error {
 }
 
 func MarkdownV2(s string) string {
-	s = LaTex(Table(s))
+	s = LaTeX(Table(s))
 
 	escapeChars := "\\[]()~>#+-=|{}.!"
 	for i := range escapeChars {
@@ -155,7 +155,7 @@ func MarkdownV2(s string) string {
 	return buffer.String()
 }
 
-func LaTex(s string) string {
+func LaTeX(s string) string {
 	for i := range LaTeXReplacements {
 		latexCmd := LaTeXReplacements[i][0]
 		re := regexp.MustCompile(latexCmd)
@@ -164,17 +164,18 @@ func LaTex(s string) string {
 			subMatches := re.FindStringSubmatch(s)
 			for _, m := range subMatches[1:] {
 				switch latexCmd {
-				case Fraction1, Fraction2, SquareRoot:
-					if !strings.ContainsAny(m, "+-*·×/^") && len(m) < 10 {
+				case Fraction1, Fraction2, Root2, Root3, Root4:
+					if !strings.ContainsAny(m, "+-*·×/÷^") && len(m) < 10 {
 						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
 						continue
 					}
 				}
 				unicode = strings.Replace(unicode, "REPLACE", m, 1)
 			}
-			if (latexCmd == Fraction1 || latexCmd == Fraction2) && len(unicode) > 20 {
+			if latexCmd != LaTeXExp && len(unicode) > 20 {
 				unicode = strings.Replace(unicode, "/", " / ", 1)
 			}
+			unicode = strings.ReplaceAll(unicode, "  ", " ")
 			unicode = strings.ReplaceAll(unicode, "  ", " ")
 			s = strings.Replace(s, re.FindString(s), unicode, 1)
 		}
