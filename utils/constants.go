@@ -25,7 +25,6 @@ const (
 	Root2     = `\\\s?sqrt\s?{(.+?)}`
 	Root3     = `\\\s?sqrt\s?[3]\s?{(.+?)}`
 	Root4     = `\\\s?sqrt\s?[4]\s?{(.+?)}`
-	LaTeXExp  = `\\[(\[]\s?(.+?)\s?\\[)\]]`
 )
 
 var LaTeXReplacements = [][]string{

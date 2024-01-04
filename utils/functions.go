@@ -158,6 +158,7 @@ func MarkdownV2(s string) string {
 func LaTeX(s string) string {
 	LaTeXes := LaTeXRgx.FindAllString(s, -1)
 	for i, latex := range LaTeXes {
+		latex = "`" + LaTeXRgx.FindStringSubmatch(latex)[1] + "`"
 		for j := range LaTeXReplacements {
 			latexCmd := LaTeXReplacements[j][0]
 			re := regexp.MustCompile(latexCmd)
@@ -174,7 +175,7 @@ func LaTeX(s string) string {
 					}
 					unicode = strings.Replace(unicode, "REPLACE", m, 1)
 				}
-				if latexCmd != LaTeXExp && len(unicode) > 20 {
+				if len(unicode) > 20 {
 					unicode = strings.Replace(unicode, "/", " / ", 1)
 				}
 				unicode = strings.ReplaceAll(unicode, "  ", " ")
@@ -182,7 +183,7 @@ func LaTeX(s string) string {
 				latex = strings.Replace(latex, re.FindString(latex), unicode, 1)
 			}
 		}
-		s = strings.Replace(s, LaTeXes[i], "`"+latex[3:len(latex)-3]+"`", 1)
+		s = strings.Replace(s, LaTeXes[i], latex, 1)
 	}
 	return s
 }
