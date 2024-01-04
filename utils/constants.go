@@ -122,7 +122,8 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:Bigg?\||mid)`, "|"},
 
 	// Binary Operation/Relation Symbols
-	{`\\?(?:times|marta)`, "×"},
+	{`\\(?:times|kes)`, "×"},
+	{`\\?marta`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\leq`, "≤"},
@@ -193,7 +194,7 @@ var LaTeXReplacements = [][]string{
 	{Root4, "∜(REPLACE)"},
 	{Fraction1, "(REPLACE)/(REPLACE)"},
 	{Fraction2, "(REPLACE)/(REPLACE)"},
-	{`\\\s?(?:left|chap|right|o'ng|text|matn|limits|vec)\s?`, ""},
+	{`\\\s?(?:left|chap|right|o['ʻ]ng|text|matn|limits|vec)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{LaTeXExp, "`REPLACE`"},
 }
