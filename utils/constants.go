@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?.+?\s?\\[)\]]`)
+	LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 	TableRgx = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
@@ -68,7 +68,7 @@ var LaTeXReplacements = [][]string{
 
 	// Arrows
 	{`\\leftarrow`, "←"},
-	{`\\rightarrow`, "→"},
+	{`\\(?:rightarrow|to)`, "→"},
 	{`\\uparrow`, "↑"},
 	{`\\downarrow`, "↓"},
 	{`\\leftrightarrow`, "↔"},
@@ -175,6 +175,7 @@ var LaTeXReplacements = [][]string{
 	{`\\}`, "}"},
 	{`\\ln`, "ln"},
 	{`\\log`, "log"},
+	{`\\lim`, "lim"},
 	{`\\sin`, "sin"},
 	{`\\cos`, "cos"},
 	{`\\tan`, "tan"},
@@ -188,13 +189,12 @@ var LaTeXReplacements = [][]string{
 	{`\\arcsec`, "arcsec"},
 	{`\\arccsc`, "arccsc"},
 
-	{`\\\s?(?:text|matn|vec)\s?{(.+?)}`, "REPLACE"},
+	{`\\\s?(?:text|matn)\s?{(.+?)}`, "REPLACE"},
 	{Root2, "√(REPLACE)"},
 	{Root3, "∛(REPLACE)"},
 	{Root4, "∜(REPLACE)"},
 	{Fraction1, "(REPLACE)/(REPLACE)"},
 	{Fraction2, "(REPLACE)/(REPLACE)"},
-	{`\\\s?(?:left|chap|right|o['ʻ]ng|text|matn|limits|vec)\s?`, ""},
+	{`\\\s?(?:left|chap|right|o['ʻ]ng|text|matn)\s?`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
-	{LaTeXExp, "`REPLACE`"},
 }

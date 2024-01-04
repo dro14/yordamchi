@@ -156,29 +156,33 @@ func MarkdownV2(s string) string {
 }
 
 func LaTeX(s string) string {
-	for i := range LaTeXReplacements {
-		latexCmd := LaTeXReplacements[i][0]
-		re := regexp.MustCompile(latexCmd)
-		for re.FindString(s) != "" {
-			unicode := LaTeXReplacements[i][1]
-			subMatches := re.FindStringSubmatch(s)
-			for _, m := range subMatches[1:] {
-				switch latexCmd {
-				case Fraction1, Fraction2, Root2, Root3, Root4:
-					if !strings.ContainsAny(m, "+-*·×/÷^") && len(m) < 10 {
-						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
-						continue
+	LaTeXes := LaTeXRgx.FindAllString(s, -1)
+	for i, latex := range LaTeXes {
+		for j := range LaTeXReplacements {
+			latexCmd := LaTeXReplacements[j][0]
+			re := regexp.MustCompile(latexCmd)
+			for re.FindString(latex) != "" {
+				unicode := LaTeXReplacements[j][1]
+				subMatches := re.FindStringSubmatch(latex)
+				for _, m := range subMatches[1:] {
+					switch latexCmd {
+					case Fraction1, Fraction2, Root2, Root3, Root4:
+						if !strings.ContainsAny(m, "+-*·×/÷^") && len(m) < 10 {
+							unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
+							continue
+						}
 					}
+					unicode = strings.Replace(unicode, "REPLACE", m, 1)
 				}
-				unicode = strings.Replace(unicode, "REPLACE", m, 1)
+				if latexCmd != LaTeXExp && len(unicode) > 20 {
+					unicode = strings.Replace(unicode, "/", " / ", 1)
+				}
+				unicode = strings.ReplaceAll(unicode, "  ", " ")
+				unicode = strings.ReplaceAll(unicode, "  ", " ")
+				latex = strings.Replace(latex, re.FindString(latex), unicode, 1)
 			}
-			if latexCmd != LaTeXExp && len(unicode) > 20 {
-				unicode = strings.Replace(unicode, "/", " / ", 1)
-			}
-			unicode = strings.ReplaceAll(unicode, "  ", " ")
-			unicode = strings.ReplaceAll(unicode, "  ", " ")
-			s = strings.Replace(s, re.FindString(s), unicode, 1)
 		}
+		s = strings.Replace(s, LaTeXes[i], "`"+latex[3:len(latex)-3]+"`", 1)
 	}
 	return s
 }
