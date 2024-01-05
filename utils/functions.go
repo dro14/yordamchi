@@ -65,7 +65,7 @@ func DownloadFile(URL, path string) error {
 func MarkdownV2(s string) string {
 	s = LaTeX(Table(s))
 
-	escapeChars := "\\[]()~>#+-=|{}.!"
+	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		char := string(escapeChars[i])
 		escape := "\\" + char
@@ -94,7 +94,6 @@ func MarkdownV2(s string) string {
 				matches := regexp.MustCompile("`.+?`").FindAllString(before2, -1)
 				for _, match := range matches {
 					escaped := strings.ReplaceAll(match, "*", "\\*")
-					escaped = strings.ReplaceAll(match, "_", "\\_")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
@@ -104,28 +103,15 @@ func MarkdownV2(s string) string {
 				matches := regexp.MustCompile("\\*.+?\\*").FindAllString(before2, -1)
 				for _, match := range matches {
 					escaped := strings.ReplaceAll(match, "`", "\\`")
-					escaped = strings.ReplaceAll(match, "_", "\\_")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			} else {
 				before2 = strings.ReplaceAll(before2, "*", "\\*")
 			}
-			if strings.Count(before2, "_")%2 == 0 {
-				matches := regexp.MustCompile("_.+?_").FindAllString(before2, -1)
-				for _, match := range matches {
-					escaped := strings.ReplaceAll(match, "`", "\\`")
-					escaped = strings.ReplaceAll(match, "*", "\\*")
-					before2 = strings.Replace(before2, match, escaped, 1)
-				}
-			} else {
-				before2 = strings.ReplaceAll(before2, "_", "\\_")
-			}
 			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
 			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
 			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
 			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
-			before2 = strings.ReplaceAll(before2, "\\\\_", "\\_")
-			before2 = strings.ReplaceAll(before2, "\\\\_", "\\_")
 			buffer.WriteString(before2)
 			if !found2 {
 				break
@@ -135,7 +121,6 @@ func MarkdownV2(s string) string {
 			before2, before1, _ = strings.Cut(before1, "**")
 			before2 = strings.ReplaceAll(before2, "`", "\\`")
 			before2 = strings.ReplaceAll(before2, "*", "\\*")
-			before2 = strings.ReplaceAll(before2, "_", "\\_")
 			buffer.WriteString(before2)
 			buffer.WriteString("__*")
 		}
@@ -147,7 +132,6 @@ func MarkdownV2(s string) string {
 		before1, s, _ = strings.Cut(s, "```")
 		before1 = strings.ReplaceAll(before1, "`", "\\`")
 		before1 = strings.ReplaceAll(before1, "*", "\\*")
-		before1 = strings.ReplaceAll(before1, "_", "\\_")
 		buffer.WriteString(before1)
 		buffer.WriteString("```")
 	}
