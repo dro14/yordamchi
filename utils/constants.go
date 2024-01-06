@@ -20,23 +20,23 @@ var (
 )
 
 const (
-	Fraction1 = `\\\s?d?frac\s?{(.+?)[})]\s?{(.+?)}`
-	Fraction2 = `\\\s?d?frac\s?{(.+?){(.+?)}\s?}`
-	Root2     = `\\\s?sqrt\s?{(.+?)}`
-	Root3     = `\\\s?sqrt\s?[3]\s?{(.+?)}`
-	Root4     = `\\\s?sqrt\s?[4]\s?{(.+?)}`
+	Fraction1 = `\\d?frac{(.+?)}{(.+?)}`
+	Fraction2 = `\\d?frac{(.+?){(.+?)}}`
+	Root2     = `\\sqrt{(.+?)}`
+	Root3     = `\\sqrt[3]{(.+?)}`
+	Root4     = `\\sqrt[4]{(.+?)}`
 )
 
 var LaTeXReplacements = [][]string{
 	// Greek letters
-	{`\\(?:alpha|alfa)`, "α"},
+	{`\\alpha`, "α"},
 	{`\\beta`, "β"},
 	{`\\gamma`, "γ"},
 	{`\\delta`, "δ"},
 	{`\\(?:var)?epsilon`, "ε"},
 	{`\\zeta`, "ζ"},
 	{`\\eta`, "η"},
-	{`\\(?:var)?(theta|teta)`, "θ"},
+	{`\\(?:var)?theta`, "θ"},
 	{`\\iota`, "ι"},
 	{`\\kappa`, "κ"},
 	{`\\lambda`, "λ"},
@@ -85,7 +85,7 @@ var LaTeXReplacements = [][]string{
 	{`\\infty`, "∞"},
 	{`\\Re`, "ℜ"},
 	{`\\nabla`, "∇"},
-	{`\\(?:partial|qisman)`, "∂"},
+	{`\\partial`, "∂"},
 	{`\\emptyset`, "∅"},
 	{`\\wp`, "℘"},
 	{`\\neg`, "¬"},
@@ -101,7 +101,7 @@ var LaTeXReplacements = [][]string{
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
-	{`\\sum(?:ma)?`, "Σ"},
+	{`\\sum`, "Σ"},
 	{`\\prod`, "Π"},
 	{`\\binom`, "C"},
 	{`\\int`, "∫"},
@@ -129,8 +129,7 @@ var LaTeXReplacements = [][]string{
 	{`\\rceil`, "⌉"},
 
 	// Binary Operation/Relation Symbols
-	{`\\(?:times|kes)`, "×"},
-	{`\\?marta`, "×"},
+	{`\\times`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\leq`, "≤"},
@@ -146,7 +145,7 @@ var LaTeXReplacements = [][]string{
 	{`\\neq`, "≠"},
 	{`\\geq`, "≥"},
 	{`\\perp`, "⊥"},
-	{`\\(?:approx|taxminan)`, "≈"},
+	{`\\approx`, "≈"},
 	{`\\vee`, "∨"},
 	{`\\otimes`, "⊗"},
 	{`\\boxtimes`, "⊠"},
@@ -192,12 +191,12 @@ var LaTeXReplacements = [][]string{
 	{`\\arcsec`, "arcsec"},
 	{`\\arccsc`, "arccsc"},
 
-	{`\\\s?(?:text|matn|mathbf)\s?{(.+?)}`, "REPLACE"},
+	{`\\(?:text|mathbf){(.+?)}`, "REPLACE"},
 	{Root2, "√(REPLACE)"},
 	{Root3, "∛(REPLACE)"},
 	{Root4, "∜(REPLACE)"},
 	{Fraction1, "(REPLACE)/(REPLACE)"},
 	{Fraction2, "(REPLACE)/(REPLACE)"},
-	{`\\\s?(?:left|chap|right|o['ʻ]ng|text|matn)\s?`, ""},
+	{`\\(?:left|right)`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
 }

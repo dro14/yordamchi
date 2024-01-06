@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -62,6 +61,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		ctx = context.WithValue(ctx, "stream", false)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
+		completion = utils.LaTeX(completion)
 		completion = p.apis.Translate("auto", "uz", completion)
 		completions = utils.Slice(completion, 4096)
 
@@ -146,13 +146,5 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	p.postgres.SaveMessage(ctx, message.From, msg)
 	if message.From.ID == 1792604195 {
 		utils.SendInfoMessage(completion, "")
-	}
-	latex := utils.LaTeXRgx.FindAllString(completion, -1)
-	if len(latex) > 0 {
-		utils.SendInfoMessage(strings.Join(latex, "\n\n"), "")
-	}
-	table := utils.TableRgx.FindAllString(completion, -1)
-	if len(table) > 0 {
-		utils.SendInfoMessage(strings.Join(table, "----------\n"), "")
 	}
 }
