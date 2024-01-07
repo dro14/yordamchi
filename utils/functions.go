@@ -162,11 +162,11 @@ func LaTeX(s string) string {
 				if len(unicode) > 20 {
 					unicode = strings.Replace(unicode, "/", " / ", 1)
 				}
-				unicode = strings.ReplaceAll(unicode, "  ", " ")
-				unicode = strings.ReplaceAll(unicode, "  ", " ")
 				latex = strings.Replace(latex, re.FindString(latex), unicode, 1)
 			}
 		}
+		latex = strings.ReplaceAll(latex, "  ", " ")
+		latex = strings.ReplaceAll(latex, "  ", " ")
 		s = strings.Replace(s, LaTeXes[i], latex, 1)
 	}
 	return s
