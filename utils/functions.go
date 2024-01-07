@@ -150,14 +150,11 @@ func LaTeX(s string) string {
 				unicode := LaTeXReplacements[j][1]
 				subMatches := re.FindStringSubmatch(latex)
 				for _, m := range subMatches[1:] {
-					switch latexCmd {
-					case Fraction1, Fraction2, Root2, Root3, Root4:
-						if !strings.ContainsAny(m, "+-*·×/÷^") && len(m) < 10 {
-							unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
-							continue
-						}
+					if latexCmd != Text && !strings.ContainsAny(m, "+-*·×/÷^ ") {
+						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
+					} else {
+						unicode = strings.Replace(unicode, "REPLACE", m, 1)
 					}
-					unicode = strings.Replace(unicode, "REPLACE", m, 1)
 				}
 				if len(unicode) > 20 {
 					unicode = strings.Replace(unicode, "/", " / ", 1)

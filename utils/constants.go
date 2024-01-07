@@ -19,13 +19,7 @@ var (
 	TableRgx = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
-const (
-	Fraction1 = `\\d?frac{(.+?)}{(.+?)}`
-	Fraction2 = `\\d?frac{(.+?){(.+?)}}`
-	Root2     = `\\sqrt{(.+?)}`
-	Root3     = `\\sqrt[3]{(.+?)}`
-	Root4     = `\\sqrt[4]{(.+?)}`
-)
+const Text = `\\(?:text|mathbf|mathcal){(.+?)}`
 
 var LaTeXReplacements = [][]string{
 	// Greek letters
@@ -33,10 +27,10 @@ var LaTeXReplacements = [][]string{
 	{`\\beta`, "β"},
 	{`\\gamma`, "γ"},
 	{`\\delta`, "δ"},
-	{`\\(?:var)?epsilon`, "ε"},
+	{`\\epsilon`, "ε"},
 	{`\\zeta`, "ζ"},
 	{`\\eta`, "η"},
-	{`\\(?:var)?theta`, "θ"},
+	{`\\theta`, "θ"},
 	{`\\iota`, "ι"},
 	{`\\kappa`, "κ"},
 	{`\\lambda`, "λ"},
@@ -44,11 +38,11 @@ var LaTeXReplacements = [][]string{
 	{`\\nu`, "ν"},
 	{`\\xi`, "ξ"},
 	{`\\pi`, "π"},
-	{`\\(?:var)?rho`, "ρ"},
+	{`\\rho`, "ρ"},
 	{`\\sigma`, "σ"},
 	{`\\tau`, "τ"},
 	{`\\upsilon`, "υ"},
-	{`\\(?:var)?phi`, "φ"},
+	{`\\phi`, "φ"},
 	{`\\chi`, "χ"},
 	{`\\psi`, "ψ"},
 	{`\\omega`, "ω"},
@@ -98,6 +92,7 @@ var LaTeXReplacements = [][]string{
 	{`\\varnothing`, "∅"},
 	{`\\complement`, "∁"},
 	{`\\cdots`, "⋯"},
+	{`\\ldots`, "..."},
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
@@ -115,13 +110,13 @@ var LaTeXReplacements = [][]string{
 	{`\\supset`, "⊃"},
 	{`\\subseteq`, "⊆"},
 	{`\\supseteq`, "⊇"},
-	{`^\\circ`, "°"},
-	{`\\ldots`, "..."},
+	{`\\setminus`, "∖"},
 	{`\\\|`, "‖"},
-	{`\\(?:Bigg?\||mid)`, "|"},
+	{`\\Bigg?\|`, "|"},
+	{`\\mid`, "∣"},
 	{`\\land`, "∧"},
 	{`\\lor`, "∨"},
-	{`\\lnot?`, "¬"},
+	{`\\lnot`, "¬"},
 	{`\\lxor`, "⊻"},
 	{`\\lfloor`, "⌊"},
 	{`\\rfloor`, "⌋"},
@@ -169,6 +164,7 @@ var LaTeXReplacements = [][]string{
 	{`\\mathbb{R}`, "ℝ"},
 	{`\\mathbb{C}`, "ℂ"},
 
+	{`\^\\circ`, "°"},
 	{`\^0`, "⁰"},
 	{`\^1`, "¹"},
 	{`\^2`, "²"},
@@ -216,12 +212,12 @@ var LaTeXReplacements = [][]string{
 	{`\\arcsec`, "arcsec"},
 	{`\\arccsc`, "arccsc"},
 
-	{`\\(?:text|mathbf|mathcal){(.+?)}`, "REPLACE"},
-	{Root2, "√(REPLACE)"},
-	{Root3, "∛(REPLACE)"},
-	{Root4, "∜(REPLACE)"},
-	{Fraction1, "(REPLACE)/(REPLACE)"},
-	{Fraction2, "(REPLACE)/(REPLACE)"},
 	{`\\(?:left|right)`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
+	{Text, "REPLACE"},
+	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
+	{`\\sqrt[3]{(.+?)}`, "∛(REPLACE)"},
+	{`\\sqrt[4]{(.+?)}`, "∜(REPLACE)"},
+	{`\\d?frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
+	{`\\d?frac{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
 }
