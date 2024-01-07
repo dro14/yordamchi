@@ -45,8 +45,9 @@ func (l *Legacy) Redirect(update *tgbotapi.Update) {
 	default:
 		config.Text = text.LegacyMessage["en"]
 	}
-
 	config.Text = utils.MarkdownV2(config.Text)
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+
 	_, err := l.bot.Request(config)
 	if err != nil {
 		log.Println("can't send legacy message:", err)
