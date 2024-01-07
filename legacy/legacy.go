@@ -1,6 +1,7 @@
 package legacy
 
 import (
+	"github.com/dro14/yordamchi/utils"
 	"log"
 	"os"
 
@@ -45,6 +46,7 @@ func (l *Legacy) Redirect(update *tgbotapi.Update) {
 		config.Text = text.LegacyMessage["en"]
 	}
 
+	config.Text = utils.MarkdownV2(config.Text)
 	_, err := l.bot.Request(config)
 	if err != nil {
 		log.Println("can't send legacy message:", err)
