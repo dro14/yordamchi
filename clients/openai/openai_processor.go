@@ -55,7 +55,7 @@ Retry:
 
 	completion := response.Choices[0].Message.Content.(string)
 	msg.CompletionTokens = o.countTokens(completion)
-	msg.CompletionLength = len(completion)
+	msg.CompletionLength = len([]rune(completion))
 
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)

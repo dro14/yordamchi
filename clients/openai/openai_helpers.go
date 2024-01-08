@@ -96,7 +96,7 @@ func decodeResponse(ctx context.Context, resp *http.Response) (*types.Response, 
 func length(messages []types.Message) int {
 	var promptLength int
 	for i := range messages {
-		promptLength += len(fmt.Sprintf("<|start|>%s\n%v<|end|>\n", messages[i].Role, messages[i].Content))
+		promptLength += len([]rune(fmt.Sprintf("<|start|>%s\n%v<|end|>\n", messages[i].Role, messages[i].Content)))
 	}
 	return promptLength
 }

@@ -22,7 +22,7 @@ func Sleep(retryDelay *time.Duration) {
 
 func Slice(s string, maxLen int) []string {
 	var slices []string
-	runes := []rune(s)
+	runes := []rune(Table(s))
 	for len(runes) > maxLen {
 		cutIndex := maxLen
 	Loop:
@@ -63,7 +63,7 @@ func DownloadFile(URL, path string) error {
 }
 
 func MarkdownV2(s string) string {
-	s = LaTeX(Table(s))
+	s = LaTeX(s)
 
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
