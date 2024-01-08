@@ -20,7 +20,7 @@ var (
 )
 
 const (
-	Text        = `\\(?:text|mathbf|mathcal){(.+?)}`
+	Text        = `\\(?:text|mathbf|mathcal|d){(.+?)}`
 	Subscript   = `_{(.+?)}`
 	Superscript = `\^{(.+?)}`
 )
@@ -108,7 +108,6 @@ var LaTeXReplacements = [][]string{
 	{`\\iiint`, "∭"},
 	{`\\langle`, "⟨"},
 	{`\\rangle`, "⟩"},
-	{`\\pm`, "±"},
 	{`\\mp`, "∓"},
 	{`\\subset`, "⊂"},
 	{`\\supset`, "⊃"},
@@ -126,6 +125,12 @@ var LaTeXReplacements = [][]string{
 	{`\\rfloor`, "⌋"},
 	{`\\lceil`, "⌈"},
 	{`\\rceil`, "⌉"},
+	{`\\begin{pmatrix}`, "("},
+	{`\\end{pmatrix}`, ")"},
+	{`\\begin{bmatrix}`, "["},
+	{`\\end{bmatrix}`, "]"},
+	{`\\begin{vmatrix}`, "|"},
+	{`\\end{vmatrix}`, "|"},
 
 	// Binary Operation/Relation Symbols
 	{`\\times`, "×"},
@@ -150,18 +155,58 @@ var LaTeXReplacements = [][]string{
 	{`\\boxtimes`, "⊠"},
 	{`\\cong`, "≅"},
 
+	{`\\(?:bar|vec){a}`, "ā"},
+	{`\\(?:bar|vec){b}`, "b̄"},
+	{`\\(?:bar|vec){c}`, "c̄"},
+	{`\\(?:bar|vec){d}`, "d̄"},
+	{`\\(?:bar|vec){e}`, "ē"},
+	{`\\(?:bar|vec){f}`, "f̄"},
+	{`\\(?:bar|vec){g}`, "ḡ"},
+	{`\\(?:bar|vec){h}`, "h̄"},
+	{`\\(?:bar|vec){i}`, "ī"},
+	{`\\(?:bar|vec){j}`, "j̄"},
+	{`\\(?:bar|vec){k}`, "k̄"},
+	{`\\(?:bar|vec){l}`, "l̄"},
+	{`\\(?:bar|vec){m}`, "m̄"},
+	{`\\(?:bar|vec){n}`, "n̄"},
+	{`\\(?:bar|vec){o}`, "ō"},
+	{`\\(?:bar|vec){p}`, "p̄"},
+	{`\\(?:bar|vec){q}`, "q̄"},
+	{`\\(?:bar|vec){r}`, "r̄"},
+	{`\\(?:bar|vec){s}`, "s̄"},
+	{`\\(?:bar|vec){t}`, "t̄"},
+	{`\\(?:bar|vec){u}`, "ū"},
+	{`\\(?:bar|vec){v}`, "v̄"},
+	{`\\(?:bar|vec){w}`, "w̄"},
 	{`\\(?:bar|vec){x}`, "x̄"},
-	{`\\(?:bar|vec){X}`, "X̄"},
 	{`\\(?:bar|vec){y}`, "ȳ"},
-	{`\\(?:bar|vec){Y}`, "Ȳ"},
+	{`\\(?:bar|vec){z}`, "z̄"},
+	{`\\hat{a}`, "â"},
+	{`\\hat{b}`, "b̂"},
+	{`\\hat{c}`, "ĉ"},
+	{`\\hat{d}`, "d̂"},
+	{`\\hat{e}`, "ê"},
+	{`\\hat{f}`, "f̂"},
+	{`\\hat{g}`, "ĝ"},
+	{`\\hat{h}`, "ĥ"},
+	{`\\hat{i}`, "î"},
+	{`\\hat{j}`, "ĵ"},
+	{`\\hat{k}`, "k̂"},
+	{`\\hat{l}`, "l̂"},
+	{`\\hat{m}`, "m̂"},
+	{`\\hat{n}`, "n̂"},
+	{`\\hat{o}`, "ô"},
 	{`\\hat{p}`, "p̂"},
-	{`\\hat{P}`, "P̂"},
+	{`\\hat{q}`, "q̂"},
 	{`\\hat{r}`, "r̂"},
-	{`\\hat{R}`, "R̂"},
+	{`\\hat{s}`, "ŝ"},
+	{`\\hat{t}`, "t̂"},
+	{`\\hat{u}`, "û"},
+	{`\\hat{v}`, "v̂"},
+	{`\\hat{w}`, "ŵ"},
 	{`\\hat{x}`, "x̂"},
-	{`\\hat{X}`, "X̂"},
 	{`\\hat{y}`, "ŷ"},
-	{`\\hat{Y}`, "Ŷ"},
+	{`\\hat{z}`, "ẑ"},
 	{`\\mathbb{N}`, "ℕ"},
 	{`\\mathbb{Z}`, "ℤ"},
 	{`\\mathbb{Q}`, "ℚ"},
@@ -199,6 +244,7 @@ var LaTeXReplacements = [][]string{
 	{`_y`, "ᵧ"},
 	{`_-`, "₋"},
 	{`_\+`, "₊"},
+	{`_=`, "₌"},
 
 	// Superscripts
 	{`\^0`, "⁰"},
@@ -257,6 +303,7 @@ var LaTeXReplacements = [][]string{
 	{`\^z`, "ᶻ"},
 	{`\^-`, "⁻"},
 	{`\^\+`, "⁺"},
+	{`\^=`, "⁼"},
 	{`\^\\circ`, "°"},
 
 	{`\\#`, "#"},
@@ -283,6 +330,8 @@ var LaTeXReplacements = [][]string{
 
 	{`\\(?:left|right)`, ""},
 	{`\\(?: |,|;|:|quad)`, " "},
+	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
+	{`\\pm`, "±"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{Superscript, "REPLACE"},
@@ -325,6 +374,7 @@ var Subscripts = map[rune]rune{
 
 	'-': '₋',
 	'+': '₊',
+	'=': '₌',
 	' ': ' ',
 }
 
@@ -388,5 +438,6 @@ var Superscripts = map[rune]rune{
 
 	'-': '⁻',
 	'+': '⁺',
+	'=': '⁼',
 	' ': ' ',
 }
