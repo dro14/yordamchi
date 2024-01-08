@@ -150,10 +150,43 @@ func LaTeX(s string) string {
 				unicode := LaTeXReplacements[j][1]
 				subMatches := re.FindStringSubmatch(latex)
 				for _, m := range subMatches[1:] {
-					if latexCmd != Text && !strings.ContainsAny(m, "+-*·×/÷^ ") {
-						unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
-					} else {
+					switch latexCmd {
+					case Text:
 						unicode = strings.Replace(unicode, "REPLACE", m, 1)
+					case Subscript:
+						subscript := ""
+						for _, c := range m {
+							char, ok := Subscripts[c]
+							if ok {
+								subscript += string(char)
+							} else {
+								subscript = re.FindString(latex)
+								break
+							}
+						}
+						subscript = strings.Replace(subscript, "{", "", 1)
+						subscript = strings.Replace(subscript, "}", "", 1)
+						unicode = strings.Replace(unicode, "REPLACE", subscript, 1)
+					case Superscript:
+						superscript := ""
+						for _, c := range m {
+							char, ok := Superscripts[c]
+							if ok {
+								superscript += string(char)
+							} else {
+								superscript = re.FindString(latex)
+								break
+							}
+						}
+						superscript = strings.Replace(superscript, "{", "", 1)
+						superscript = strings.Replace(superscript, "}", "", 1)
+						unicode = strings.Replace(unicode, "REPLACE", superscript, 1)
+					default:
+						if !strings.ContainsAny(m, "+-*·×/÷^ ") {
+							unicode = strings.Replace(unicode, "(REPLACE)", m, 1)
+						} else {
+							unicode = strings.Replace(unicode, "REPLACE", m, 1)
+						}
 					}
 				}
 				if len(unicode) > 20 {
