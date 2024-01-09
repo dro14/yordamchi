@@ -29,7 +29,9 @@ Retry:
 	resp, err := t.bot.Request(request)
 	if err != nil {
 		if resp != nil {
-			log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
+			if resp.ErrorCode != 403 {
+				log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
+			}
 			is := func(s string) bool {
 				return strings.Contains(resp.Description, s)
 			}
