@@ -64,12 +64,10 @@ func DownloadFile(URL, path string) error {
 
 func MarkdownV2(s string) string {
 	s = LaTeX(s)
-
-	escapeChars := "\\_[]()~>#+-=|{}.!"
+	s = strings.ReplaceAll(s, `\`, `\\\\`)
+	escapeChars := "_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
-		char := string(escapeChars[i])
-		escape := "\\" + char
-		s = strings.ReplaceAll(s, char, escape)
+		s = strings.ReplaceAll(s, escapeChars[i:i+1], "\\"+escapeChars[i:i+1])
 	}
 
 	if strings.Count(s, "```")%2 != 0 {
@@ -158,28 +156,28 @@ func LaTeX(s string) string {
 						for _, c := range m {
 							char, ok := Subscripts[c]
 							if ok {
-								subscript += string(char)
+								subscript += char
 							} else {
 								subscript = re.FindString(latex)
 								break
 							}
 						}
-						subscript = strings.Replace(subscript, "{", "", 1)
-						subscript = strings.Replace(subscript, "}", "", 1)
+						subscript = strings.Replace(subscript, "{", "(", 1)
+						subscript = strings.Replace(subscript, "}", ")", 1)
 						unicode = strings.Replace(unicode, "REPLACE", subscript, 1)
 					case Superscript:
 						superscript := ""
 						for _, c := range m {
 							char, ok := Superscripts[c]
 							if ok {
-								superscript += string(char)
+								superscript += char
 							} else {
 								superscript = re.FindString(latex)
 								break
 							}
 						}
-						superscript = strings.Replace(superscript, "{", "", 1)
-						superscript = strings.Replace(superscript, "}", "", 1)
+						superscript = strings.Replace(superscript, "{", "(", 1)
+						superscript = strings.Replace(superscript, "}", ")", 1)
 						unicode = strings.Replace(unicode, "REPLACE", superscript, 1)
 					default:
 						if !strings.ContainsAny(m, "+-*·×/÷^ ") {
