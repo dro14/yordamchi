@@ -89,7 +89,6 @@ var LaTeXReplacements = [][]string{
 
 	{`\\sum`, "Σ"},
 	{`\\prod`, "Π"},
-	{`\\binom`, "C"},
 	{`\\int`, "∫"},
 	{`\\iint`, "∬"},
 	{`\\iiint`, "∭"},
@@ -118,6 +117,8 @@ var LaTeXReplacements = [][]string{
 	{`\\end{bmatrix}`, "]"},
 	{`\\begin{vmatrix}`, "|"},
 	{`\\end{vmatrix}`, "|"},
+	{`\\begin{cases}`, "{"},
+	{`\\end{cases}`, "}"},
 
 	// Binary Operation/Relation Symbols
 	{`\\times`, "×"},
@@ -166,6 +167,7 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){v}`, "v̄"},
 	{`\\(?:bar|vec){w}`, "w̄"},
 	{`\\(?:bar|vec){x}`, "x̄"},
+	{`\\(?:bar|vec){X}`, "X̄"},
 	{`\\(?:bar|vec){y}`, "ȳ"},
 	{`\\(?:bar|vec){z}`, "z̄"},
 	{`\\hat{a}`, "â"},
@@ -232,6 +234,8 @@ var LaTeXReplacements = [][]string{
 	{`_-`, "₋"},
 	{`_\+`, "₊"},
 	{`_=`, "₌"},
+	{`_\(`, "₍"},
+	{`_\)`, "₎"},
 
 	// Superscripts
 	{`\^0`, "⁰"},
@@ -291,6 +295,8 @@ var LaTeXReplacements = [][]string{
 	{`\^-`, "⁻"},
 	{`\^\+`, "⁺"},
 	{`\^=`, "⁼"},
+	{`\^\(`, "⁽"},
+	{`\^\)`, "⁾"},
 	{`\^\\circ`, "°"},
 
 	{`\\#`, "#"},
@@ -319,14 +325,16 @@ var LaTeXReplacements = [][]string{
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\pm`, "±"},
+	{`\\binom{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`\\binom`, "C"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{Superscript, "REPLACE"},
 	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
 	{`\\sqrt[3]{(.+?)}`, "∛(REPLACE)"},
 	{`\\sqrt[4]{(.+?)}`, "∜(REPLACE)"},
-	{`\\d?frac{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
-	{`\\d?frac{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
+	{`\\d?frac ?{(.+?)[})]{(.+?)}`, "(REPLACE)/(REPLACE)"},
+	{`\\d?frac ?{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
 }
 
 var Subscripts = map[rune]rune{
@@ -363,6 +371,8 @@ var Subscripts = map[rune]rune{
 	'-': '₋',
 	'+': '₊',
 	'=': '₌',
+	'(': '₍',
+	')': '₎',
 	' ': ' ',
 }
 
@@ -427,5 +437,7 @@ var Superscripts = map[rune]rune{
 	'-': '⁻',
 	'+': '⁺',
 	'=': '⁼',
+	'(': '⁽',
+	')': '⁾',
 	' ': ' ',
 }
