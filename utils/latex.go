@@ -5,7 +5,7 @@ import "regexp"
 var LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 
 const (
-	Text        = `\\(?:text|mathbf|mathcal|d){(.+?)}`
+	Text        = `\\(?:text|mathbf|mathcal|d|boldsymbol){(.+?)}`
 	Subscript   = `_{(.+?)}`
 	Superscript = `\^{(.+?)}`
 )
@@ -81,7 +81,9 @@ var LaTeXReplacements = [][]string{
 	{`\\varnothing`, "∅"},
 	{`\\complement`, "∁"},
 	{`\\cdots`, "⋯"},
+	{`\\ddots`, "⋱"},
 	{`\\ldots`, "..."},
+	{`\\vdots`, "⋮"},
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
@@ -100,6 +102,7 @@ var LaTeXReplacements = [][]string{
 	{`\\supseteq`, "⊇"},
 	{`\\setminus`, "∖"},
 	{`\\(?:\||[lr]Vert)`, "‖"},
+	{`\\[lr]vert`, "|"},
 	{`\\mid`, "∣"},
 	{`\\land`, "∧"},
 	{`\\lor`, "∨"},
@@ -163,6 +166,7 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){t}`, "t̄"},
 	{`\\(?:bar|vec){u}`, "ū"},
 	{`\\(?:bar|vec){v}`, "v̄"},
+	{`\\(?:bar|vec){V}`, "V̄"},
 	{`\\(?:bar|vec){w}`, "w̄"},
 	{`\\(?:bar|vec){x}`, "x̄"},
 	{`\\(?:bar|vec){X}`, "X̄"},
@@ -299,28 +303,6 @@ var LaTeXReplacements = [][]string{
 	{`\^\*`, "ˣ"},
 	{`\^\\circ`, "°"},
 
-	{`\\#`, "#"},
-	{`\\$`, "$"},
-	{`\\%`, "%"},
-	{`\\&`, "&"},
-	{`\\{`, "{"},
-	{`\\}`, "}"},
-	{`\\ln`, "ln"},
-	{`\\log`, "log"},
-	{`\\lim`, "lim"},
-	{`\\sin`, "sin"},
-	{`\\cos`, "cos"},
-	{`\\tan`, "tan"},
-	{`\\cot`, "cot"},
-	{`\\sec`, "sec"},
-	{`\\csc`, "csc"},
-	{`\\arcsin`, "arcsin"},
-	{`\\arccos`, "arccos"},
-	{`\\arctan`, "arctan"},
-	{`\\arccot`, "arccot"},
-	{`\\arcsec`, "arcsec"},
-	{`\\arccsc`, "arccsc"},
-
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\pm`, "±"},
 	{`\\binom{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
@@ -329,10 +311,10 @@ var LaTeXReplacements = [][]string{
 	{Subscript, "REPLACE"},
 	{Superscript, "REPLACE"},
 	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
-	{`\\sqrt[3]{(.+?)}`, "∛(REPLACE)"},
-	{`\\sqrt[4]{(.+?)}`, "∜(REPLACE)"},
-	{`\\d?frac ?{(.+?)[})]{(.+?)}`, "(REPLACE)/(REPLACE)"},
-	{`\\d?frac ?{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
+	{`\\sqrt\[3\]{(.+?)}`, "∛(REPLACE)"},
+	{`\\sqrt\[4\]{(.+?)}`, "∜(REPLACE)"},
+	{`\\[cd]?frac ?{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
+	{`\\[cd]?frac ?{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`(?:limits|nolimits)`, ""},
 	{`\\(?:left|right|Bigg?)?`, ""},
