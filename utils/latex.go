@@ -58,7 +58,7 @@ var LaTeXReplacements = [][]string{
 	{`\\rightleftharpoons`, "⇌"},
 
 	{`\\Leftarrow`, "⇐"},
-	{`\\Rightarrow`, "⇒"},
+	{`\\(?:Rightarrow|implies)`, "⇒"},
 	{`\\Uparrow`, "⇑"},
 	{`\\Downarrow`, "⇓"},
 	{`\\Leftrightarrow`, "⇔"},
@@ -89,6 +89,7 @@ var LaTeXReplacements = [][]string{
 
 	{`\\sum`, "Σ"},
 	{`\\prod`, "Π"},
+	{`\\binom`, "C"},
 	{`\\int`, "∫"},
 	{`\\iint`, "∬"},
 	{`\\iiint`, "∭"},
@@ -145,8 +146,14 @@ var LaTeXReplacements = [][]string{
 	{`\\cong`, "≅"},
 
 	{`\\(?:bar|vec){a}`, "ā"},
+	{`\\(?:bar|vec){A}`, "Ā"},
+	{`\\(?:bar|vec){AB}`, "ĀB̄"},
+	{`\\(?:bar|vec){AC}`, "ĀC̄"},
 	{`\\(?:bar|vec){b}`, "b̄"},
+	{`\\(?:bar|vec){B}`, "B̄"},
+	{`\\(?:bar|vec){BC}`, "B̄C̄"},
 	{`\\(?:bar|vec){c}`, "c̄"},
+	{`\\(?:bar|vec){C}`, "C̄"},
 	{`\\(?:bar|vec){d}`, "d̄"},
 	{`\\(?:bar|vec){e}`, "ē"},
 	{`\\(?:bar|vec){f}`, "f̄"},
@@ -240,6 +247,7 @@ var LaTeXReplacements = [][]string{
 	{`_\(`, "₍"},
 	{`_\)`, "₎"},
 	{`_\*`, "⁎"},
+	{`_π`, "ₚᵢ"},
 
 	// Superscripts
 	{`\^0`, "⁰"},
@@ -302,12 +310,13 @@ var LaTeXReplacements = [][]string{
 	{`\^\(`, "⁽"},
 	{`\^\)`, "⁾"},
 	{`\^\*`, "ˣ"},
+	{`\^π`, "ᵖⁱ"},
 	{`\^\\circ`, "°"},
 
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\pm`, "±"},
-	{`\\binom{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
-	{`\\binom`, "C"},
+	{`\\C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`\\C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{Superscript, "REPLACE"},
