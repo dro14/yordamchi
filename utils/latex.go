@@ -80,6 +80,7 @@ var LaTeXReplacements = [][]string{
 	{`\\nexists`, "∄"},
 	{`\\varnothing`, "∅"},
 	{`\\complement`, "∁"},
+	{`\\dots`, "…"},
 	{`\\cdots`, "⋯"},
 	{`\\ddots`, "⋱"},
 	{`\\ldots`, "..."},
@@ -166,6 +167,7 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){l}`, "l̄"},
 	{`\\(?:bar|vec){m}`, "m̄"},
 	{`\\(?:bar|vec){n}`, "n̄"},
+	{`\\(?:bar|vec){N}`, "N̄"},
 	{`\\(?:bar|vec){o}`, "ō"},
 	{`\\(?:bar|vec){p}`, "p̄"},
 	{`\\(?:bar|vec){q}`, "q̄"},
@@ -313,10 +315,11 @@ var LaTeXReplacements = [][]string{
 	{`\^π`, "ᵖⁱ"},
 	{`\^\\circ`, "°"},
 
+	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
+	{`\\mod{(.+?)}`, "mod (REPLACE)"},
 	{`\\pm`, "±"},
-	{`\\C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
-	{`\\C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
@@ -327,7 +330,7 @@ var LaTeXReplacements = [][]string{
 	{Superscript, "REPLACE"},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`(?:limits|nolimits)`, ""},
-	{`\\(?:left|right|Bigg?)?`, ""},
+	{`\\(?:left|right|Bigg?|d)?`, ""},
 }
 
 var Subscripts = map[rune]string{
