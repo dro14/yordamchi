@@ -8,7 +8,7 @@ var Notify1 = map[string]string{
 
 var Notify2 = map[string]string{
 	"uz": `*Qadrli %s!* Sizning *%s* tarifingiz *%s*da tugaydi. Yordamchidan to'liq foydalanishni davom ettirish uchun, iltimos, to'lovni amalga oshiring.`,
-	"ru": `*Уважаемый(ая) %s!* Ваша *s* подписка закончится в *%s*. Чтобы продолжить пользоваться Yordamchi в полной мере, пожалуйста, совершите оплату.`,
+	"ru": `*Уважаемый(ая) %s!* Ваша *%s* подписка закончится в *%s*. Чтобы продолжить пользоваться Yordamchi в полной мере, пожалуйста, совершите оплату.`,
 	"en": `*Dear %s!* Your *%s* subscription ends at *%s*. In order to continue using Yordamchi to its fullest, please make a payment.`,
 }
 
