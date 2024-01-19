@@ -371,7 +371,7 @@ var LaTeXReplacements = [][]string{
 
 	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
-	{`{(.+?) \\choose (.+?)}`, "(^{(REPLACE)}_{(REPLACE)}"},
+	{`{(.+?) \\choose (.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\mod{(.+?)}`, "mod (REPLACE)"},
 	{`\\pm`, "±"},
