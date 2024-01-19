@@ -5,7 +5,7 @@ import "regexp"
 var LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 
 const (
-	Text        = `\\(?:text|mathbf|mathcal|d|boldsymbol){(.+?)}`
+	Text        = `\\(?:text|math|d|bold)?(?:bf|cal|symbol|rm)?{(.+?)}`
 	Subscript   = `_{(.+?)}`
 	Superscript = `\^{(.+?)}`
 )
@@ -98,14 +98,15 @@ var LaTeXReplacements = [][]string{
 	{`\\langle`, "⟨"},
 	{`\\rangle`, "⟩"},
 	{`\\mp`, "∓"},
-	{`\\subset`, "⊂"},
-	{`\\supset`, "⊃"},
 	{`\\subseteq`, "⊆"},
 	{`\\supseteq`, "⊇"},
+	{`\\subset`, "⊂"},
+	{`\\supset`, "⊃"},
 	{`\\setminus`, "∖"},
 	{`\\(?:\||[lr]Vert)`, "‖"},
 	{`\\[lr]vert`, "|"},
 	{`\\mid`, "∣"},
+	{`\\circ`, "∘"},
 	{`\\land`, "∧"},
 	{`\\lor`, "∨"},
 	{`\\lnot`, "¬"},
@@ -123,11 +124,14 @@ var LaTeXReplacements = [][]string{
 	{`\\end{vmatrix}`, "|"},
 	{`\\begin{cases}`, "{"},
 	{`\\end{cases}`, "}"},
+	{`\\begin{array}{.+?}`, ""},
+	{`\\end{array}`, ""},
 
 	// Binary Operation/Relation Symbols
 	{`\\times`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
+	{`\\bigcup`, "⋃"},
 	{`\\leq`, "≤"},
 	{`\\in`, "∈"},
 	{`\\notin`, "∉"},
@@ -201,10 +205,6 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){X}`, "X̄"},
 	{`\\(?:bar|vec){Y}`, "Ȳ"},
 	{`\\(?:bar|vec){Z}`, "Z̄"},
-
-	{`\\(?:bar|vec){AB}`, "ĀB̄"},
-	{`\\(?:bar|vec){AC}`, "ĀC̄"},
-	{`\\(?:bar|vec){BC}`, "B̄C̄"},
 
 	// Hats
 	{`\\hat{a}`, "â"},
@@ -367,10 +367,11 @@ var LaTeXReplacements = [][]string{
 	{`\^\)`, "⁾"},
 	{`\^\*`, "ˣ"},
 	{`\^π`, "ᵖⁱ"},
-	{`\^\\circ`, "°"},
+	{`\^∘`, "°"},
 
 	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`{(.+?) \choose (.+?)}`, "(^{(REPLACE)}_{(REPLACE)}"},
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\mod{(.+?)}`, "mod (REPLACE)"},
 	{`\\pm`, "±"},
@@ -379,12 +380,12 @@ var LaTeXReplacements = [][]string{
 	{`\\sqrt{(.+?)}`, "√(REPLACE)"},
 	{`\\sqrt\[3\]{(.+?)}`, "∛(REPLACE)"},
 	{`\\sqrt\[4\]{(.+?)}`, "∜(REPLACE)"},
-	{`\\[cd]?frac ?{(.+?)}{(.+?)}`, "(REPLACE)/(REPLACE)"},
+	{`\\[cd]?frac ?{(.+?)} ?{(.+?)}`, "(REPLACE)/(REPLACE)"},
 	{`\\[cd]?frac ?{(.+?){(.+?)}}`, "(REPLACE)/(REPLACE)"},
 	{Superscript, "REPLACE"},
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`(?:limits|nolimits)`, ""},
-	{`\\(?:left|right|Bigg?|d)?`, ""},
+	{`\\(?:left|right|[Bb]igg?|d)?`, ""},
 }
 
 var Subscripts = map[rune]string{
@@ -493,5 +494,6 @@ var Superscripts = map[rune]string{
 	')': "⁾",
 	'*': "ˣ",
 	'π': "ᵖⁱ",
+	'∘': "°",
 	' ': " ",
 }
