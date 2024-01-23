@@ -64,8 +64,7 @@ func DownloadFile(URL, path string) error {
 
 func MarkdownV2(s string) string {
 	s = LaTeX(s)
-	s = strings.ReplaceAll(s, `\`, `\\\\`)
-	escapeChars := "_[]()~>#+-=|{}.!"
+	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		s = strings.ReplaceAll(s, escapeChars[i:i+1], "\\"+escapeChars[i:i+1])
 	}
@@ -88,28 +87,32 @@ func MarkdownV2(s string) string {
 
 		for {
 			before2, before1, found2 = strings.Cut(before1, "**")
-			if strings.Count(before2, "`")%2 == 0 {
-				matches := regexp.MustCompile("`.+?`").FindAllString(before2, -1)
-				for _, match := range matches {
+			code := regexp.MustCompile("`.+?`")
+			matches := code.FindAllString(before2, -1)
+			for _, match := range matches {
+				escaped := strings.ReplaceAll(match, "*", "\\*")
+				before2 = strings.Replace(before2, match, escaped, 1)
+			}
+			matches = code.Split(before2, -1)
+			for _, match := range matches {
+				if strings.Count(match, "*")%2 != 0 {
 					escaped := strings.ReplaceAll(match, "*", "\\*")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
-			} else {
-				before2 = strings.ReplaceAll(before2, "`", "\\`")
 			}
-			if strings.Count(before2, "*")%2 == 0 {
-				matches := regexp.MustCompile("\\*.+?\\*").FindAllString(before2, -1)
-				for _, match := range matches {
+			bold := regexp.MustCompile(`[^\\]\*.+?\*[^\\]`)
+			matches = bold.FindAllString(before2, -1)
+			for _, match := range matches {
+				escaped := strings.ReplaceAll(match, "`", "\\`")
+				before2 = strings.Replace(before2, match, escaped, 1)
+			}
+			matches = bold.Split(before2, -1)
+			for _, match := range matches {
+				if strings.Count(match, "`")%2 != 0 {
 					escaped := strings.ReplaceAll(match, "`", "\\`")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
-			} else {
-				before2 = strings.ReplaceAll(before2, "*", "\\*")
 			}
-			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
-			before2 = strings.ReplaceAll(before2, "\\\\`", "\\`")
-			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
-			before2 = strings.ReplaceAll(before2, "\\\\*", "\\*")
 			buffer.WriteString(before2)
 			if !found2 {
 				break
@@ -144,9 +147,9 @@ func LaTeX(s string) string {
 		for j := range LaTeXReplacements {
 			latexCmd := LaTeXReplacements[j][0]
 			re := regexp.MustCompile(latexCmd)
-			for re.FindString(latex) != "" {
+			for _, match := range re.FindAllString(latex, -1) {
 				unicode := LaTeXReplacements[j][1]
-				subMatches := re.FindStringSubmatch(latex)
+				subMatches := re.FindStringSubmatch(match)
 				for _, m := range subMatches[1:] {
 					switch latexCmd {
 					case Text:
@@ -158,12 +161,10 @@ func LaTeX(s string) string {
 							if ok {
 								subscript += char
 							} else {
-								subscript = re.FindString(latex)
+								subscript = match
 								break
 							}
 						}
-						subscript = strings.Replace(subscript, "{", "(", 1)
-						subscript = strings.Replace(subscript, "}", ")", 1)
 						unicode = strings.Replace(unicode, "REPLACE", subscript, 1)
 					case Superscript:
 						superscript := ""
@@ -172,12 +173,10 @@ func LaTeX(s string) string {
 							if ok {
 								superscript += char
 							} else {
-								superscript = re.FindString(latex)
+								superscript = match
 								break
 							}
 						}
-						superscript = strings.Replace(superscript, "{", "(", 1)
-						superscript = strings.Replace(superscript, "}", ")", 1)
 						unicode = strings.Replace(unicode, "REPLACE", superscript, 1)
 					default:
 						if !strings.ContainsAny(m, "+-*·×/÷^ ") {
@@ -188,12 +187,12 @@ func LaTeX(s string) string {
 					}
 				}
 				if len(unicode) > 20 {
-					unicode = strings.Replace(unicode, "/", " / ", 1)
+					unicode = strings.ReplaceAll(unicode, "/", " / ")
+					unicode = strings.ReplaceAll(unicode, "  ", " ")
 				}
-				latex = strings.Replace(latex, re.FindString(latex), unicode, 1)
+				latex = strings.Replace(latex, match, unicode, 1)
 			}
 		}
-		latex = strings.ReplaceAll(latex, "  ", " ")
 		latex = strings.ReplaceAll(latex, "  ", " ")
 		s = strings.Replace(s, LaTeXes[i], latex, 1)
 	}
