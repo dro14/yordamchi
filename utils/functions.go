@@ -165,6 +165,8 @@ func LaTeX(s string) string {
 								break
 							}
 						}
+						subscript = strings.Replace(subscript, "{", "[", 1)
+						subscript = strings.Replace(subscript, "}", "]", 1)
 						unicode = strings.Replace(unicode, "REPLACE", subscript, 1)
 					case Superscript:
 						superscript := ""
@@ -177,6 +179,8 @@ func LaTeX(s string) string {
 								break
 							}
 						}
+						superscript = strings.Replace(superscript, "{", "[", 1)
+						superscript = strings.Replace(superscript, "}", "]", 1)
 						unicode = strings.Replace(unicode, "REPLACE", superscript, 1)
 					default:
 						if !strings.ContainsAny(m, "+-*·×/÷^ ") {
