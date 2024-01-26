@@ -88,7 +88,6 @@ var LaTeXReplacements = [][]string{
 	{`\\surd`, "√"},
 	{`\\triangle`, "△"},
 
-	{`\\det`, "det"},
 	{`\\sum`, "Σ"},
 	{`\\prod`, "Π"},
 	{`\\binom`, "C"},
@@ -210,6 +209,8 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){AB}`, "ĀB̄"},
 	{`\\(?:bar|vec){AC}`, "ĀC̄"},
 	{`\\(?:bar|vec){BC}`, "B̄C̄"},
+	{`\\(?:bar|vec){MN}`, "M̄N̄"},
+	{`\\(?:bar|vec){MP}`, "M̄P̄"},
 
 	// Hats
 	{`\\hat{a}`, "â"},
@@ -293,6 +294,7 @@ var LaTeXReplacements = [][]string{
 	{`\\dot{x}`, "ẋ"},
 	{`\\dot{y}`, "ẏ"},
 	{`\\dot{z}`, "ż"},
+	{`\\dot{θ}`, "θ̇"},
 
 	{`\\dot{A}`, "Ȧ"},
 	{`\\dot{B}`, "Ḃ"},
@@ -427,6 +429,9 @@ var LaTeXReplacements = [][]string{
 	{`\^\*`, "ˣ"},
 	{`\^π`, "ᵖⁱ"},
 	{`\^∘`, "°"},
+
+	{`\\det`, "det"},
+	{`\\dot`, "dot"},
 
 	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
