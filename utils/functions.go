@@ -197,6 +197,11 @@ func LaTeX(s string) string {
 				latex = strings.Replace(latex, match, unicode, 1)
 			}
 		}
+		leftover := regexp.MustCompile(`{(.+?)}`)
+		for _, match := range leftover.FindAllString(latex, -1) {
+			submatch := leftover.FindStringSubmatch(match)[1]
+			latex = strings.Replace(latex, match, submatch, 1)
+		}
 		latex = strings.ReplaceAll(latex, "  ", " ")
 		s = strings.Replace(s, LaTeXes[i], latex, 1)
 	}
