@@ -203,6 +203,7 @@ func LaTeX(s string) string {
 			latex = strings.Replace(latex, match, submatch, 1)
 		}
 		latex = strings.ReplaceAll(latex, "  ", " ")
+		latex = strings.ReplaceAll(latex, "  ", " ")
 		s = strings.Replace(s, LaTeXes[i], latex, 1)
 	}
 	return s
