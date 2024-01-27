@@ -198,9 +198,9 @@ func LaTeX(s string) string {
 			}
 		}
 		leftover := regexp.MustCompile(`{(.+?)}`)
-		for _, match := range leftover.FindAllString(latex, -1) {
-			submatch := leftover.FindStringSubmatch(match)[1]
-			latex = strings.Replace(latex, match, submatch, 1)
+		for leftover.FindString(latex) != "" {
+			submatch := leftover.FindStringSubmatch(latex)[1]
+			latex = strings.Replace(latex, "{"+submatch+"}", submatch, 1)
 		}
 		latex = strings.ReplaceAll(latex, "  ", " ")
 		latex = strings.ReplaceAll(latex, "  ", " ")
