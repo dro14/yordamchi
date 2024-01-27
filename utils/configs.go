@@ -24,7 +24,7 @@ func SetConfigs() {
 		log.Fatal("can't create gin.log:", err)
 	}
 	gin.DefaultWriter = file
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 
 	token, ok := os.LookupEnv("INFO_BOT_TOKEN")
 	if !ok {

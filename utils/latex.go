@@ -450,6 +450,7 @@ var LaTeXReplacements = [][]string{
 	{`\\(?: |,|;|:|quad)`, " "},
 	{`(?:limits|nolimits)`, ""},
 	{`\\(?:left|right|[Bb]igg?|d)?`, ""},
+	{`{(.+?)}`, "REPLACE"},
 }
 
 var Subscripts = map[rune]string{
