@@ -147,7 +147,8 @@ func LaTeX(s string) string {
 		for j := range LaTeXReplacements {
 			latexCmd := LaTeXReplacements[j][0]
 			re := regexp.MustCompile(latexCmd)
-			for _, match := range re.FindAllString(latex, -1) {
+			for re.FindString(latex) != "" {
+				match := re.FindString(latex)
 				unicode := LaTeXReplacements[j][1]
 				subMatches := re.FindStringSubmatch(match)
 				for _, m := range subMatches[1:] {
