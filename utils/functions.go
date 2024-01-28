@@ -242,9 +242,11 @@ func Table(input string) string {
 		for _, line := range lines[2:] {
 			rowCols := strings.Split(line, "|")
 			for i, col := range rowCols {
-				col = strings.TrimSpace(col)
-				if columnWidths[i] < len([]rune(col)) {
-					columnWidths[i] = len([]rune(col))
+				if i < len(columnWidths) {
+					col = strings.TrimSpace(col)
+					if columnWidths[i] < len([]rune(col)) {
+						columnWidths[i] = len([]rune(col))
+					}
 				}
 			}
 		}
