@@ -41,6 +41,10 @@ func (s *Service) Search(ctx context.Context, query string) string {
 	if err != nil {
 		return ""
 	}
+	if response["success"] == false {
+		log.Printf("user %d: can't search: %s", id(ctx), response["error"])
+		return ""
+	}
 	return response["results"].(string)
 }
 

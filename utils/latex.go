@@ -5,7 +5,7 @@ import "regexp"
 var LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 
 const (
-	Text        = `\\(?:text|math|d|bold)?(?:bf|cal|symbol|rm)?{(.+?)}`
+	Text        = `\\(?:text|math|d|bold|over)?(?:bf|cal|symbol|rm|rightarrow|line)?{(.+?)}`
 	Subscript   = `_{(.+?)}`
 	Superscript = `\^{(.+?)}`
 )
