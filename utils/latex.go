@@ -128,7 +128,7 @@ var LaTeXReplacements = [][]string{
 	{`\\end{array}`, ""},
 
 	// Binary Operation/Relation Symbols
-	{`\\times`, "×"},
+	{`\\(?:times|cross)`, "×"},
 	{`\\div`, "÷"},
 	{`\\cup`, "∪"},
 	{`\\bigcup`, "⋃"},
@@ -462,6 +462,7 @@ var LaTeXReplacements = [][]string{
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\mod{(.+?)}`, "mod (REPLACE)"},
 	{`\\pm`, "±"},
+	{`\\cancelto{(.+?)}`, "→ (REPLACE)"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{`\\[cd]?frac ?{(.+?)} ?{(.+?)}`, "(REPLACE)/(REPLACE)"},

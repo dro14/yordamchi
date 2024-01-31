@@ -47,7 +47,10 @@ func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, [
 			if text != "" {
 				content = append(content, types.Content{Type: "text", Text: text})
 			}
-			content = append(content, types.Content{Type: "image_url", ImageURL: &types.ImageURL{URL: URL}})
+			content = append(content, types.Content{
+				Type:     "image_url",
+				ImageURL: &types.ImageURL{URL: URL, Detail: "low"},
+			})
 			messages[i].Content = content
 			ctx = context.WithValue(ctx, "model", models.GPT4V)
 		}

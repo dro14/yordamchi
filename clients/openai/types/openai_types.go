@@ -22,6 +22,7 @@ type Content struct {
 
 type ImageURL struct {
 	URL           string `json:"url"`
+	Detail        string `json:"detail,omitempty"`
 	RevisedPrompt string `json:"revised_prompt,omitempty"`
 }
 

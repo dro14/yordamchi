@@ -19,6 +19,7 @@ func SendInfoMessage(text, path string) {
 	} else if text != "" {
 		config := tgbotapi.NewMessage(1331278972, "")
 		config.ParseMode = tgbotapi.ModeMarkdownV2
+		config.DisableWebPagePreview = true
 		slices := Slice(text, 4096)
 		for _, slice := range slices {
 			config.Text = MarkdownV2(slice)
