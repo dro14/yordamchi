@@ -5,7 +5,7 @@ import "regexp"
 var LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 
 const (
-	Text        = `\\(?:text|math|d|bold|over)?(?:bf|cal|symbol|rm|rightarrow|line)?{(.+?)}`
+	Text        = `\\(?:text|math|d|bold|over|wide)?(?:bf|cal|symbol|rm|rightarrow|line|bar|vec|hat|dot)?{(.+?)}`
 	Subscript   = `_{(.+?)}`
 	Superscript = `\^{(.+?)}`
 )
@@ -55,6 +55,9 @@ var LaTeXReplacements = [][]string{
 	{`\\downarrow`, "↓"},
 	{`\\leftrightarrow`, "↔"},
 	{`\\updownarrow`, "↕"},
+	{`\\longleftarrow`, "⟵"},
+	{`\\longrightarrow`, "⟶"},
+	{`\\longleftrightarrow`, "⟷"},
 	{`\\rightleftharpoons`, "⇌"},
 
 	{`\\Leftarrow`, "⇐"},
@@ -206,11 +209,35 @@ var LaTeXReplacements = [][]string{
 	{`\\(?:bar|vec){Y}`, "Ȳ"},
 	{`\\(?:bar|vec){Z}`, "Z̄"},
 
-	{`\\(?:bar|vec){AB}`, "ĀB̄"},
-	{`\\(?:bar|vec){AC}`, "ĀC̄"},
-	{`\\(?:bar|vec){BC}`, "B̄C̄"},
-	{`\\(?:bar|vec){MN}`, "M̄N̄"},
-	{`\\(?:bar|vec){MP}`, "M̄P̄"},
+	{`\\(?:bar|vec){α}`, "ᾱ"},
+	{`\\(?:bar|vec){β}`, "β̄"},
+	{`\\(?:bar|vec){γ}`, "γ̄"},
+	{`\\(?:bar|vec){δ}`, "δ̄"},
+	{`\\(?:bar|vec){ε}`, "ε̄"},
+	{`\\(?:bar|vec){ζ}`, "ζ̄"},
+	{`\\(?:bar|vec){η}`, "η̄"},
+	{`\\(?:bar|vec){θ}`, "θ̄"},
+	{`\\(?:bar|vec){ι}`, "ῑ"},
+	{`\\(?:bar|vec){κ}`, "κ̄"},
+	{`\\(?:bar|vec){λ}`, "λ̄"},
+	{`\\(?:bar|vec){μ}`, "μ̄"},
+	{`\\(?:bar|vec){ν}`, "ν̄"},
+	{`\\(?:bar|vec){ξ}`, "ξ̄"},
+	{`\\(?:bar|vec){π}`, "π̄"},
+	{`\\(?:bar|vec){ρ}`, "ρ̄"},
+	{`\\(?:bar|vec){σ}`, "σ̄"},
+	{`\\(?:bar|vec){τ}`, "τ̄"},
+	{`\\(?:bar|vec){υ}`, "ῡ"},
+	{`\\(?:bar|vec){φ}`, "φ̄"},
+	{`\\(?:bar|vec){χ}`, "χ̄"},
+	{`\\(?:bar|vec){ψ}`, "ψ̄"},
+	{`\\(?:bar|vec){ω}`, "ω̄"},
+
+	{`\\(?:bar|vec){A ?B}`, "ĀB̄"},
+	{`\\(?:bar|vec){A ?C}`, "ĀC̄"},
+	{`\\(?:bar|vec){B ?C}`, "B̄C̄"},
+	{`\\(?:bar|vec){M ?N}`, "M̄N̄"},
+	{`\\(?:bar|vec){M ?P}`, "M̄P̄"},
 
 	// Hats
 	{`\\hat{a}`, "â"},
@@ -266,6 +293,30 @@ var LaTeXReplacements = [][]string{
 	{`\\hat{X}`, "X̂"},
 	{`\\hat{Y}`, "Ŷ"},
 	{`\\hat{Z}`, "Ẑ"},
+
+	{`\\hat{α}`, "α̂"},
+	{`\\hat{β}`, "β̂"},
+	{`\\hat{γ}`, "γ̂"},
+	{`\\hat{δ}`, "δ̂"},
+	{`\\hat{ε}`, "ε̂"},
+	{`\\hat{ζ}`, "ζ̂"},
+	{`\\hat{η}`, "η̂"},
+	{`\\hat{θ}`, "θ̂"},
+	{`\\hat{ι}`, "ι̂"},
+	{`\\hat{κ}`, "κ̂"},
+	{`\\hat{λ}`, "λ̂"},
+	{`\\hat{μ}`, "μ̂"},
+	{`\\hat{ν}`, "ν̂"},
+	{`\\hat{ξ}`, "ξ̂"},
+	{`\\hat{π}`, "π̂"},
+	{`\\hat{ρ}`, "ρ̂"},
+	{`\\hat{σ}`, "σ̂"},
+	{`\\hat{τ}`, "τ̂"},
+	{`\\hat{υ}`, "υ̂"},
+	{`\\hat{φ}`, "φ̂"},
+	{`\\hat{χ}`, "χ̂"},
+	{`\\hat{ψ}`, "ψ̂"},
+	{`\\hat{ω}`, "ω̂"},
 
 	// Dots
 	{`\\dot{a}`, "ȧ"},
@@ -457,7 +508,9 @@ var LaTeXReplacements = [][]string{
 	{`\\dot`, "dot"},
 
 	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
-	{`C\((.+?), (.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`P{(.+?)}{(.+?)}`, "P_{(REPLACE)}^{(REPLACE)}"},
+	{`C\((.+?), ?(.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
+	{`P\((.+?), ?(.+?)\)`, "P_{(REPLACE)}^{(REPLACE)}"},
 	{`{(.+?) \\choose (.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`\\pmod{(.+?)}`, "(mod (REPLACE))"},
 	{`\\mod{(.+?)}`, "mod (REPLACE)"},
