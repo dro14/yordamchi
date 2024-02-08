@@ -1,0 +1,43 @@
+name: Trigger auto deployment for yordamchi
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/yordamchi-AutoDeployTrigger-a5fa4259-a7fd-4d05-a0fc-f3318fef5d81.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.YORDAMCHI_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.YORDAMCHI_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.YORDAMCHI_REGISTRY_PASSWORD }}
+          containerAppName: yordamchi
+          resourceGroup: yordamchi
+          imageToBuild: dro14/yordamchi:${{ github.sha }}
+          
+            
+
+     
+
