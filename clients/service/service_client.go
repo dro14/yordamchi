@@ -6,6 +6,6 @@ type Service struct {
 
 func New() *Service {
 	return &Service{
-		baseURL: "https://temp-service.happysmoke-1e47799e.eastus.azurecontainerapps.io/",
+		baseURL: "https://yordamchi-service.greenocean-0f99656d.westeurope.azurecontainerapps.io/",
 	}
 }
