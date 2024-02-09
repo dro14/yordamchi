@@ -60,10 +60,6 @@ Retry:
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)
 	channel <- completion
-	latex := utils.LaTeXRgx.FindAllString(completion, -1)
-	if len(latex) > 0 {
-		utils.SendInfoMessage(strings.Join(latex, "\n\n"), "")
-	}
 }
 
 func (o *OpenAI) ProcessGenerations(ctx context.Context, prompt string) (string, string) {

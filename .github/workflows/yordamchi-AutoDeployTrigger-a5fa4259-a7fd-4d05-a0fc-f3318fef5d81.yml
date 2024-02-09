@@ -34,7 +34,7 @@ jobs:
           registryUsername: ${{ secrets.YORDAMCHI_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.YORDAMCHI_REGISTRY_PASSWORD }}
           containerAppName: yordamchi
-          resourceGroup: yordamchi
+          resourceGroup: Yordamchi
           imageToBuild: dro14/yordamchi:${{ github.sha }}
           
             
