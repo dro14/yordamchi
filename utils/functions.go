@@ -136,8 +136,13 @@ func MarkdownV2(s string) string {
 		buffer.WriteString(before1)
 		buffer.WriteString("```")
 	}
-
-	return buffer.String()
+	s = buffer.String()
+	headers := HeaderRgx.FindAllString(s, -1)
+	for i, header := range headers {
+		header = "\n_" + HeaderRgx.FindStringSubmatch(header)[1] + "_\n"
+		s = strings.Replace(s, headers[i], header, 1)
+	}
+	return s
 }
 
 func LaTeX(s string) string {

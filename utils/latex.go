@@ -2,7 +2,10 @@ package utils
 
 import "regexp"
 
-var LaTeXRgx = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
+var (
+	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
+	HeaderRgx = regexp.MustCompile(`\n(?:\\#)+ (.+?)\n`)
+)
 
 const (
 	Text        = `\\(?:text|math|d|bold|over|wide)?(?:bf|cal|symbol|rm|rightarrow|line|bar|vec|hat|dot)?{(.+?)}`
