@@ -125,16 +125,6 @@ func MarkdownV2(s string) string {
 			buffer.WriteString(before2)
 			buffer.WriteString("__*")
 		}
-		temp := buffer.String()
-		headers := HeaderRgx.FindAllString(temp, -1)
-		for i, header := range headers {
-			header = "\n_" + HeaderRgx.FindStringSubmatch(header)[1] + "_\n"
-			temp = strings.Replace(temp, headers[i], header, 1)
-		}
-		if len(headers) > 0 {
-			buffer.Reset()
-			buffer.WriteString(temp)
-		}
 		if !found1 {
 			break
 		}
@@ -146,7 +136,16 @@ func MarkdownV2(s string) string {
 		buffer.WriteString(before1)
 		buffer.WriteString("```")
 	}
-	return buffer.String()
+	s = buffer.String()
+	parts := strings.Split(s, "```")
+	for i := 0; i < len(parts); i += 2 {
+		headers := HeaderRgx.FindAllString(parts[i], -1)
+		for j, header := range headers {
+			header = "\n_" + HeaderRgx.FindStringSubmatch(header)[1] + "_\n"
+			parts[i] = strings.Replace(parts[i], headers[j], header, 1)
+		}
+	}
+	return strings.Join(parts, "```")
 }
 
 func LaTeX(s string) string {

@@ -29,8 +29,8 @@ func (p *Postgres) SaveMessage(ctx context.Context, user *tgbotapi.User, msg *Me
 }
 
 func (p *Postgres) UserBlocked(ctx context.Context, user *tgbotapi.User) {
-	query := "UPDATE users SET is_active = $1, blocked_at = $2 WHERE id = $3;"
-	args := []any{false, time.Now().Format(time.DateTime), user.ID}
+	query := "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = $5, blocked_at = $6 WHERE id = $7;"
+	args := []any{user.FirstName, user.LastName, user.UserName, lang(ctx), false, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to deactivate user: %s", user.ID, err)
@@ -38,8 +38,8 @@ func (p *Postgres) UserBlocked(ctx context.Context, user *tgbotapi.User) {
 }
 
 func (p *Postgres) UserRestarted(ctx context.Context, user *tgbotapi.User) {
-	query := "UPDATE users SET is_active = $1, restarted_at = $2 WHERE id = $3;"
-	args := []any{true, time.Now().Format(time.DateTime), user.ID}
+	query := "UPDATE users SET first_name = $1, last_name = $2, username = $3, language_code = $4, is_active = $5, restarted_at = $6 WHERE id = $7;"
+	args := []any{user.FirstName, user.LastName, user.UserName, lang(ctx), true, time.Now().Format(time.DateTime), user.ID}
 	err := p.execTelegram(ctx, user, query, args)
 	if err != nil {
 		log.Printf("user %d: failed to rejoin user: %s", user.ID, err)

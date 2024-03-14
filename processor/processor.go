@@ -138,7 +138,6 @@ func (p *Processor) myChatMember(ctx context.Context, chatMemberUpdated *tgbotap
 	default:
 		log.Println("unknown chat member status:", chatMemberUpdated.NewChatMember.Status)
 	}
-	p.postgres.UpdateUser(ctx, &chatMemberUpdated.From)
 }
 
 func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAnswer) {
