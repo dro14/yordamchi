@@ -5,6 +5,7 @@ import "regexp"
 var (
 	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
 	HeaderRgx = regexp.MustCompile(`\n(?:\\#)+ (.+?)\n`)
+	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
 )
 
 const (

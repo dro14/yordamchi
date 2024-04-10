@@ -144,6 +144,11 @@ func MarkdownV2(s string) string {
 			header = "\n_" + HeaderRgx.FindStringSubmatch(header)[1] + "_\n"
 			parts[i] = strings.Replace(parts[i], headers[j], header, 1)
 		}
+		links := LinkRgx.FindAllString(parts[i], -1)
+		for j, link := range links {
+			link = strings.ReplaceAll(link, "\\", "")
+			parts[i] = strings.Replace(parts[i], links[j], link, 1)
+		}
 	}
 	return strings.Join(parts, "```")
 }
