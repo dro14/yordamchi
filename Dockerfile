@@ -1,7 +1,7 @@
 # Use the official Golang image to create a build artifact.
 # This is based on Debian and sets the GOPATH to /go.
 # The image contains all the necessary build tools and libraries needed to compile Go applications.
-FROM golang:1.21 as builder
+FROM golang:1.22 as builder
 
 # Create and change to the app directory.
 WORKDIR /app
