@@ -146,7 +146,10 @@ func MarkdownV2(s string) string {
 		}
 		links := LinkRgx.FindAllString(parts[i], -1)
 		for j, link := range links {
+			name := LinkRgx.FindStringSubmatch(link)[1]
+			link = LinkRgx.FindStringSubmatch(link)[2]
 			link = strings.ReplaceAll(link, "\\", "")
+			link = fmt.Sprintf("[%s](%s)", name, link)
 			parts[i] = strings.Replace(parts[i], links[j], link, 1)
 		}
 	}
