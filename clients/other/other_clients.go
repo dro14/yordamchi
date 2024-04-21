@@ -19,7 +19,7 @@ func New() *APIs {
 
 	return &APIs{
 		subscriptionKey: subscriptionKey,
-		ocrURL:          "https://yordamchi-vision.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2022-10-12-preview&features=read",
+		ocrURL:          "https://yordamchi.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2022-10-12-preview&features=read",
 		translateURL:    "https://translate.google.com/m?sl=%s&tl=%s&q=%s",
 	}
 }
