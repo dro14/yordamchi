@@ -97,7 +97,7 @@ func (o *APIs) Translate(sl, tl, q string) string {
 
 			qs[j] = html.UnescapeString(translation)
 		}
-		parts[i] = strings.Join(qs, " ")
+		parts[i] = "\n\n" + strings.Join(qs, " ") + "\n\n"
 	}
 
 	return strings.Join(parts, "```")
