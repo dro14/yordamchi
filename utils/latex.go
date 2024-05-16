@@ -3,7 +3,7 @@ package utils
 import "regexp"
 
 var (
-	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s?(.+?)\s?\\[)\]]`)
+	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s+(.+?)\s+\\[)\]]`)
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
 )
@@ -520,6 +520,7 @@ var LaTeXReplacements = [][]string{
 	{`\\mod{(.+?)}`, "mod (REPLACE)"},
 	{`\\pm`, "±"},
 	{`\\cancelto{(.+?)}`, "→ (REPLACE)"},
+	{`\\xrightarrow{(.+?})}`, "+ (REPLACE) →"},
 	{Text, "REPLACE"},
 	{Subscript, "REPLACE"},
 	{`\\[cd]?frac ?{(.+?)} ?{(.+?)}`, "(REPLACE)/(REPLACE)"},
