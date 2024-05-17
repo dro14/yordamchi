@@ -11,14 +11,14 @@ import (
 
 func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 	var userIDs []int64
-	keys, err := r.client.Keys(ctx, pattern).Result()
+	keys, err := client.Keys(ctx, pattern).Result()
 	if err != nil {
 		log.Printf("can't get %q: %s", pattern, err)
 		return userIDs
 	}
 
 	for _, key := range keys {
-		ttl, err := r.client.TTL(ctx, key).Result()
+		ttl, err := client.TTL(ctx, key).Result()
 		if err != nil {
 			log.Printf("can't get %q: %s", key, err)
 			continue
@@ -34,7 +34,7 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 }
 
 func (r *Redis) NotificationTime(ctx context.Context) time.Time {
-	unixTime, err := r.client.Get(ctx, "notification_time").Int64()
+	unixTime, err := client.Get(ctx, "notification_time").Int64()
 	if err != nil {
 		log.Printf("can't get %q: %s", "notification_time", err)
 		return time.Now().Add(utils.NotificationInterval)
@@ -43,5 +43,5 @@ func (r *Redis) NotificationTime(ctx context.Context) time.Time {
 }
 
 func (r *Redis) SetNotificationTime(ctx context.Context, notificationTime time.Time) {
-	r.client.Set(ctx, "notification_time", notificationTime.Unix(), 0)
+	client.Set(ctx, "notification_time", notificationTime.Unix(), 0)
 }

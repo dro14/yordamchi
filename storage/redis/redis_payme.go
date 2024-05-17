@@ -28,7 +28,7 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 			return fmt.Errorf("invalid subscription: %s", order)
 		}
 		expirationDate := expiration.Format("02.01.2006 15:04:05")
-		r.client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
+		client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
 	case "unlimited":
 		expiration := time.Now()
 		switch subscription {
@@ -40,14 +40,14 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 			return fmt.Errorf("invalid subscription: %s", order)
 		}
 		expirationDate := expiration.Format("02.01.2006 15:04:05")
-		r.client.Set(ctx, "unlimited:"+id(ctx), expirationDate, time.Until(expiration))
+		client.Set(ctx, "unlimited:"+id(ctx), expirationDate, time.Until(expiration))
 	case "images", "dall-e-3":
 		purchased, err := strconv.Atoi(subscription)
 		if err != nil {
 			return fmt.Errorf("invalid number of purchased images: %s", subscription)
 		}
-		available, _ := r.client.Get(ctx, "images:"+id(ctx)).Int()
-		r.client.Set(ctx, "images:"+id(ctx), available+purchased, 0)
+		available, _ := client.Get(ctx, "images:"+id(ctx)).Int()
+		client.Set(ctx, "images:"+id(ctx), available+purchased, 0)
 	default:
 		return fmt.Errorf("invalid order type: %s", order)
 	}

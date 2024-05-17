@@ -75,12 +75,12 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 	} else {
 		expiration = 72 * time.Hour
 	}
-	r.client.Set(ctx, "context:"+id(ctx), jsonData, expiration)
+	client.Set(ctx, "context:"+id(ctx), jsonData, expiration)
 }
 
 func (r *Redis) DeleteContext(ctx context.Context) {
-	r.client.Del(ctx, "context:"+id(ctx))
-	r.client.Del(ctx, "system:"+id(ctx))
+	client.Del(ctx, "context:"+id(ctx))
+	client.Del(ctx, "system:"+id(ctx))
 	r.service.Delete(ctx)
 }
 
@@ -91,7 +91,7 @@ func (r *Redis) System(ctx context.Context) string {
 		"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
 	}
 
-	system, err := r.client.Get(ctx, "system:"+id(ctx)).Result()
+	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
 	if err != nil || userStatus(ctx) == StatusFree {
 		if model(ctx) == models.GPT3 {
 			if lang(ctx) == "uz" {
@@ -107,11 +107,11 @@ func (r *Redis) System(ctx context.Context) string {
 }
 
 func (r *Redis) SetSystem(ctx context.Context, system string) {
-	r.client.Set(ctx, "system:"+id(ctx), system, 0)
+	client.Set(ctx, "system:"+id(ctx), system, 0)
 }
 
 func (r *Redis) messages(ctx context.Context) []types.Message {
-	jsonData, err := r.client.Get(ctx, "context:"+id(ctx)).Bytes()
+	jsonData, err := client.Get(ctx, "context:"+id(ctx)).Bytes()
 	if err != nil {
 		return []types.Message{}
 	}

@@ -9,8 +9,9 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+var client *redis.Client
+
 type Redis struct {
-	client  *redis.Client
 	service *service.Service
 	apis    *other.APIs
 }
@@ -26,11 +27,12 @@ func New() *Redis {
 		log.Fatal("redis password is not specified")
 	}
 
+	client = redis.NewClient(&redis.Options{
+		Addr:     url,
+		Password: password,
+	})
+
 	return &Redis{
-		client: redis.NewClient(&redis.Options{
-			Addr:     url,
-			Password: password,
-		}),
 		service: service.New(),
 		apis:    other.New(),
 	}

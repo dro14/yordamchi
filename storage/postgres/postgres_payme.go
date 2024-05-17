@@ -275,7 +275,7 @@ func (p *Postgres) CheckTransaction(params *types.Params) (gin.H, int) {
 }
 
 func (p *Postgres) GetStatement(params *types.Params) (gin.H, int) {
-	rows, err := p.db.Query(`SELECT * FROM transactions WHERE time >= $1 AND time <= $2 ORDER BY time;`, params.From, params.To)
+	rows, err := db.Query(`SELECT * FROM transactions WHERE time >= $1 AND time <= $2 ORDER BY time;`, params.From, params.To)
 	if err != nil {
 		log.Println("can't get transactions:", err)
 		return nil, -32400

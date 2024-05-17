@@ -16,7 +16,7 @@ func (p *Postgres) execTelegram(ctx context.Context, user *tgbotapi.User, query 
 	attempts := 0
 Retry:
 	attempts++
-	_, err := p.db.ExecContext(ctx, query, args...)
+	_, err := db.ExecContext(ctx, query, args...)
 	if err != nil {
 		log.Printf("%s\nuser %d: %s\n", query, user.ID, err)
 		if errors.Is(err, sql.ErrNoRows) || strings.Contains(err.Error(), "violates foreign key constraint") {
@@ -37,7 +37,7 @@ func (p *Postgres) queryTelegram(ctx context.Context, user *tgbotapi.User, query
 	attempts := 0
 Retry:
 	attempts++
-	err := p.db.QueryRowContext(ctx, query, args...).Scan(results...)
+	err := db.QueryRowContext(ctx, query, args...).Scan(results...)
 	if err != nil {
 		log.Printf("%s\nuser %d: %s\n", query, user.ID, err)
 		if errors.Is(err, sql.ErrNoRows) {
@@ -58,7 +58,7 @@ func (p *Postgres) execPayme(query string, args []any) error {
 	attempts := 0
 Retry:
 	attempts++
-	_, err := p.db.Exec(query, args...)
+	_, err := db.Exec(query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return err
@@ -78,7 +78,7 @@ func (p *Postgres) queryPayme(query string, args []any, results ...any) error {
 	attempts := 0
 Retry:
 	attempts++
-	err := p.db.QueryRow(query, args...).Scan(results...)
+	err := db.QueryRow(query, args...).Scan(results...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return err

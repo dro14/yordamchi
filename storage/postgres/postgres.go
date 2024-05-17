@@ -12,8 +12,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var db *sql.DB
+
 type Postgres struct {
-	db       *sql.DB
 	telegram *telegram.Telegram
 	redis    *redis.Redis
 }
@@ -24,13 +25,13 @@ func New() *Postgres {
 		log.Fatal("database url is not specified")
 	}
 
-	db, err := sql.Open("postgres", url)
+	var err error
+	db, err = sql.Open("postgres", url)
 	if err != nil {
 		log.Fatal("can't connect to database:", err)
 	}
 
 	return &Postgres{
-		db:       db,
 		telegram: telegram.New(),
 		redis:    redis.New(),
 	}
