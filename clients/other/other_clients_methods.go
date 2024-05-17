@@ -100,5 +100,7 @@ func (o *APIs) Translate(sl, tl, q string) string {
 		parts[i] = "\n\n" + strings.Join(qs, " ") + "\n\n"
 	}
 
-	return strings.Join(parts, "```")
+	q = strings.Join(parts, "```")
+	q = strings.TrimSpace(q)
+	return q
 }
