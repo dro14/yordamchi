@@ -32,6 +32,7 @@ func (h *Handler) Run(port string) error {
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
+	h.router.GET("/stats", h.Stats)
 	return h.router.Run(":" + port)
 }
 
@@ -73,4 +74,13 @@ func (h *Handler) Payme(c *gin.Context) {
 	}
 	response := h.payme.Respond(c, request)
 	c.JSON(200, response)
+}
+
+func (h *Handler) Stats(c *gin.Context) {
+	stats := h.processor.Stats()
+	if stats != nil {
+		c.JSON(200, stats)
+	} else {
+		c.JSON(500, gin.H{"error": "failed to get stats"})
+	}
 }

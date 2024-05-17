@@ -13,6 +13,7 @@ import (
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/dro14/yordamchi/utils"
+	"github.com/gin-gonic/gin"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -145,4 +146,8 @@ func (p *Processor) pollAnswer(ctx context.Context, pollAnswer *tgbotapi.PollAns
 	ctx, _ = p.redis.Lang(ctx, pollAnswer.User.LanguageCode)
 	p.postgres.PollAnswer(ctx, pollAnswer)
 	p.postgres.UpdateUser(ctx, &pollAnswer.User)
+}
+
+func (p *Processor) Stats() *gin.H {
+	return p.postgres.Stats()
 }
