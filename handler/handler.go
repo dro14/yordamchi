@@ -83,4 +83,5 @@ func (h *Handler) Stats(c *gin.Context) {
 	} else {
 		c.JSON(500, gin.H{"error": "failed to get stats"})
 	}
+	c.Header("Access-Control-Allow-Origin", "*")
 }
