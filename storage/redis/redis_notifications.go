@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (r *Redis) SoonExpires(ctx context.Context, pattern string, notifyInterval time.Duration) []int64 {
+func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 	var userIDs []int64
 	keys, err := r.client.Keys(ctx, pattern).Result()
 	if err != nil {
@@ -23,7 +23,7 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string, notifyInterval 
 			log.Printf("can't get %q: %s", key, err)
 			continue
 		}
-		if 0 < ttl && ttl < notifyInterval {
+		if 0 < ttl && ttl < utils.NotificationInterval {
 			_, ID, _ := strings.Cut(key, ":")
 			userID, _ := strconv.ParseInt(ID, 10, 64)
 			userIDs = append(userIDs, userID)
@@ -33,15 +33,15 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string, notifyInterval 
 	return userIDs
 }
 
-func (r *Redis) NotifyInterval(ctx context.Context) time.Duration {
-	seconds, err := r.client.Get(ctx, "notify_interval").Float64()
+func (r *Redis) NotificationTime(ctx context.Context) time.Time {
+	unixTime, err := r.client.Get(ctx, "notification_time").Int64()
 	if err != nil {
-		log.Printf("can't get %q: %s", "notify_interval", err)
-		seconds = utils.NotifyInterval.Seconds()
+		log.Printf("can't get %q: %s", "notification_time", err)
+		return time.Now().Add(utils.NotificationInterval)
 	}
-	return time.Duration(seconds) * time.Second
+	return time.Unix(unixTime, 0)
 }
 
-func (r *Redis) SetNotifyInterval(ctx context.Context, duration time.Duration) {
-	r.client.Set(ctx, "notify_interval", duration.Seconds(), 0)
+func (r *Redis) SetNotificationTime(ctx context.Context, notificationTime time.Time) {
+	r.client.Set(ctx, "notification_time", notificationTime.Unix(), 0)
 }

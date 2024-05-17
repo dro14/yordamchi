@@ -62,10 +62,13 @@ func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) 
 func (p *Processor) notify(ctx context.Context) {
 	patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
 	for {
-		beginning := time.Now()
-		notifyInterval := p.redis.NotifyInterval(ctx)
+		notificationTime := p.redis.NotificationTime(ctx)
+		time.Sleep(time.Until(notificationTime))
+		notificationTime = notificationTime.Add(utils.NotificationInterval)
+		p.redis.SetNotificationTime(ctx, notificationTime)
+
 		for _, pattern := range patterns {
-			for _, userID := range p.redis.SoonExpires(ctx, pattern, notifyInterval) {
+			for _, userID := range p.redis.SoonExpires(ctx, pattern) {
 				ctx = context.WithValue(ctx, "user_id", userID)
 				ctx, _ = p.redis.Lang(ctx, "uz")
 				name := p.postgres.User(ctx, &tgbotapi.User{ID: userID})
@@ -96,7 +99,5 @@ func (p *Processor) notify(ctx context.Context) {
 				_, _ = p.telegram.SendMessage(ctx, Text, 0, replyMarkup)
 			}
 		}
-		time.Sleep(utils.NotifyInterval)
-		p.redis.SetNotifyInterval(ctx, time.Since(beginning))
 	}
 }

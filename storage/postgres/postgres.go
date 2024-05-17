@@ -45,7 +45,7 @@ func (p *Postgres) Stats() *gin.H {
 (SELECT COUNT(id) FROM transactions WHERE state = 2);`
 
 	var totalActiveUsers, dailyActiveUsers, legacyMessages, newMessages, totalPayments int
-	args := []any{time.Now().Format(time.DateOnly)}
+	args := []any{time.Now().AddDate(0, 0, -1).Format(time.DateOnly)}
 
 	err := p.queryPayme(query, args, &totalActiveUsers, &dailyActiveUsers, &legacyMessages, &newMessages, &totalPayments)
 	if err != nil {

@@ -3,10 +3,10 @@ package utils
 import "time"
 
 const (
-	NumOfFreeReqs  = 5
-	RetryAttempts  = 10
-	RetryDelay     = 1000 * time.Millisecond
-	ReqInterval    = 2000 * time.Millisecond
-	NotifyInterval = 12 * time.Hour
-	Delim          = "\n-\n-\n-\n-\n"
+	NumOfFreeReqs        = 5
+	RetryAttempts        = 10
+	RetryDelay           = 1000 * time.Millisecond
+	ReqInterval          = 2000 * time.Millisecond
+	NotificationInterval = 6 * time.Hour
+	Delim                = "\n-\n-\n-\n-\n"
 )
