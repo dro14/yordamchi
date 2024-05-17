@@ -78,10 +78,10 @@ func (h *Handler) Payme(c *gin.Context) {
 
 func (h *Handler) Stats(c *gin.Context) {
 	stats := h.processor.Stats()
+	c.Header("Access-Control-Allow-Origin", "*")
 	if stats != nil {
 		c.JSON(200, stats)
 	} else {
 		c.JSON(500, gin.H{"error": "failed to get stats"})
 	}
-	c.Header("Access-Control-Allow-Origin", "*")
 }
