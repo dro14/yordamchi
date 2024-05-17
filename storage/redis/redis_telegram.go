@@ -119,5 +119,5 @@ func (r *Redis) SetLang(ctx context.Context) {
 }
 
 func (r *Redis) PollQuestion(ctx context.Context) string {
-	return r.client.Get(ctx, "poll_question").String()
+	return r.client.Get(ctx, "poll_question").Val()
 }
