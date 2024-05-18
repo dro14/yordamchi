@@ -27,10 +27,12 @@ func New() *Redis {
 		log.Fatal("redis password is not specified")
 	}
 
-	client = redis.NewClient(&redis.Options{
-		Addr:     url,
-		Password: password,
-	})
+	if client == nil {
+		client = redis.NewClient(&redis.Options{
+			Addr:     url,
+			Password: password,
+		})
+	}
 
 	return &Redis{
 		service: service.New(),
