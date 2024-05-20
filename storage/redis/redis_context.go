@@ -86,9 +86,9 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 
 func (r *Redis) System(ctx context.Context) string {
 	template := map[string]string{
-		"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
-		"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
-		"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
+		"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN. JAVOBLARINGNI QISQA VA ANIQ QILGIN.",
+		"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s. ДЕЛАЙ СВОИ ОТВЕТЫ КРАТКИМИ И ЧЕТКИМИ.",
+		"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE. MAKE YOUR RESPONSES CONCISE AND CLEAR.",
 	}
 
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
