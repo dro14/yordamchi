@@ -16,11 +16,12 @@ const ImagesGenerations = "images/generations"
 func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 	request := &types.Completions{
-		Model:     ctx.Value("model").(string),
-		Messages:  messages,
-		MaxTokens: 4096,
-		Stream:    ctx.Value("stream").(bool),
-		User:      id(ctx),
+		Model:       ctx.Value("model").(string),
+		Messages:    messages,
+		MaxTokens:   4096,
+		Stream:      ctx.Value("stream").(bool),
+		Temperature: 0.0,
+		User:        id(ctx),
 	}
 
 	resp, err := o.send(ctx, request)
