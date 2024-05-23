@@ -20,7 +20,7 @@ var User = map[string]string{
 
 var UnlimitedSubscription = map[string]string{
 	"uz": `cheksiz`,
-	"ru": `неограниченная`,
+	"ru": `безлимитная`,
 	"en": `unlimited`,
 }
 

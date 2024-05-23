@@ -23,7 +23,7 @@ Komandalarni chap pastki burchakdagi *ko'k menu tugmachasi* orqali ham ishlatish
 /language - *Поменять язык*
 /memory - *Память бота*
 /examples - *Примеры использования*
-/unlimited - *Неограниченная подписка*
+/unlimited - *Безлимитная подписка*
 /premium - *Премиум подписка*
 /image - *Генерация изображений*
 
