@@ -11,9 +11,9 @@ Premium tarifda:
 • *Fayllar* bilan ishlash ✅
 • Bot *xotirasi* ✅
 
-  10 000 so'm - *Kunlik*
-  50 000 so'm - *Haftalik*
-150 000 so'm - *Oylik*
+  12 000 so'm - *Kunlik*
+  60 000 so'm - *Haftalik*
+180 000 so'm - *Oylik*
 
 Millionlar ishongan servis - *Payme* orqali to'lang`,
 
@@ -27,9 +27,9 @@ Millionlar ishongan servis - *Payme* orqali to'lang`,
 • Работа с *файлами* ✅
 • *Память* бота ✅
 
-  10 000 сум - *Дневная*
-  50 000 сум - *Недельная*
-150 000 сум - *Месячная*
+  12 000 сум - *Дневная*
+  60 000 сум - *Недельная*
+180 000 сум - *Месячная*
 
 Оплатите через *Payme* - доверянный миллионами сервис`,
 
@@ -43,9 +43,9 @@ In the premium subscription:
 • Working with *files* ✅
 • Bot *memory* ✅
 
-  10 000 UZS - *Daily*
-  50 000 UZS - *Weekly*
-150 000 UZS - *Monthly*
+  12 000 UZS - *Daily*
+  60 000 UZS - *Weekly*
+180 000 UZS - *Monthly*
 
 Pay via *Payme* - service trusted by millions`,
 }
