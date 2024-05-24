@@ -26,6 +26,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 	defer close(channel)
 	defer utils.RecoverIfPanic()
 
+	var completion string
 	var tools []types.Tool
 	ctx, messages := o.redis.Context(ctx, &prompt)
 	if userStatus(ctx) != redis.StatusFree && !strings.Contains(prompt, utils.Delim) {
@@ -46,7 +47,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 	var errMsg string
 Retry:
 	msg.Attempts++
-	response, err := o.Completions(ctx, messages, tools, channel)
+	response, err := o.Completions(ctx, messages, tools, completion, channel)
 	if err != nil {
 		errMsg = err.Error()
 		is := func(s string) bool {
@@ -96,6 +97,8 @@ Retry:
 				},
 			)
 			tools = nil
+			completion += responseMessage.Content.(string)
+			completion += text.GoogleSearch[lang(ctx)]
 		} else {
 			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), data)
 		}
@@ -106,7 +109,7 @@ Retry:
 	msg.PromptTokens = o.countTokens(messages)
 	msg.PromptLength = length(messages)
 
-	completion := responseMessage.Content.(string)
+	completion = responseMessage.Content.(string)
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
 

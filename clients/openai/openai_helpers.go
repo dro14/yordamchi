@@ -18,7 +18,7 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func streamResponse(ctx context.Context, resp *http.Response, channel chan<- string) (*types.Response, error) {
+func streamResponse(ctx context.Context, resp *http.Response, completion string, channel chan<- string) (*types.Response, error) {
 	var stream, send atomic.Bool
 	go func() {
 		stream.Store(true)
@@ -30,8 +30,9 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 
 	response := &types.Response{Choices: []types.Choice{{}}}
 	reader := bufio.NewReader(resp.Body)
-	var previous, completion string
+	var previous string
 	var content, args strings.Builder
+	content.WriteString(completion)
 
 	for {
 		bts, err := reader.ReadBytes('\n')
