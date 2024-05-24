@@ -53,11 +53,11 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	case "premium", "gpt-4":
 		switch subscription {
 		case "daily":
-			title = fmt.Sprintf("Подписка GPT-4: дневная\n2. ID пользователя: %d", userID)
+			title = "Дневная премиум подписка"
 		case "weekly":
-			title = fmt.Sprintf("Подписка GPT-4: недельная\n2. ID пользователя: %d", userID)
+			title = "Недельная премиум подписка"
 		case "monthly":
-			title = fmt.Sprintf("Подписка GPT-4: месячная\n2. ID пользователя: %d", userID)
+			title = "Месячная премиум подписка"
 		default:
 			log.Printf("user %d: invalid subscripion: %v", userID, order)
 			return nil, -31052
@@ -65,9 +65,9 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	case "unlimited":
 		switch subscription {
 		case "weekly":
-			title = fmt.Sprintf("Подписка GPT-3.5: недельная\n2. ID пользователя: %d", userID)
+			title = "Недельная безлимитная подписка"
 		case "monthly":
-			title = fmt.Sprintf("Подписка GPT-3.5: месячная\n2. ID пользователя: %d", userID)
+			title = "Месячная безлимитная подписка"
 		default:
 			log.Printf("user %d: invalid subscripion: %v", userID, order)
 			return nil, -31052
@@ -78,7 +78,7 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 			log.Println("invalid number of images:", subscription)
 			return nil, -31052
 		}
-		title = fmt.Sprintf("Генерации DALL-E 3: %s штук\n2. ID пользователя: %d", subscription, userID)
+		title = fmt.Sprintf("%s изображений DALL-E 3", subscription)
 	default:
 		log.Println("invalid order type:", orderType)
 		return nil, -31052

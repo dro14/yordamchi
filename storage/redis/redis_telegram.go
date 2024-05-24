@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/utils"
@@ -58,30 +60,68 @@ func (r *Redis) UserStatus(ctx context.Context) UserStatus {
 }
 
 func (r *Redis) Expiration(ctx context.Context) string {
-	expirationDate, err := client.Get(ctx, "premium:"+id(ctx)).Result()
+	expiration, err := client.Get(ctx, "premium:"+id(ctx)).Result()
 	if err == nil {
-		return expirationDate
+		return strings.Split(expiration, "|")[0]
 	}
 
-	expirationDate, err = client.Get(ctx, "unlimited:"+id(ctx)).Result()
+	expiration, err = client.Get(ctx, "unlimited:"+id(ctx)).Result()
 	if err == nil {
-		return expirationDate
+		return expiration
 	}
 
-	return midnight()
+	log.Printf("can't get expiration for %s: %v", id(ctx), err)
+	return ""
 }
 
 func (r *Redis) Requests(ctx context.Context) string {
-	requests, err := client.Get(ctx, "free:"+id(ctx)).Int()
-	if err != nil {
-		log.Printf("can't get %q: %v", "free:"+id(ctx), err)
-		return ""
+	requests, err := client.Get(ctx, "premium:"+id(ctx)).Result()
+	if err == nil {
+		return strings.Split(requests, "|")[1]
 	}
-	return fmt.Sprintf("%d/%d", requests, utils.NumOfFreeReqs)
+
+	requests, err = client.Get(ctx, "free:"+id(ctx)).Result()
+	if err == nil {
+		return requests
+	}
+
+	log.Printf("can't get requests for %s: %v", id(ctx), err)
+	return ""
+}
+
+func (r *Redis) Premium(ctx context.Context) (string, string) {
+	value, err := client.Get(ctx, "premium:"+id(ctx)).Result()
+	if err != nil {
+		log.Printf("can't get %q: %s", "premium:"+id(ctx), err)
+		return "", ""
+	}
+
+	values := strings.Split(value, "|")
+	return values[0], values[1]
 }
 
 func (r *Redis) DecrementRequests(ctx context.Context) {
-	if ctx.Value("user_status") == StatusFree {
+	switch ctx.Value("user_status") {
+	case StatusPremium:
+		value, err := client.Get(ctx, "premium:"+id(ctx)).Result()
+		if err != nil {
+			log.Printf("can't get %q: %s", "premium:"+id(ctx), err)
+			return
+		}
+
+		values := strings.Split(value, "|")
+		requests, _ := strconv.Atoi(values[1])
+		value = fmt.Sprintf("%s|%d", values[0], requests-1)
+		expiration, _ := time.Parse("02.01.2006 15:04:05", values[0])
+
+		if requests > 1 {
+			client.Set(ctx, "premium:"+id(ctx), value, time.Until(expiration))
+		} else if requests == 1 {
+			client.Del(ctx, "premium:"+id(ctx))
+		} else {
+			log.Printf("user %s: invalid number of requests: %d", id(ctx), requests)
+		}
+	case StatusFree:
 		requests, err := client.Get(ctx, "free:"+id(ctx)).Int()
 		if err != nil {
 			log.Printf("can't get %q: %s", "free:"+id(ctx), err)

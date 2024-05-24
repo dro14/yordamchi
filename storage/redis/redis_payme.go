@@ -16,19 +16,23 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 
 	switch orderType {
 	case "premium", "gpt-4":
-		expiration := time.Now()
+		expiration := time.Time{}
+		requests := ""
 		switch subscription {
 		case "daily":
 			expiration = expiration.AddDate(0, 0, 1)
+			requests = "50"
 		case "weekly":
 			expiration = expiration.AddDate(0, 0, 7)
+			requests = "250"
 		case "monthly":
 			expiration = expiration.AddDate(0, 1, 0)
+			requests = "750"
 		default:
 			return fmt.Errorf("invalid subscription: %s", order)
 		}
-		expirationDate := expiration.Format("02.01.2006 15:04:05")
-		client.Set(ctx, "premium:"+id(ctx), expirationDate, time.Until(expiration))
+		value := expiration.Format("02.01.2006 15:04:05") + "|" + requests
+		client.Set(ctx, "premium:"+id(ctx), value, time.Until(expiration))
 	case "unlimited":
 		expiration := time.Now()
 		switch subscription {

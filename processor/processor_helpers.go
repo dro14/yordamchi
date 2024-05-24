@@ -66,7 +66,8 @@ func (p *Processor) msg(ctx context.Context) string {
 	switch userStatus(ctx) {
 	case redis.StatusPremium:
 		template := text.Settings2[lang(ctx)]
-		return fmt.Sprintf(template, p.redis.Expiration(ctx))
+		expiration, requests := p.redis.Premium(ctx)
+		return fmt.Sprintf(template, requests, expiration)
 	case redis.StatusUnlimited:
 		template := text.Settings1[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Expiration(ctx))

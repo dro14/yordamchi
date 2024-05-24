@@ -64,7 +64,7 @@ Bot memory: *available* ✅`,
 var Settings2 = map[string]string{
 	"uz": `Obuna: *premium* 🔥
 Versiya: *GPT-4 Vision*
-So'rovlar soni: -
+So'rovlar soni: *%s*
 Tugash muddati: *%s*
 Rasmni tushunish: *mavjud* ✅
 Googleda qidirish: *mavjud* ✅
@@ -73,7 +73,7 @@ Bot xotirasi: *mavjud* ✅`,
 
 	"ru": `Подписка: *премиум* 🔥
 Версия: *GPT-4 Vision*
-Количество запросов: -
+Количество запросов: *%s*
 Срок истечения: *%s*
 Понимание изображений: *доступно* ✅
 Google поиск: *доступно* ✅
@@ -82,7 +82,7 @@ Google поиск: *доступно* ✅
 
 	"en": `Subscription: *premium* 🔥
 Version: *GPT-4 Vision*
-Number of requests: -
+Number of requests: *%s*
 Expiration date: *%s*
 Image understanding: *available* ✅
 Google search: *available* ✅
