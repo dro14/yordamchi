@@ -35,7 +35,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 
 	for {
 		bts, err := reader.ReadBytes('\n')
-		print(string(bts))
+		log.Printf("user %s: %s", id(ctx), bts)
 		if err != nil {
 			log.Printf("user %s: %s", id(ctx), err)
 			return nil, fmt.Errorf("user %s: stream error", id(ctx))
