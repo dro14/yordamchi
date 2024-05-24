@@ -7,12 +7,24 @@ type Completions struct {
 	MaxTokens   int       `json:"max_tokens,omitempty"`
 	Stream      bool      `json:"stream,omitempty"`
 	Temperature float64   `json:"temperature,omitempty"`
+	Tools       []Tool    `json:"tools,omitempty"`
 	User        string    `json:"user,omitempty"`
 }
 
 type Message struct {
 	Role    string `json:"role"`
 	Content any    `json:"content"`
+}
+
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Parameters  map[string]string `json:"parameters"`
 }
 
 type Content struct {

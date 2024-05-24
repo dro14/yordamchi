@@ -34,15 +34,26 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 func (s *Service) Search(ctx context.Context, query string) string {
 	request := map[string]any{
 		"query":   query,
-		"lang":    lang(ctx),
 		"user_id": id(ctx),
 	}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"search")
+	if err != nil && response["success"] == false {
+		return ""
+	}
+	return response["results"].(string)
+}
+
+func (s *Service) GoogleSearch(ctx context.Context, query string) string {
+	request := map[string]any{
+		"query": query,
+		"lang":  lang(ctx),
+	}
+	response, err := s.makeRequest(ctx, request, s.baseURL+"google_search")
 	if err != nil {
 		return ""
 	}
 	if response["success"] == false {
-		log.Printf("user %d: can't search: %s", id(ctx), response["error"])
+		log.Printf("user %d: can't search google: %s", id(ctx), response["error"])
 		return ""
 	}
 	return response["results"].(string)

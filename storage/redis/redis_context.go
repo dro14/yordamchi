@@ -13,25 +13,16 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, []types.Message) {
-	template := map[string]string{
-		"uz": "\n\nQUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
-		"ru": "\n\nНИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
-		"en": "\n\nTHE FOLLOWING ARE THE RELEVANT PIECES OF INFORMATION. USE THEM IF HELPFUL.\n\n%s",
-	}
+var template = map[string]string{
+	"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
+	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
+	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
+}
 
+func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, []types.Message) {
 	system := r.System(ctx)
 	system, _ = strings.CutPrefix(system, "USER: ")
 	messages := r.messages(ctx)
-	if userStatus(ctx) != StatusFree && !strings.Contains(*prompt, utils.Delim) {
-		results := r.service.Search(ctx, *prompt)
-		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-			results = r.apis.Translate("auto", "en", results)
-			system += fmt.Sprintf(template["en"], results)
-		} else {
-			system += fmt.Sprintf(template[lang(ctx)], results)
-		}
-	}
 
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 		*prompt = r.apis.Translate("auto", "en", *prompt)
@@ -85,12 +76,6 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 }
 
 func (r *Redis) System(ctx context.Context) string {
-	template := map[string]string{
-		"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
-		"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
-		"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
-	}
-
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
 	if err != nil || userStatus(ctx) == StatusFree {
 		if model(ctx) == models.GPT3 {
