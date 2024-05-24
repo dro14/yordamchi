@@ -73,7 +73,9 @@ Retry:
 			return
 		}
 	} else if msg.Attempts > 1 {
-		log.Printf("%q was handled after %d attempts", errMsg, msg.Attempts)
+		if errMsg != "" {
+			log.Printf("%q was handled after %d attempts", errMsg, msg.Attempts)
+		}
 	}
 
 	responseMessage := response.Choices[0].Message

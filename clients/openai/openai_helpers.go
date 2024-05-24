@@ -31,7 +31,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 	response := &types.Response{Choices: []types.Choice{{}}}
 	reader := bufio.NewReader(resp.Body)
 	var previous, completion string
-	var builder strings.Builder
+	var content, args strings.Builder
 
 	for {
 		bts, err := reader.ReadBytes('\n')
@@ -64,13 +64,14 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 		}
 
 		if response.Choices[0].Delta.ToolCalls != nil {
-			builder.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
-			continue
-		} else {
-			builder.WriteString(response.Choices[0].Delta.Content)
+			response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
+			args.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
+			response.Choices[0].Delta.Content = ""
 		}
 
-		completion = strings.TrimSpace(builder.String())
+		content.WriteString(response.Choices[0].Delta.Content)
+		response.Choices[0].Delta.ToolCalls = nil
+		completion = strings.TrimSpace(content.String())
 		if send.Load() && completion != previous {
 			channel <- completion + " ▌"
 			previous = completion
@@ -82,9 +83,9 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
 	if response.Choices[0].Delta.ToolCalls != nil {
 		response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
-		response.Choices[0].Message.ToolCalls[0].Function.Arguments = builder.String()
+		response.Choices[0].Message.ToolCalls[0].Function.Arguments = args.String()
 	}
-	response.Choices[0].Message.Content = builder.String()
+	response.Choices[0].Message.Content = content.String()
 	return response, nil
 }
 
