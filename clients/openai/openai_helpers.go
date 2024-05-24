@@ -36,6 +36,9 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 	for {
 		bts, err := reader.ReadBytes('\n')
+		if ctx.Value("user_id").(int64) == 1331278972 {
+			log.Printf("%s", bts)
+		}
 		if err != nil {
 			log.Printf("user %s: %s", id(ctx), err)
 			return nil, fmt.Errorf("user %s: stream error", id(ctx))
