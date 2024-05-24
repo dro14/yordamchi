@@ -134,6 +134,17 @@ func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }
 
+func getContent(response *types.Response) string {
+	return response.Choices[0].Message.Content.(string)
+}
+
+func getArgs(response *types.Response) string {
+	if response.Choices[0].Message.ToolCalls == nil {
+		return ""
+	}
+	return response.Choices[0].Message.ToolCalls[0].Function.Arguments
+}
+
 var tool = types.Tool{
 	Type: "function",
 	Function: types.Function{
