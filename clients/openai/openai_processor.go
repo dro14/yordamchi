@@ -81,9 +81,8 @@ Retry:
 
 	responseMessage := response.Choices[0].Message
 	if responseMessage.ToolCalls != nil {
-		data := responseMessage.ToolCalls[0].Function.Arguments
 		var args map[string]string
-		_ = json.Unmarshal([]byte(data), &args)
+		_ = json.Unmarshal([]byte(getArgs(response)), &args)
 		query, ok := args["query"]
 		if ok {
 			log.Printf("user %s: google search for %q", id(ctx), query)
@@ -100,7 +99,7 @@ Retry:
 			completion += responseMessage.Content.(string)
 			completion += text.GoogleSearch[lang(ctx)]
 		} else {
-			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), data)
+			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))
 		}
 		goto Retry
 	}
@@ -109,7 +108,7 @@ Retry:
 	msg.PromptTokens = o.countTokens(messages)
 	msg.PromptLength = length(messages)
 
-	completion = responseMessage.Content.(string)
+	completion = getContent(response)
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
 
