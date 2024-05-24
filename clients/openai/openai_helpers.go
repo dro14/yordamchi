@@ -64,7 +64,12 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 			break
 		}
 
-		builder.WriteString(response.Choices[0].Delta.Content)
+		if response.Choices[0].Delta.ToolCalls != nil {
+			builder.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
+		} else {
+			builder.WriteString(response.Choices[0].Delta.Content)
+		}
+
 		completion = strings.TrimSpace(builder.String())
 		if send.Load() && completion != previous {
 			channel <- completion + " ▌"
@@ -74,7 +79,13 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 	}
 
 	stream.Store(false)
-	response.Choices[0].Message.Content = completion
+	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
+	if response.Choices[0].Delta.ToolCalls != nil {
+		response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
+		response.Choices[0].Message.ToolCalls[0].Function.Arguments = completion
+	} else {
+		response.Choices[0].Message.Content = completion
+	}
 	return response, nil
 }
 

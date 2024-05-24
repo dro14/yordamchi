@@ -66,15 +66,16 @@ type Choice struct {
 	FinishDetails FinishDetails `json:"finish_details"`
 }
 
+type Delta struct {
+	Role      string     `json:"role"`
+	Content   string     `json:"content"`
+	ToolCalls []ToolCall `json:"tool_calls"`
+}
+
 type ToolCall struct {
 	ID       string   `json:"id"`
 	Type     string   `json:"type"`
 	Function Function `json:"function"`
-}
-
-type Delta struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
 }
 
 type FinishDetails struct {
