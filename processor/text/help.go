@@ -9,8 +9,8 @@ var Help = map[string]string{
 /language - *Tilni o'zgartirish*
 /memory - *Botning xotirasi*
 /examples - *Foydalanish misollari*
-/unlimited - *Cheksiz tarif*
-/premium - *Premium tarif*
+/unlimited - *Cheksiz obuna*
+/premium - *Premium obuna*
 /image - *Rasm generatsiyasi*
 
 Komandalarni chap pastki burchakdagi *ko'k menu tugmachasi* orqali ham ishlatishingiz mumkin`,

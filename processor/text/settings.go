@@ -10,7 +10,7 @@ Googledan qidirish: *mavjud emas* 🚫
 Fayllar bilan ishlash: *mavjud emas* 🚫
 Bot xotirasi: *mavjud emas* 🚫
 
-*Qo'shimcha funksiyalarni* sinab ko'rmoqchimisiz? Unda *pullik tariflarga* o'ting!`,
+*Qo'shimcha funksiyalarni* sinab ko'rmoqchimisiz? Unda *pullik obunalarga* o'ting!`,
 
 	"ru": `Подписка: *бесплатная*
 Версия: *GPT-3.5*
@@ -67,7 +67,7 @@ Bot memory: *available* ✅`,
 var Settings2 = map[string]string{
 	"uz": `Tarif: *premium* 🔥
 Versiya: *GPT-4 Vision*
-So'rovlar soni: *%s*
+So'rovlar soni: -
 Tugash muddati: *%s*
 Rasmni tushunish: *mavjud* ✅
 Googleda qidirish: *mavjud* ✅
@@ -76,7 +76,7 @@ Bot xotirasi: *mavjud* ✅`,
 
 	"ru": `Подписка: *премиум* 🔥
 Версия: *GPT-4 Vision*
-Количество запросов: *%s*
+Количество запросов: -
 Срок истечения: *%s*
 Понимание изображений: *доступно* ✅
 Google поиск: *доступно* ✅
@@ -85,7 +85,7 @@ Google поиск: *доступно* ✅
 
 	"en": `Subscription: *premium* 🔥
 Version: *GPT-4 Vision*
-Number of requests: *%s*
+Number of requests: -
 Expiration date: *%s*
 Image understanding: *available* ✅
 Google search: *available* ✅

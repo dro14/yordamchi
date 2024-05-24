@@ -6,7 +6,7 @@ var Start = map[string]string{
 O'zimni tanishtirishga ijozat bering:
 • Men Sizning *topshiriq* va *savollaringizda* yordam berish uchun yaratilgan sun'iy intellektman 🤖
 • *Matn* bilan bog'liq har qanday topshiriqni bajara olaman 📝
-• Pullik tariflarda esa, hattoki *rasmlarni* ham tahlil qila olaman 🧐
+• Pullik obunalarda esa, hattoki *rasmlarni* ham tahlil qila olaman 🧐
 • Quyida, chap burchakda *ko'k rangdagi menyu tugmachasi* bor; shu orqali men haqimda batafsilroq bilib olishingiz mumkin 😉`,
 
 	"ru": `*Добро пожаловать, %s!* 😊

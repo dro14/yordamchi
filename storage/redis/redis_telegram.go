@@ -47,7 +47,7 @@ func (r *Redis) UserStatus(ctx context.Context) UserStatus {
 			return StatusUnknown
 		}
 	} else if errors.Is(err, redis.Nil) {
-		client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeReqs, untilMidnight())
+		client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeReqs, 0)
 		return StatusFree
 	} else {
 		log.Printf("user %s: can't check whether status is free: %s", id(ctx), err)
@@ -88,7 +88,7 @@ func (r *Redis) DecrementRequests(ctx context.Context) {
 			return
 		}
 		if requests > 0 && requests <= utils.NumOfFreeReqs {
-			client.Set(ctx, "free:"+id(ctx), requests-1, untilMidnight())
+			client.Set(ctx, "free:"+id(ctx), requests-1, 0)
 		} else {
 			log.Printf("user %s: invalid number of requests: %d", id(ctx), requests)
 		}
