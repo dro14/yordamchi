@@ -94,10 +94,10 @@ func (r *Redis) System(ctx context.Context) string {
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
 	if err != nil || userStatus(ctx) == StatusFree {
 		if model(ctx) == models.GPT3 {
-			if lang(ctx) == "uz" {
-				return fmt.Sprintf(template["en"], "GPT-3.5")
+			if lang(ctx) == "ru" {
+				return fmt.Sprintf(template["ru"], "GPT-3.5")
 			} else {
-				return fmt.Sprintf(template[lang(ctx)], "GPT-3.5")
+				return fmt.Sprintf(template["en"], "GPT-3.5")
 			}
 		} else {
 			return fmt.Sprintf(template[lang(ctx)], "GPT-4")
