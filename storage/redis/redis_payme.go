@@ -16,7 +16,7 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 
 	switch orderType {
 	case "premium", "gpt-4":
-		expiration := time.Time{}
+		expiration := time.Now()
 		requests := ""
 		switch subscription {
 		case "daily":
