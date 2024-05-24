@@ -65,6 +65,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 
 		if response.Choices[0].Delta.ToolCalls != nil {
 			builder.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
+			continue
 		} else {
 			builder.WriteString(response.Choices[0].Delta.Content)
 		}
