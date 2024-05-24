@@ -12,8 +12,10 @@ type Completions struct {
 }
 
 type Message struct {
-	Role    string `json:"role"`
-	Content any    `json:"content"`
+	Role       string     `json:"role"`
+	Content    any        `json:"content"`
+	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
+	ToolCallID string     `json:"tool_call_id,omitempty"`
 }
 
 type Tool struct {
@@ -22,9 +24,10 @@ type Tool struct {
 }
 
 type Function struct {
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Parameters  map[string]string `json:"parameters"`
+	Name        string         `json:"name"`
+	Description string         `json:"description,omitempty"`
+	Parameters  map[string]any `json:"parameters,omitempty"`
+	Arguments   string         `json:"arguments,omitempty"`
 }
 
 type Content struct {
@@ -61,6 +64,12 @@ type Choice struct {
 	Delta         Delta         `json:"delta"`
 	FinishReason  string        `json:"finish_reason"`
 	FinishDetails FinishDetails `json:"finish_details"`
+}
+
+type ToolCall struct {
+	ID       string   `json:"id"`
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
 }
 
 type Delta struct {

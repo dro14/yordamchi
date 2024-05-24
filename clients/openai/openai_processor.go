@@ -2,12 +2,14 @@ package openai
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
+	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
@@ -15,15 +17,16 @@ import (
 )
 
 var template = map[string]string{
-	"uz": "%s\n\nQUYIDA MAVZUGA OID MA'LUMOTLAR KELTIRILGAN. KERAK BO'LSA ULARDAN FOYDALAN.\n\n%s",
-	"ru": "%s\n\nНИЖЕ ПРИВЕДЕНЫ СООТВЕТСТВУЮЩИЕ ТЕМЕ ФРАГМЕНТЫ ИНФОРМАЦИИ. ИСПОЛЬЗУЙ ИХ, ЕСЛИ ОНИ БУДУТ ПОЛЕЗНЫ.\n\n%s",
-	"en": "%s\n\nTHE FOLLOWING ARE THE RELEVANT PIECES OF INFORMATION. USE THEM IF HELPFUL.\n\n%s",
+	"uz": "%s\n\nQUYIDA KELTIRILGAN MA'LUMOTLAR FOYDALANUVCHIDAN:\n\n%s",
+	"ru": "%s\n\nНИЖЕПРИВЕДЕННАЯ ИНФОРМАЦИЯ ОТ ПОЛЬЗОВАТЕЛЯ:\n\n%s",
+	"en": "%s\n\nTHE FOLLOWING INFORMATION IS FROM THE USER:\n\n%s",
 }
 
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
 	defer utils.RecoverIfPanic()
 
+	var tools []types.Tool
 	ctx, messages := o.redis.Context(ctx, &prompt)
 	if userStatus(ctx) != redis.StatusFree && !strings.Contains(prompt, utils.Delim) {
 		results := o.service.Search(ctx, prompt)
@@ -34,6 +37,8 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 			} else {
 				messages[0].Content = fmt.Sprintf(template[lang(ctx)], messages[0].Content, results)
 			}
+		} else {
+			tools = append(tools, tool)
 		}
 	}
 
@@ -41,7 +46,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 	var errMsg string
 Retry:
 	msg.Attempts++
-	response, err := o.Completions(ctx, messages, channel)
+	response, err := o.Completions(ctx, messages, tools, channel)
 	if err != nil {
 		errMsg = err.Error()
 		is := func(s string) bool {
@@ -71,11 +76,35 @@ Retry:
 		log.Printf("%q was handled after %d attempts", errMsg, msg.Attempts)
 	}
 
+	responseMessage := response.Choices[0].Message
+	if responseMessage.ToolCalls != nil {
+		data := responseMessage.ToolCalls[0].Function.Arguments
+		var args map[string]string
+		_ = json.Unmarshal([]byte(data), &args)
+		query, ok := args["query"]
+		if ok {
+			log.Printf("user %s: google search for %q", id(ctx), query)
+			results := o.service.GoogleSearch(ctx, query)
+			messages = append(messages, responseMessage)
+			messages = append(messages,
+				types.Message{
+					Role:       "tool",
+					Content:    results,
+					ToolCallID: responseMessage.ToolCalls[0].ID,
+				},
+			)
+			tools = nil
+		} else {
+			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), data)
+		}
+		goto Retry
+	}
+
 	msg.FinishReason = response.Choices[0].FinishReason
 	msg.PromptTokens = o.countTokens(messages)
 	msg.PromptLength = length(messages)
 
-	completion := response.Choices[0].Message.Content.(string)
+	completion := responseMessage.Content.(string)
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
 

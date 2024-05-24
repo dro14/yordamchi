@@ -13,7 +13,7 @@ const Baseurl = "https://api.openai.com/v1/"
 const ChatCompletions = "chat/completions"
 const ImagesGenerations = "images/generations"
 
-func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, channel chan<- string) (*types.Response, error) {
+func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, tools []types.Tool, channel chan<- string) (*types.Response, error) {
 	ctx = context.WithValue(ctx, "url", Baseurl+ChatCompletions)
 	request := &types.Completions{
 		Model:       ctx.Value("model").(string),
@@ -22,6 +22,10 @@ func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, chan
 		Stream:      ctx.Value("stream").(bool),
 		Temperature: 0.0,
 		User:        id(ctx),
+	}
+
+	if tools != nil {
+		request.Tools = tools
 	}
 
 	resp, err := o.send(ctx, request)

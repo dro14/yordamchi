@@ -117,3 +117,16 @@ func model(ctx context.Context) string {
 func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }
+
+var tool = types.Tool{
+	Type: "function",
+	Function: types.Function{
+		Name: "google_search",
+		Parameters: map[string]any{
+			"type": "object",
+			"properties": map[string]any{
+				"query": map[string]any{"type": "string"},
+			},
+		},
+	},
+}
