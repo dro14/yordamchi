@@ -3,7 +3,7 @@ package utils
 import "regexp"
 
 var (
-	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s+(.+?)\s+\\[)\]]`)
+	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*(.+?)\s*\\[)\]]`)
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
 )
