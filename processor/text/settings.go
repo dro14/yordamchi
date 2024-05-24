@@ -1,10 +1,9 @@
 package text
 
 var Settings = map[string]string{
-	"uz": `Tarif: *bepul*
+	"uz": `Obuna: *bepul*
 Versiya: *GPT-3.5*
 So'rovlar soni: *%s*
-Tugash muddati: *%s*
 Rasmni tushunish: *mavjud emas* 🚫
 Googledan qidirish: *mavjud emas* 🚫
 Fayllar bilan ishlash: *mavjud emas* 🚫
@@ -15,7 +14,6 @@ Bot xotirasi: *mavjud emas* 🚫
 	"ru": `Подписка: *бесплатная*
 Версия: *GPT-3.5*
 Количество запросов: *%s*
-Срок истечения: *%s*
 Понимание изображений: *недоступно* 🚫
 Google поиск: *недоступно* 🚫
 Работа с файлами: *недоступно* 🚫
@@ -26,7 +24,6 @@ Google поиск: *недоступно* 🚫
 	"en": `Subscription: *free*
 Version: *GPT-3.5*
 Number of requests: *%s*
-Expiration date: *%s*
 Image understanding: *unavailable* 🚫
 Google search: *unavailable* 🚫
 Working with files: *unavailable* 🚫
@@ -36,7 +33,7 @@ Want to try *additional features*? Then switch to the *paid subscriptions*!`,
 }
 
 var Settings1 = map[string]string{
-	"uz": `Tarif: *cheksiz* ⭐️
+	"uz": `Obuna: *cheksiz* ⭐️
 Versiya: *GPT-3.5*
 So'rovlar soni: *cheklanmagan*
 Tugash muddati: *%s*
@@ -65,7 +62,7 @@ Bot memory: *available* ✅`,
 }
 
 var Settings2 = map[string]string{
-	"uz": `Tarif: *premium* 🔥
+	"uz": `Obuna: *premium* 🔥
 Versiya: *GPT-4 Vision*
 So'rovlar soni: -
 Tugash muddati: *%s*

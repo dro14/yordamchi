@@ -72,6 +72,6 @@ func (p *Processor) msg(ctx context.Context) string {
 		return fmt.Sprintf(template, p.redis.Expiration(ctx))
 	default:
 		template := text.Settings[lang(ctx)]
-		return fmt.Sprintf(template, p.redis.Requests(ctx), p.redis.Expiration(ctx))
+		return fmt.Sprintf(template, p.redis.Requests(ctx))
 	}
 }

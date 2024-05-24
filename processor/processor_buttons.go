@@ -26,12 +26,12 @@ func (p *Processor) startButton(ctx context.Context) *tgbotapi.InlineKeyboardMar
 
 func (p *Processor) settingsButton(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	unlimitedText := map[string]string{
-		"uz": "⭐️ Cheksiz tarif ⭐️",
+		"uz": "⭐️ Cheksiz obuna ⭐️",
 		"ru": "⭐️ Безлимитная подписка ⭐️",
 		"en": "⭐️ Unlimited subscription ⭐️",
 	}
 	premiumText := map[string]string{
-		"uz": "🔥 Premium tarif 🔥",
+		"uz": "🔥 Premium obuna 🔥",
 		"ru": "🔥 Премиум подписка 🔥",
 		"en": "🔥 Premium subscription 🔥",
 	}
@@ -83,9 +83,9 @@ func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboard
 
 func (p *Processor) imageButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text := map[string][]string{
-		"uz": {"⭐️ 10 ta generatsiya ⭐️", "🔥 50 ta generatsiya 🔥", "🚀 100 ta generatsiya 🚀"},
-		"ru": {"⭐️ 10 генераций ⭐️", "🔥 50 генераций 🔥", "🚀 100 генераций 🚀"},
-		"en": {"⭐️ 10 generations ⭐️", "🔥 50 generations 🔥", "🚀 100 generations 🚀"},
+		"uz": {"⭐️ 10ta rasm ⭐️", "🔥 50ta rasm 🔥", "🚀 100ta rasm 🚀"},
+		"ru": {"⭐️ 10 изображений ⭐️", "🔥 50 изображений 🔥", "🚀 100 изображений 🚀"},
+		"en": {"⭐️ 10 images ⭐️", "🔥 50 images 🔥", "🚀 100 images 🚀"},
 	}
 	args := make([]string, 6)
 	args[0] = p.payme.CheckoutURL(ctx, 2000000, "10:images")
