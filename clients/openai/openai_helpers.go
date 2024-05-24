@@ -82,7 +82,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
 	if response.Choices[0].Delta.ToolCalls != nil {
 		response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
-		response.Choices[0].Message.ToolCalls[0].Function.Arguments = completion
+		response.Choices[0].Message.ToolCalls[0].Function.Arguments = builder.String()
 	} else {
 		response.Choices[0].Message.Content = completion
 	}
