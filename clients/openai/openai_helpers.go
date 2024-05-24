@@ -36,9 +36,6 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 	for {
 		bts, err := reader.ReadBytes('\n')
-		if ctx.Value("user_id").(int64) == 1331278972 {
-			log.Printf("%s", bts)
-		}
 		if err != nil {
 			log.Printf("user %s: %s", id(ctx), err)
 			return nil, fmt.Errorf("user %s: stream error", id(ctx))
@@ -87,10 +84,10 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 	stream.Store(false)
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
+	response.Choices[0].Message.Content = content.String()
 	if response.Choices[0].Message.ToolCalls != nil {
 		response.Choices[0].Message.ToolCalls[0].Function.Arguments = args.String()
 	}
-	response.Choices[0].Message.Content = content.String()
 	return response, nil
 }
 
