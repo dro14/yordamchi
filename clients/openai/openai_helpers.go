@@ -81,8 +81,7 @@ func streamResponse(ctx context.Context, resp *http.Response, channel chan<- str
 
 	stream.Store(false)
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
-	if response.Choices[0].Delta.ToolCalls != nil {
-		response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
+	if response.Choices[0].Message.ToolCalls != nil {
 		response.Choices[0].Message.ToolCalls[0].Function.Arguments = args.String()
 	}
 	response.Choices[0].Message.Content = content.String()
