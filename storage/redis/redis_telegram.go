@@ -101,8 +101,7 @@ func (r *Redis) Premium(ctx context.Context) (string, string) {
 }
 
 func (r *Redis) DecrementRequests(ctx context.Context) {
-	switch ctx.Value("user_status") {
-	case StatusPremium:
+	if ctx.Value("user_status") == StatusPremium {
 		value, err := client.Get(ctx, "premium:"+id(ctx)).Result()
 		if err != nil {
 			log.Printf("can't get %q: %s", "premium:"+id(ctx), err)
@@ -121,7 +120,7 @@ func (r *Redis) DecrementRequests(ctx context.Context) {
 		} else {
 			log.Printf("user %s: invalid number of requests: %d", id(ctx), requests)
 		}
-	case StatusFree:
+	} else if ctx.Value("user_status") == StatusFree {
 		requests, err := client.Get(ctx, "free:"+id(ctx)).Int()
 		if err != nil {
 			log.Printf("can't get %q: %s", "free:"+id(ctx), err)
