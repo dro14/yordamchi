@@ -37,7 +37,7 @@ func (s *Service) Search(ctx context.Context, query string) string {
 		"user_id": id(ctx),
 	}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"search")
-	if err != nil && response["success"] == false {
+	if err != nil || response["success"] == false {
 		return ""
 	}
 	return response["results"].(string)
