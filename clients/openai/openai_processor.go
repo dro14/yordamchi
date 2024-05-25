@@ -22,7 +22,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 	var completion, source string
 	var tools []types.Tool
 	ctx, messages := o.redis.Context(ctx, &prompt)
-	if userStatus(ctx) != redis.StatusFree && !strings.Contains(prompt, utils.Delim) {
+	if userStatus(ctx) != redis.StatusFree {
 		source = o.service.Memory(ctx)
 		if source == "GOOGLE" {
 			tools = append(tools, googleSearch)
