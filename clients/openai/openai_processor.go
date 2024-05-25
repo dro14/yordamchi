@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -15,6 +16,8 @@ import (
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/dro14/yordamchi/utils"
 )
+
+var jsonBody = regexp.MustCompile(`(?<=[^\\]})(?=\{)`)
 
 var template = map[string]string{
 	"uz": "%s BITTA FUNKSIYA BIR VAQTDA FAQAT BIR MARTA CHAQIRILSIN.",
@@ -86,32 +89,47 @@ Retry:
 
 	responseMessage := response.Choices[0].Message
 	if responseMessage.ToolCalls != nil {
-		var args map[string]string
-		_ = json.Unmarshal([]byte(getArgs(response)), &args)
-		query, ok := args["query"]
-		if ok {
-			var results string
-			if source == "GOOGLE" {
-				log.Printf("user %s: google search for %q", id(ctx), query)
-				results = o.service.GoogleSearch(ctx, query)
+		arguments := getArgs(response)
+		bodies := jsonBody.Split(arguments, -1)
+		var results []string
+		for _, body := range bodies {
+			var args map[string]string
+			_ = json.Unmarshal([]byte(body), &args)
+			query, ok := args["query"]
+			if ok {
+				if source == "GOOGLE" {
+					log.Printf("user %s: google search for %q", id(ctx), query)
+					results = append(results, o.service.GoogleSearch(ctx, query))
+				} else {
+					log.Printf("user %s: file search for %q", id(ctx), query)
+					results = append(results, o.service.FileSearch(ctx, query))
+				}
 			} else {
-				log.Printf("user %s: file search for %q", id(ctx), query)
-				results = o.service.FileSearch(ctx, query)
+				log.Printf("user %s: invalid body from OpenAI %q", id(ctx), body)
 			}
-			messages = append(messages, responseMessage)
-			messages = append(messages,
-				types.Message{
-					Role:       "tool",
-					Content:    results,
-					ToolCallID: responseMessage.ToolCalls[0].ID,
-				},
-			)
-			completion += getContent(response)
-			completion += fmt.Sprintf(text.Search[lang(ctx)], source)
-		} else {
-			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))
 		}
-		goto Retry
+		messages = append(messages, responseMessage)
+		messages = append(messages,
+			types.Message{
+				Role:       "tool",
+				Content:    strings.Join(results, "\n\n****\n\n"),
+				ToolCallID: responseMessage.ToolCalls[0].ID,
+			},
+		)
+		if results == nil {
+			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))
+			messages[len(messages)-1].Content = "no results"
+		}
+		completion += getContent(response)
+		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
+		if msg.Attempts < utils.RetryAttempts {
+			utils.Sleep(&retryDelay)
+			goto Retry
+		} else {
+			log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
+			channel <- text.RequestFailed[lang(ctx)]
+			return
+		}
 	}
 
 	msg.FinishReason = getFinishReason(response)
