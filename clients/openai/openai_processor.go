@@ -95,8 +95,7 @@ Retry:
 					ToolCallID: responseMessage.ToolCalls[0].ID,
 				},
 			)
-			tools = nil
-			completion += responseMessage.Content.(string)
+			completion += getContent(response)
 			completion += text.GoogleSearch[lang(ctx)]
 		} else {
 			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))

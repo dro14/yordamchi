@@ -57,7 +57,7 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 			return nil, fmt.Errorf("user %s: can't decode response", id(ctx))
 		}
 
-		if response.Choices[0].FinishReason != "" {
+		if getFinishReason(response) != "" {
 			break
 		} else if response.Choices[0].FinishDetails.Type != "" {
 			response.Choices[0].FinishReason = response.Choices[0].FinishDetails.Type
@@ -143,6 +143,10 @@ func getArgs(response *types.Response) string {
 		return ""
 	}
 	return response.Choices[0].Message.ToolCalls[0].Function.Arguments
+}
+
+func getFinishReason(response *types.Response) string {
+	return response.Choices[0].FinishReason
 }
 
 var tool = types.Tool{
