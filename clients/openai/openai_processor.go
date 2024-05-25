@@ -27,6 +27,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 		if source == "GOOGLE" {
 			tools = append(tools, googleSearch)
 		} else {
+			fileSearch.Function.Description = source
 			tools = append(tools, fileSearch)
 		}
 	}

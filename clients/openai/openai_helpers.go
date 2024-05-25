@@ -161,8 +161,7 @@ var googleSearch = types.Tool{
 var fileSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
-		Name:        "file_search",
-		Description: "search in the user-uploaded file",
+		Name: "file_search",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
