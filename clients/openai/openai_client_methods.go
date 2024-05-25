@@ -39,7 +39,7 @@ func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, tool
 	}
 	if err != nil {
 		return nil, err
-	} else if len(strings.TrimSpace(getContent(response)+getArgs(response))) == 0 {
+	} else if len(strings.TrimSpace(getContent(response))) == 0 && len(getToolCalls(response)) == 0 {
 		return nil, fmt.Errorf("user %s: empty response", id(ctx))
 	} else if getFinishReason(response) != "stop" && getFinishReason(response) != "tool_calls" {
 		log.Printf("user %s: finish reason isn't \"stop\": %q", id(ctx), getFinishReason(response))

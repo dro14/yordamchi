@@ -5,25 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/dro14/yordamchi/utils"
 )
-
-var jsonBody = regexp.MustCompile(`(?<=[^\\]})(?=\{)`)
-
-var template = map[string]string{
-	"uz": "%s BITTA FUNKSIYA BIR VAQTDA FAQAT BIR MARTA CHAQIRILSIN.",
-	"ru": "%s НЕ ДЕЛАЙ НЕСКОЛЬКО ВЫЗОВОВ ФУНКЦИИ ОДНОВРЕМЕННО.",
-	"en": "%s DO NOT MAKE MULTIPLE FUNCTION CALLS AT ONCE.",
-}
 
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
@@ -39,15 +29,6 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 		} else {
 			fileSearch.Function.Description = source
 			tools = append(tools, fileSearch)
-		}
-		if model(ctx) == models.GPT3 {
-			if lang(ctx) == "ru" {
-				messages[0].Content = fmt.Sprintf(template["ru"], messages[0].Content)
-			} else {
-				messages[0].Content = fmt.Sprintf(template["en"], messages[0].Content)
-			}
-		} else {
-			messages[0].Content = fmt.Sprintf(template[lang(ctx)], messages[0].Content)
 		}
 	}
 
@@ -87,41 +68,40 @@ Retry:
 		}
 	}
 
-	responseMessage := response.Choices[0].Message
-	if responseMessage.ToolCalls != nil {
-		arguments := getArgs(response)
-		bodies := jsonBody.Split(arguments, -1)
-		var results []string
-		for _, body := range bodies {
+	if getToolCalls(response) != nil {
+		messages = append(messages, response.Choices[0].Message)
+		for _, toolCall := range getToolCalls(response) {
+			body := toolCall.Function.Arguments
 			var args map[string]string
 			_ = json.Unmarshal([]byte(body), &args)
+
+			var result string
 			query, ok := args["query"]
 			if ok {
 				if source == "GOOGLE" {
 					log.Printf("user %s: google search for %q", id(ctx), query)
-					results = append(results, o.service.GoogleSearch(ctx, query))
+					result = o.service.GoogleSearch(ctx, query)
 				} else {
 					log.Printf("user %s: file search for %q", id(ctx), query)
-					results = append(results, o.service.FileSearch(ctx, query))
+					result = o.service.FileSearch(ctx, query)
 				}
 			} else {
-				log.Printf("user %s: invalid body from OpenAI %q", id(ctx), body)
+				log.Printf("user %s: invalid JSON body from OpenAI %q", id(ctx), body)
+				result = "no results"
 			}
+
+			messages = append(messages,
+				types.Message{
+					Role:       "tool",
+					Content:    result,
+					ToolCallID: toolCall.ID,
+				},
+			)
 		}
-		messages = append(messages, responseMessage)
-		messages = append(messages,
-			types.Message{
-				Role:       "tool",
-				Content:    strings.Join(results, "\n\n****\n\n"),
-				ToolCallID: responseMessage.ToolCalls[0].ID,
-			},
-		)
-		if results == nil {
-			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))
-			messages[len(messages)-1].Content = "no results"
-		}
+
 		completion += getContent(response)
 		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
+
 		if msg.Attempts < utils.RetryAttempts {
 			utils.Sleep(&retryDelay)
 			goto Retry

@@ -30,7 +30,7 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 	response := &types.Response{Choices: []types.Choice{{}}}
 	reader := bufio.NewReader(resp.Body)
-	var previous string
+	var previous, toolCallID string
 	var content, args strings.Builder
 	content.WriteString(completion)
 
@@ -65,8 +65,14 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 		}
 
 		if response.Choices[0].Delta.ToolCalls != nil {
-			if response.Choices[0].Message.ToolCalls == nil {
-				response.Choices[0].Message.ToolCalls = response.Choices[0].Delta.ToolCalls
+			if toolCallID != response.Choices[0].Delta.ToolCalls[0].ID {
+				toolCallID = response.Choices[0].Delta.ToolCalls[0].ID
+				if getToolCalls(response) != nil {
+					response.Choices[0].Message.ToolCalls[len(getToolCalls(response))-1].Function.Arguments = args.String()
+					args.Reset()
+				}
+				response.Choices[0].Message.ToolCalls = append(
+					response.Choices[0].Message.ToolCalls, response.Choices[0].Delta.ToolCalls[0])
 			}
 			args.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
 			response.Choices[0].Delta.Content = ""
@@ -85,8 +91,8 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 	stream.Store(false)
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
 	response.Choices[0].Message.Content = completion
-	if response.Choices[0].Message.ToolCalls != nil {
-		response.Choices[0].Message.ToolCalls[0].Function.Arguments = args.String()
+	if getToolCalls(response) != nil {
+		response.Choices[0].Message.ToolCalls[len(getToolCalls(response))-1].Function.Arguments = args.String()
 	}
 	return response, nil
 }
@@ -123,30 +129,24 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func model(ctx context.Context) string {
-	return ctx.Value("model").(string)
-}
-
 func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }
 
 func getContent(response *types.Response) string {
-	if response.Choices[0].Message.Content == nil {
+	content, ok := response.Choices[0].Message.Content.(string)
+	if !ok {
 		return ""
 	}
-	return response.Choices[0].Message.Content.(string)
-}
-
-func getArgs(response *types.Response) string {
-	if response.Choices[0].Message.ToolCalls == nil {
-		return ""
-	}
-	return response.Choices[0].Message.ToolCalls[0].Function.Arguments
+	return content
 }
 
 func getFinishReason(response *types.Response) string {
 	return response.Choices[0].FinishReason
+}
+
+func getToolCalls(response *types.Response) []types.ToolCall {
+	return response.Choices[0].Message.ToolCalls
 }
 
 var googleSearch = types.Tool{
