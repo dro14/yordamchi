@@ -103,11 +103,15 @@ Retry:
 		goto Retry
 	}
 
-	msg.FinishReason = response.Choices[0].FinishReason
+	msg.FinishReason = getFinishReason(response)
 	msg.PromptTokens = o.countTokens(messages)
 	msg.PromptLength = length(messages)
 
-	completion = getContent(response)
+	if ctx.Value("stream") == true {
+		completion = getContent(response)
+	} else {
+		completion += getContent(response)
+	}
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
 

@@ -84,7 +84,7 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 	stream.Store(false)
 	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
-	response.Choices[0].Message.Content = content.String()
+	response.Choices[0].Message.Content = completion
 	if response.Choices[0].Message.ToolCalls != nil {
 		response.Choices[0].Message.ToolCalls[0].Function.Arguments = args.String()
 	}
