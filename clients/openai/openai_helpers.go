@@ -65,8 +65,8 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 		}
 
 		if response.Choices[0].Delta.ToolCalls != nil {
-			if toolCallID != response.Choices[0].Delta.ToolCalls[0].ID {
-				toolCallID = response.Choices[0].Delta.ToolCalls[0].ID
+			if getToolCallID(response) != "" && getToolCallID(response) != toolCallID {
+				toolCallID = getToolCallID(response)
 				if getToolCalls(response) != nil {
 					response.Choices[0].Message.ToolCalls[len(getToolCalls(response))-1].Function.Arguments = args.String()
 					args.Reset()
@@ -147,6 +147,10 @@ func getFinishReason(response *types.Response) string {
 
 func getToolCalls(response *types.Response) []types.ToolCall {
 	return response.Choices[0].Message.ToolCalls
+}
+
+func getToolCallID(response *types.Response) string {
+	return response.Choices[0].Delta.ToolCalls[0].ID
 }
 
 var googleSearch = types.Tool{

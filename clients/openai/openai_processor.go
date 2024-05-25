@@ -103,7 +103,6 @@ Retry:
 		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
 
 		if msg.Attempts < utils.RetryAttempts {
-			utils.Sleep(&retryDelay)
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
