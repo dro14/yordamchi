@@ -123,10 +123,6 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func model(ctx context.Context) string {
-	return ctx.Value("model").(string)
-}
-
 func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }
@@ -149,10 +145,24 @@ func getFinishReason(response *types.Response) string {
 	return response.Choices[0].FinishReason
 }
 
-var tool = types.Tool{
+var googleSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
 		Name: "google_search",
+		Parameters: map[string]any{
+			"type": "object",
+			"properties": map[string]any{
+				"query": map[string]any{"type": "string"},
+			},
+		},
+	},
+}
+
+var fileSearch = types.Tool{
+	Type: "function",
+	Function: types.Function{
+		Name:        "file_search",
+		Description: "search in the user-uploaded file",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{

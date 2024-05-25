@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -31,19 +32,32 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 	return ""
 }
 
-func (s *Service) Search(ctx context.Context, query string) string {
+func (s *Service) FileSearch(ctx context.Context, query string) string {
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		query = s.apis.Translate("auto", "uz", query)
+	}
+
 	request := map[string]any{
 		"query":   query,
 		"user_id": id(ctx),
 	}
-	response, err := s.makeRequest(ctx, request, s.baseURL+"search")
+	response, err := s.makeRequest(ctx, request, s.baseURL+"file_search")
 	if err != nil || response["success"] == false {
 		return ""
 	}
-	return response["results"].(string)
+
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		return s.apis.Translate("auto", "en", response["results"].(string))
+	} else {
+		return response["results"].(string)
+	}
 }
 
 func (s *Service) GoogleSearch(ctx context.Context, query string) string {
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		query = s.apis.Translate("auto", "uz", query)
+	}
+
 	request := map[string]any{
 		"query": query,
 		"lang":  lang(ctx),
@@ -56,7 +70,12 @@ func (s *Service) GoogleSearch(ctx context.Context, query string) string {
 		log.Printf("user %d: can't search google: %s", id(ctx), response["error"])
 		return "no results"
 	}
-	return response["results"].(string)
+
+	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		return s.apis.Translate("auto", "en", response["results"].(string))
+	} else {
+		return response["results"].(string)
+	}
 }
 
 func (s *Service) Memory(ctx context.Context) string {

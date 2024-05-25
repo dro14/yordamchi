@@ -21,11 +21,8 @@ func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, tool
 		MaxTokens:   4096,
 		Stream:      ctx.Value("stream").(bool),
 		Temperature: 0.0,
+		Tools:       tools,
 		User:        id(ctx),
-	}
-
-	if tools != nil {
-		request.Tools = tools
 	}
 
 	resp, err := o.send(ctx, request)

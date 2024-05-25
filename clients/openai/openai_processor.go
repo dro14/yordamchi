@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
@@ -16,30 +15,19 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
-var template = map[string]string{
-	"uz": "%s\n\nQUYIDA KELTIRILGAN MA'LUMOTLAR FOYDALANUVCHIDAN:\n\n%s",
-	"ru": "%s\n\nНИЖЕПРИВЕДЕННАЯ ИНФОРМАЦИЯ ОТ ПОЛЬЗОВАТЕЛЯ:\n\n%s",
-	"en": "%s\n\nTHE FOLLOWING INFORMATION IS FROM THE USER:\n\n%s",
-}
-
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
 	defer utils.RecoverIfPanic()
 
-	var completion string
+	var completion, source string
 	var tools []types.Tool
 	ctx, messages := o.redis.Context(ctx, &prompt)
 	if userStatus(ctx) != redis.StatusFree && !strings.Contains(prompt, utils.Delim) {
-		results := o.service.Search(ctx, prompt)
-		if results != "" {
-			if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-				results = o.apis.Translate("auto", "en", results)
-				messages[0].Content = fmt.Sprintf(template["en"], messages[0].Content, results)
-			} else {
-				messages[0].Content = fmt.Sprintf(template[lang(ctx)], messages[0].Content, results)
-			}
+		source = o.service.Memory(ctx)
+		if source == "GOOGLE" {
+			tools = append(tools, googleSearch)
 		} else {
-			tools = append(tools, tool)
+			tools = append(tools, fileSearch)
 		}
 	}
 
@@ -85,8 +73,14 @@ Retry:
 		_ = json.Unmarshal([]byte(getArgs(response)), &args)
 		query, ok := args["query"]
 		if ok {
-			log.Printf("user %s: google search for %q", id(ctx), query)
-			results := o.service.GoogleSearch(ctx, query)
+			var results string
+			if source == "GOOGLE" {
+				log.Printf("user %s: google search for %q", id(ctx), query)
+				results = o.service.GoogleSearch(ctx, query)
+			} else {
+				log.Printf("user %s: file search for %q", id(ctx), query)
+				results = o.service.FileSearch(ctx, query)
+			}
 			messages = append(messages, responseMessage)
 			messages = append(messages,
 				types.Message{
@@ -96,7 +90,7 @@ Retry:
 				},
 			)
 			completion += getContent(response)
-			completion += text.GoogleSearch[lang(ctx)]
+			completion += fmt.Sprintf(text.Search[lang(ctx)], source)
 		} else {
 			log.Printf("user %s: invalid args from OpenAI %q", id(ctx), getArgs(response))
 		}
