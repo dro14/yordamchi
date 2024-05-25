@@ -123,6 +123,10 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
+func model(ctx context.Context) string {
+	return ctx.Value("model").(string)
+}
+
 func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }

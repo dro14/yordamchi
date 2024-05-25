@@ -8,12 +8,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/dro14/yordamchi/utils"
 )
+
+var template = map[string]string{
+	"uz": "%s BITTA FUNKSIYA BIR VAQTDA FAQAT BIR MARTA CHAQIRILSIN.",
+	"ru": "%s НЕ ДЕЛАЙ НЕСКОЛЬКО ВЫЗОВОВ ФУНКЦИИ ОДНОВРЕМЕННО.",
+	"en": "%s DO NOT MAKE MULTIPLE FUNCTION CALLS AT ONCE.",
+}
 
 func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
 	defer close(channel)
@@ -29,6 +36,15 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 		} else {
 			fileSearch.Function.Description = source
 			tools = append(tools, fileSearch)
+		}
+		if model(ctx) == models.GPT3 {
+			if lang(ctx) == "ru" {
+				messages[0].Content = fmt.Sprintf(template["ru"], messages[0].Content)
+			} else {
+				messages[0].Content = fmt.Sprintf(template["en"], messages[0].Content)
+			}
+		} else {
+			messages[0].Content = fmt.Sprintf(template[lang(ctx)], messages[0].Content)
 		}
 	}
 
