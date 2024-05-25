@@ -34,7 +34,7 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 
 func (s *Service) FileSearch(ctx context.Context, query string) string {
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		query = s.apis.Translate("auto", "uz", query)
+		query = s.apis.Translate("en", "uz", query)
 	}
 
 	request := map[string]any{
@@ -47,7 +47,7 @@ func (s *Service) FileSearch(ctx context.Context, query string) string {
 	}
 
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		return s.apis.Translate("auto", "en", response["results"].(string))
+		return s.apis.Translate("uz", "en", response["results"].(string))
 	} else {
 		return response["results"].(string)
 	}

@@ -25,7 +25,7 @@ func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, [
 	messages := r.messages(ctx)
 
 	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		*prompt = r.apis.Translate("auto", "en", *prompt)
+		*prompt = r.apis.Translate("uz", "en", *prompt)
 	}
 
 	messages = append([]types.Message{{Role: "system", Content: system}}, messages...)

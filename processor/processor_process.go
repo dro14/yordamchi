@@ -62,7 +62,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
 		completion = utils.LaTeX(completion)
-		completion = p.apis.Translate("auto", "uz", completion)
+		completion = p.apis.Translate("en", "uz", completion)
 		completions = utils.Slice(completion, 4096)
 
 		var replyMarkup *tgbotapi.InlineKeyboardMarkup
