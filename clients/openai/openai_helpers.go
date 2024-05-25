@@ -132,6 +132,9 @@ func userStatus(ctx context.Context) redis.UserStatus {
 }
 
 func getContent(response *types.Response) string {
+	if response.Choices[0].Message.Content == nil {
+		return ""
+	}
 	return response.Choices[0].Message.Content.(string)
 }
 
