@@ -3,7 +3,6 @@ package text
 var Examples = map[string]string{
 	"uz": `*Namunaviy so'rovlar:*
 
-• Quyidagi matnni ingliz (yoki ixtiyoriy) tilga tarjima qilib ber...
 • Dunyo tarixiga oid top o'nta kitobni tavsiya qil
 • Kvant fizikasini sodda tilda tushuntirib ber
 • Pufakli saralash algoritmini Go dasturlash tilida yozib ber
@@ -21,7 +20,6 @@ var Examples = map[string]string{
 
 	"ru": `*Примеры запросов:*
 
-• Переведи следующий текст на английский (или же на желаемый) язык...
 • Посоветуй топ десять книг по всемирной истории
 • Объясни квантовую физику простыми словами
 • Напиши алгоритм пузырчатой сортировки на языке программирования Го
@@ -39,7 +37,6 @@ var Examples = map[string]string{
 
 	"en": `*Example requests:*
 
-• Translate the following text into English (or any language of choice)...
 • Recommend the top ten books on world history
 • Explain quantum physics in simple words
 • Write bubble sort algorithm in the Go programming language

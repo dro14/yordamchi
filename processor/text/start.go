@@ -24,7 +24,7 @@ O'zimni tanishtirishga ijozat bering:
 Let me introduce myself:
 • I'm a friendly AI here to help you with any *questions* or *tasks* you need 🤖
 • I'm pretty good with anything that involves *text* 📝
-• You can send me *50* requests in your free subscription 🤩
+• You can send me up to *50* requests in your free subscription 🤩
 • If you've got a paid subscription, I can even understand *images* 🧐
 • If you're curious to learn more about what I can do, just click on the *blue menu button* on the bottom left 😉`,
 }

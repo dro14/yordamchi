@@ -5,7 +5,7 @@ var LegacyMessage = map[string]string{
 
 Botimizdan foydalanayotganingizdan juda xursandmiz. Lekin kelajakda ChatGPT nomi va logosi bilan bog'liq avtorlik huquqi muammolariga uchramaslik uchun, o'zimizga yangi nom, logo va yuzrneym olishimizga to'gri keldi.
 
-Endi Sizda *50ta bepul so'rov* mavjud! Bundan tashqari botning tezligi oshirildi va xatoliklari tuzatildi. Premium obunada esa *GPT-4 - eng kuchli sun'iy intellektdan foydalanishingiz mumkin*.
+Endilikda Sizga *50ta bepul so'rov* taqdim etilgan! Bundan tashqari botning tezligi oshirildi va xatoliklari tuzatildi. Premium obunada esa *GPT-4 - eng kuchli sun'iy intellektdan foydalanishingiz mumkin*.
 
 👉 @yordamchi_ai_bot 👈
 
