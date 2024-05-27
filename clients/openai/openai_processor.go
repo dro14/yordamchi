@@ -127,11 +127,11 @@ Retry:
 	}
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
-	msg.Output = utils.LaTeX(completion)
+	msg.Output = completion
 
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)
-	channel <- msg.Output
+	channel <- completion
 }
 
 func (o *OpenAI) ProcessGenerations(ctx context.Context, prompt string) (string, string) {

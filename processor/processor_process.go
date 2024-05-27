@@ -64,6 +64,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		ctx = context.WithValue(ctx, "stream", false)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
+		completion = utils.LaTeX(completion)
 		completion = p.apis.Translate("en", "uz", completion)
 		completions = utils.Slice(completion, 4096)
 
