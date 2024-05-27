@@ -89,13 +89,15 @@ func (s *Service) Delete(ctx context.Context) {
 	}
 }
 
-func (s *Service) Logs(ctx context.Context) {
+func (s *Service) Files(ctx context.Context) string {
 	request := map[string]any{"user_id": id(ctx)}
-	response, err := s.makeRequest(ctx, request, s.baseURL+"logs")
+	response, err := s.makeRequest(ctx, request, s.baseURL+"files")
 	if err != nil {
-		return
+		return "🚨 ERROR 🚨"
 	}
 	if response["success"] == false {
-		log.Printf("user %d: can't get logs: %s", id(ctx), response["error"])
+		log.Printf("user %d: can't get files: %s", id(ctx), response["error"])
+		return response["error"].(string)
 	}
+	return "Uploaded files:\n\n" + response["files"].(string)
 }

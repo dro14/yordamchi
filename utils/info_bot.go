@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -38,4 +39,10 @@ func SendLogFile(filepath string) {
 	if err != nil {
 		log.Println("can't send log file:", err)
 	}
+}
+
+func SendLogFiles() {
+	SendLogFile("gil.log")
+	SendLogFile("yordamchi.log")
+	_, _ = http.Get("https://yordamchi-service.icysky-10e92f2c.westeurope.azurecontainerapps.io/logs")
 }

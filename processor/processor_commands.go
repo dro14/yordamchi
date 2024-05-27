@@ -36,8 +36,8 @@ func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 		p.generate(ctx, message)
 	case "system":
 		p.system(ctx, message)
-	case "logs":
-		p.logs(ctx, message)
+	case "files":
+		p.files(ctx, message)
 	}
 }
 
@@ -162,10 +162,11 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	}
 }
 
-func (p *Processor) logs(ctx context.Context, message *tgbotapi.Message) {
+func (p *Processor) files(ctx context.Context, message *tgbotapi.Message) {
 	if message.From.ID == 1331278972 {
-		p.telegram.SendFile(ctx, "gin.log")
-		p.telegram.SendFile(ctx, "yordamchi.log")
-		p.service.Logs(ctx)
+		_, err := p.telegram.SendMessage(ctx, p.service.Files(ctx), 0, nil)
+		if err != nil {
+			log.Println("can't send files command")
+		}
 	}
 }

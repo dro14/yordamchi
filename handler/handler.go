@@ -7,6 +7,7 @@ import (
 	"github.com/dro14/yordamchi/payme"
 	"github.com/dro14/yordamchi/payme/types"
 	"github.com/dro14/yordamchi/processor"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -32,6 +33,7 @@ func (h *Handler) Run(port string) error {
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
+	h.router.GET("/logs", h.Logs)
 	return h.router.Run(":" + port)
 }
 
@@ -73,4 +75,10 @@ func (h *Handler) Payme(c *gin.Context) {
 	}
 	response := h.payme.Respond(c, request)
 	c.JSON(200, response)
+}
+
+func (h *Handler) Logs(c *gin.Context) {
+	utils.SendLogFile("gin.log")
+	utils.SendLogFile("yordamchi.log")
+	c.JSON(200, gin.H{"ok": true})
 }
