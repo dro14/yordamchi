@@ -78,7 +78,6 @@ func (h *Handler) Payme(c *gin.Context) {
 }
 
 func (h *Handler) Logs(c *gin.Context) {
-	utils.SendLogFile("gin.log")
-	utils.SendLogFile("yordamchi.log")
+	utils.SendLogFiles()
 	c.JSON(200, gin.H{"ok": true})
 }

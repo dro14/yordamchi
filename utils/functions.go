@@ -117,13 +117,13 @@ func MarkdownV2(s string) string {
 			if !found2 {
 				break
 			}
-			buffer.WriteString("*__")
+			buffer.WriteString("*_")
 
 			before2, before1, _ = strings.Cut(before1, "**")
 			before2 = strings.ReplaceAll(before2, "`", "\\`")
 			before2 = strings.ReplaceAll(before2, "*", "\\*")
 			buffer.WriteString(before2)
-			buffer.WriteString("__*")
+			buffer.WriteString("_*")
 		}
 		if !found1 {
 			break
@@ -141,7 +141,7 @@ func MarkdownV2(s string) string {
 	for i := 0; i < len(parts); i += 2 {
 		headers := HeaderRgx.FindAllString(parts[i], -1)
 		for j, header := range headers {
-			header = "_" + HeaderRgx.FindStringSubmatch(header)[1] + "_"
+			header = "__" + HeaderRgx.FindStringSubmatch(header)[1] + "__"
 			parts[i] = strings.Replace(parts[i], headers[j], header, 1)
 		}
 		links := LinkRgx.FindAllString(parts[i], -1)
