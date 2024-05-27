@@ -42,7 +42,7 @@ func SendLogFile(filepath string) {
 }
 
 func SendLogFiles() {
-	SendLogFile("gil.log")
+	SendLogFile("gin.log")
 	SendLogFile("yordamchi.log")
 	_, _ = http.Get("https://yordamchi-service.icysky-10e92f2c.westeurope.azurecontainerapps.io/logs")
 }
