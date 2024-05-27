@@ -122,6 +122,7 @@ Retry:
 	}
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
+	msg.Output = completion
 
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)

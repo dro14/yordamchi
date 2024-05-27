@@ -26,11 +26,13 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 
 	msg := &postgres.Message{Type: Type}
 	msg.Requests++
+	msg.Input = message.Text
 	msg.FirstSend = int(time.Since(start(ctx)).Milliseconds())
 	msg.Activity = int(p.activity.Add(1))
 	defer p.activity.Add(-1)
 
 	if message.Photo != nil {
+		msg.Input = message.Caption
 		var photoURL string
 		photoURL, err = p.telegram.PhotoURL(ctx, message.Photo)
 		if err != nil {
@@ -38,6 +40,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		} else if model(ctx) == models.GPT3 {
 			message.Text = p.apis.OCR(ctx, photoURL, message.Caption)
 			msg.Type = "ocr"
+			msg.Input = message.Text
 		} else {
 			message.Text = photoURL + utils.Delim + message.Caption
 			msg.Type = "vision"

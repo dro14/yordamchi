@@ -18,4 +18,6 @@ type Message struct {
 	Attempts         int
 	FinishReason     string
 	LanguageCode     string
+	Input            string
+	Output           string
 }
