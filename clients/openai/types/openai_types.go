@@ -2,13 +2,14 @@ package types
 
 // Completions is a struct for OpenAI Completions API
 type Completions struct {
-	Model       string    `json:"model"`
-	Messages    []Message `json:"messages"`
-	MaxTokens   int       `json:"max_tokens,omitempty"`
-	Stream      bool      `json:"stream,omitempty"`
-	Temperature float64   `json:"temperature,omitempty"`
-	Tools       []Tool    `json:"tools,omitempty"`
-	User        string    `json:"user,omitempty"`
+	Model         string         `json:"model"`
+	Messages      []Message      `json:"messages"`
+	MaxTokens     int            `json:"max_tokens,omitempty"`
+	Stream        bool           `json:"stream"`
+	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
+	Temperature   float64        `json:"temperature"`
+	Tools         []Tool         `json:"tools,omitempty"`
+	User          string         `json:"user,omitempty"`
 }
 
 type Message struct {
@@ -16,6 +17,10 @@ type Message struct {
 	Content    any        `json:"content"`
 	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
 	ToolCallID string     `json:"tool_call_id,omitempty"`
+}
+
+type StreamOptions struct {
+	IncludeUsage bool `json:"include_usage,omitempty"`
 }
 
 type Tool struct {
@@ -55,6 +60,7 @@ type Generations struct {
 // Response is a struct for OpenAI API response
 type Response struct {
 	Choices []Choice   `json:"choices"`
+	Usage   Usage      `json:"usage"`
 	Error   Error      `json:"error"`
 	Data    []ImageURL `json:"data"`
 }
@@ -64,6 +70,12 @@ type Choice struct {
 	Delta         Delta         `json:"delta"`
 	FinishReason  string        `json:"finish_reason"`
 	FinishDetails FinishDetails `json:"finish_details"`
+}
+
+type Usage struct {
+	PromptTokens     int `json:"prompt_tokens"`
+	CompletionTokens int `json:"completion_tokens"`
+	TotalTokens      int `json:"total_tokens"`
 }
 
 type Delta struct {

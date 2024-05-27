@@ -28,7 +28,8 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 		}
 	}()
 
-	response := &types.Response{Choices: []types.Choice{{}}}
+	choice := types.Choice{}
+	response := &types.Response{}
 	reader := bufio.NewReader(resp.Body)
 	var previous, toolCallID string
 	var content, args strings.Builder
@@ -47,7 +48,6 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 
 		bts = bytes.TrimPrefix(bts, []byte("data: "))
 		if string(bts) == "[DONE]\n" {
-			response.Choices[0].FinishReason = "done"
 			break
 		}
 
@@ -57,29 +57,33 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 			return nil, fmt.Errorf("user %s: can't decode response", id(ctx))
 		}
 
-		if getFinishReason(response) != "" {
-			break
-		} else if response.Choices[0].FinishDetails.Type != "" {
-			response.Choices[0].FinishReason = response.Choices[0].FinishDetails.Type
-			break
+		if len(response.Choices) == 0 {
+			continue
+		}
+
+		if response.Choices[0].Delta.Role != "" {
+			choice.Message.Role = response.Choices[0].Delta.Role
+		}
+
+		if response.Choices[0].FinishReason != "" {
+			choice.FinishReason = response.Choices[0].FinishReason
 		}
 
 		if response.Choices[0].Delta.ToolCalls != nil {
 			if getToolCallID(response) != "" && getToolCallID(response) != toolCallID {
 				toolCallID = getToolCallID(response)
-				if getToolCalls(response) != nil {
-					response.Choices[0].Message.ToolCalls[len(getToolCalls(response))-1].Function.Arguments = args.String()
+				if choice.Message.ToolCalls != nil {
+					choice.Message.ToolCalls[len(choice.Message.ToolCalls)-1].Function.Arguments = args.String()
 					args.Reset()
 				}
-				response.Choices[0].Message.ToolCalls = append(
-					response.Choices[0].Message.ToolCalls, response.Choices[0].Delta.ToolCalls[0])
+				choice.Message.ToolCalls = append(choice.Message.ToolCalls, response.Choices[0].Delta.ToolCalls[0])
 			}
 			args.WriteString(response.Choices[0].Delta.ToolCalls[0].Function.Arguments)
-			response.Choices[0].Delta.Content = ""
+			response.Choices[0].Delta.ToolCalls = nil
 		}
 
 		content.WriteString(response.Choices[0].Delta.Content)
-		response.Choices[0].Delta.ToolCalls = nil
+		response.Choices[0].Delta.Content = ""
 		completion = strings.TrimSpace(content.String())
 		if send.Load() && completion != previous {
 			channel <- completion + " ▌"
@@ -89,11 +93,11 @@ func streamResponse(ctx context.Context, resp *http.Response, completion string,
 	}
 
 	stream.Store(false)
-	response.Choices[0].Message.Role = response.Choices[0].Delta.Role
-	response.Choices[0].Message.Content = completion
-	if getToolCalls(response) != nil {
-		response.Choices[0].Message.ToolCalls[len(getToolCalls(response))-1].Function.Arguments = args.String()
+	choice.Message.Content = completion
+	if choice.Message.ToolCalls != nil {
+		choice.Message.ToolCalls[len(choice.Message.ToolCalls)-1].Function.Arguments = args.String()
 	}
+	response.Choices = append(response.Choices, choice)
 	return response, nil
 }
 
@@ -115,8 +119,8 @@ func decodeResponse(ctx context.Context, resp *http.Response) (*types.Response, 
 
 func length(messages []types.Message) int {
 	var promptLength int
-	for i := range messages {
-		promptLength += len([]rune(fmt.Sprintf("<|start|>%s\n%v<|end|>\n", messages[i].Role, messages[i].Content)))
+	for _, message := range messages {
+		promptLength += len([]rune(fmt.Sprintf("<|start|>%v\n%v<|end|>\n", message.Role, message.Content)))
 	}
 	return promptLength
 }
@@ -137,7 +141,7 @@ func userStatus(ctx context.Context) redis.UserStatus {
 	return ctx.Value("user_status").(redis.UserStatus)
 }
 
-func getContent(response *types.Response) string {
+func getCompletion(response *types.Response) string {
 	content, ok := response.Choices[0].Message.Content.(string)
 	if !ok {
 		return ""

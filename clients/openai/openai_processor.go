@@ -69,7 +69,7 @@ Retry:
 		}
 	}
 
-	if getToolCalls(response) != nil {
+	if len(getToolCalls(response)) > 0 {
 		messages = append(messages, response.Choices[0].Message)
 		for _, toolCall := range getToolCalls(response) {
 			body := toolCall.Function.Arguments
@@ -100,7 +100,7 @@ Retry:
 			)
 		}
 
-		completion += getContent(response)
+		completion += getCompletion(response)
 		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
 			completion += fmt.Sprintf(text.Search["en"], source)
 		} else {
@@ -117,16 +117,16 @@ Retry:
 	}
 
 	msg.FinishReason = getFinishReason(response)
-	msg.PromptTokens = o.countTokens(messages)
-	msg.PromptLength = length(messages)
-
 	if ctx.Value("stream") == true {
-		completion = getContent(response)
+		completion = getCompletion(response)
 	} else {
-		completion += getContent(response)
+		completion += getCompletion(response)
 	}
-	msg.CompletionTokens = o.countTokens(completion)
-	msg.CompletionLength = len([]rune(completion))
+
+	msg.PromptTokens += response.Usage.PromptTokens
+	msg.PromptLength += length(messages)
+	msg.CompletionTokens += response.Usage.CompletionTokens
+	msg.CompletionLength += len([]rune(completion))
 	msg.Output = completion
 
 	o.redis.SetContext(ctx, prompt, completion)

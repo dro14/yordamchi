@@ -126,18 +126,32 @@ Retry:
 	return nil
 }
 
-func (t *Telegram) SendFile(ctx context.Context, path string) {
-	config := tgbotapi.NewDocument(id(ctx), tgbotapi.FilePath(path))
-	_, err := t.makeRequest(ctx, config)
-	if err != nil {
-		log.Printf("user %d: can't send file", id(ctx))
-	}
-}
-
 func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 	config := tgbotapi.NewCallback(ID, text)
 	_, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't answer callback query", id(ctx))
 	}
+}
+
+func (t *Telegram) SetKeyboard(ctx context.Context, text string, questions []string) error {
+	formatted := utils.MarkdownV2(text)
+	config := tgbotapi.NewMessage(id(ctx), formatted)
+	config.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[0])),
+		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[1])),
+		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[2])))
+	config.DisableWebPagePreview = true
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+Retry:
+	_, err := t.makeRequest(ctx, config)
+	if errors.Is(err, ErrMarkdown) {
+		log.Println(formatted)
+		config.Text = text
+		config.ParseMode = ""
+		goto Retry
+	} else if err != nil {
+		return err
+	}
+	return nil
 }

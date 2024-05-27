@@ -8,13 +8,11 @@ import (
 	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/storage/redis"
-	"github.com/pkoukk/tiktoken-go"
 )
 
 type OpenAI struct {
 	keys    []string
 	index   int
-	tkm     *tiktoken.Tiktoken
 	redis   *redis.Redis
 	service *service.Service
 	apis    *other.APIs
@@ -35,15 +33,9 @@ func New() *OpenAI {
 		log.Fatal("openai token is not specified")
 	}
 
-	tkm, err := tiktoken.GetEncoding(tiktoken.MODEL_CL100K_BASE)
-	if err != nil {
-		log.Fatal("can't get encoding:", err)
-	}
-
 	return &OpenAI{
 		keys:    keys,
 		index:   0,
-		tkm:     tkm,
 		redis:   redis.New(),
 		service: service.New(),
 		apis:    other.New(),

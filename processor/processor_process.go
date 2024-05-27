@@ -68,12 +68,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		completion = p.apis.Translate("en", "uz", completion)
 		completions = utils.Slice(completion, 4096)
 
-		var replyMarkup *tgbotapi.InlineKeyboardMarkup
-		if len(completions) == 1 {
-			replyMarkup = p.newChatButton(ctx)
-		}
-
-		err = p.telegram.EditMessage(ctx, completions[i], messageID, replyMarkup)
+		err = p.telegram.EditMessage(ctx, completions[i], messageID, nil)
 		if errors.Is(err, telegram.ErrForbidden) {
 			return
 		} else if errors.Is(err, telegram.ErrNotFound) {
@@ -83,10 +78,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		time.Sleep(utils.ReqInterval)
 
 		for i++; i < len(completions); i++ {
-			if i == len(completions)-1 {
-				replyMarkup = p.newChatButton(ctx)
-			}
-			_, err = p.telegram.SendMessage(ctx, completions[i], 0, replyMarkup)
+			messageID, err = p.telegram.SendMessage(ctx, completions[i], 0, nil)
 			if errors.Is(err, telegram.ErrForbidden) {
 				return
 			} else if err != nil {
@@ -133,13 +125,13 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 				time.Sleep(utils.ReqInterval)
 			}
 		}
-
-		err = p.telegram.EditMessage(ctx, completions[i], messageID, p.newChatButton(ctx))
-		if err != nil {
-			log.Printf("can't add new chat button")
-		}
-		msg.Requests++
 	}
+
+	err = p.telegram.EditMessage(ctx, completions[i], messageID, p.newChatButton(ctx))
+	if err != nil {
+		log.Printf("can't add new chat button")
+	}
+	msg.Requests++
 
 	p.redis.DecrementRequests(ctx)
 	msg.LastEdit = int(time.Since(start(ctx)).Milliseconds())
