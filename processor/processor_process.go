@@ -32,17 +32,14 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	defer p.activity.Add(-1)
 
 	if message.Photo != nil {
-		msg.Input = message.Caption
-		var photoURL string
-		photoURL, err = p.telegram.PhotoURL(ctx, message.Photo)
-		if err != nil {
-			message.Text = message.Caption
-		} else if model(ctx) == models.GPT3 {
+		photoURL := p.telegram.PhotoURL(ctx, message.Photo)
+		if model(ctx) == models.GPT3 {
 			message.Text = p.apis.OCR(ctx, photoURL, message.Caption)
-			msg.Type = "ocr"
 			msg.Input = message.Text
+			msg.Type = "ocr"
 		} else {
 			message.Text = photoURL + utils.Delim + message.Caption
+			msg.Input = message.Caption
 			msg.Type = "vision"
 		}
 		if message.From.ID == 1792604195 {
@@ -127,7 +124,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		}
 	}
 
-	err = p.telegram.EditMessage(ctx, completions[i], messageID, p.newChatButton(ctx))
+	err = p.telegram.EditMessage(ctx, completions[len(completions)-1], messageID, p.newChatButton(ctx))
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}

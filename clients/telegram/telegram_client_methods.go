@@ -90,21 +90,21 @@ func (t *Telegram) SetCommands(ctx context.Context) {
 	}
 }
 
-func (t *Telegram) PhotoURL(ctx context.Context, photos []tgbotapi.PhotoSize) (string, error) {
+func (t *Telegram) PhotoURL(ctx context.Context, photos []tgbotapi.PhotoSize) string {
 	config := tgbotapi.FileConfig{FileID: photos[len(photos)-1].FileID}
 	resp, err := t.makeRequest(ctx, config)
 	if err != nil {
 		log.Printf("user %d: can't get photo url", id(ctx))
-		return "", err
+		return ""
 	}
 
 	file := &tgbotapi.File{}
 	err = json.Unmarshal(resp.Result, file)
 	if err != nil {
 		log.Printf("user %d: can't decode result: %s", id(ctx), err)
-		return "", err
+		return ""
 	}
-	return file.Link(t.token), nil
+	return file.Link(t.token)
 }
 
 func (t *Telegram) SendPhoto(ctx context.Context, path, caption string, replyMarkup *tgbotapi.InlineKeyboardMarkup) error {
