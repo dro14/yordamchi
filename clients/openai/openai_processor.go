@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"log"
 	"strings"
 	"time"
@@ -100,7 +101,11 @@ Retry:
 		}
 
 		completion += getContent(response)
-		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
+		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+			completion += fmt.Sprintf(text.Search["en"], source)
+		} else {
+			completion += fmt.Sprintf(text.Search[lang(ctx)], source)
+		}
 
 		if msg.Attempts < utils.RetryAttempts {
 			goto Retry
@@ -122,11 +127,11 @@ Retry:
 	}
 	msg.CompletionTokens = o.countTokens(completion)
 	msg.CompletionLength = len([]rune(completion))
-	msg.Output = completion
+	msg.Output = utils.LaTeX(completion)
 
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)
-	channel <- completion
+	channel <- msg.Output
 }
 
 func (o *OpenAI) ProcessGenerations(ctx context.Context, prompt string) (string, string) {
