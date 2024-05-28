@@ -2,9 +2,10 @@ package processor
 
 import (
 	"context"
+	"log"
+
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
 )
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
@@ -14,6 +15,14 @@ func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi
 		log.Println("can't send new chat callback")
 	}
 	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.NewChatAnswer[lang(ctx)])
+}
+
+func (p *Processor) moreCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	err := p.telegram.SetKeyboard(ctx, text.More[lang(ctx)], nil)
+	if err != nil {
+		log.Println("can't set more callback keyboard")
+	}
+	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.More[lang(ctx)])
 }
 
 func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {

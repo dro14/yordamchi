@@ -9,11 +9,7 @@ import (
 )
 
 var keywords = []string{
-	"tarjim", "o'zbek til", "ozbek til", "rus til", "ingliz til", "ingiliz til", "turk til", "koreys til",
-	"o'zbekcha", "ozbekcha", "ruscha", "inglizcha", "ingilizcha", "turkcha", "koreyscha",
-	"перевод", "узбекск", "русск", "английск", "турецк", "корейск",
-	"perevod", "uzbeksk", "russk", "angliysk", "turetsk", "koreysk",
-	"translat", "uzbek", "russian", "english", "turkish", "korean",
+	"tarjim", "перевод", "perevod", "translat",
 }
 
 func (p *Processor) needTranslation(ctx context.Context, prompt string, userID int64) bool {
