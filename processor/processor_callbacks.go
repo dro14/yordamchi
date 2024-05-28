@@ -36,10 +36,8 @@ func (p *Processor) settingsCallback(ctx context.Context, callbackQuery *tgbotap
 			log.Println("can't edit settings2 callback")
 		}
 	case "settings3":
-		err := p.telegram.EditMessage(ctx, text.Images[lang(ctx)], callbackQuery.Message.MessageID, p.imageButtons(ctx))
-		if err != nil {
-			log.Println("can't edit settings3 callback")
-		}
+		p.telegram.DeleteMessage(ctx, callbackQuery.Message.MessageID)
+		p.images(ctx)
 	}
 }
 
