@@ -55,7 +55,14 @@ func (p *Processor) settingsButton(ctx context.Context) *tgbotapi.InlineKeyboard
 		"ru": "🔥 Премиум подписка 🔥",
 		"en": "🔥 Premium subscription 🔥",
 	}
-	return data("settings1", "settings2", unlimitedText[lang(ctx)], premiumText[lang(ctx)])
+	imageGeneration := map[string]string{
+		"uz": "🚀 Rasm generatsiyasi 🚀",
+		"ru": "🚀 Генерация изображений 🚀",
+		"en": "🚀 Image generation 🚀",
+	}
+	return data(
+		"settings1", "settings2", "settings3",
+		unlimitedText[lang(ctx)], premiumText[lang(ctx)], imageGeneration[lang(ctx)])
 }
 
 func (p *Processor) languageButtons() *tgbotapi.InlineKeyboardMarkup {

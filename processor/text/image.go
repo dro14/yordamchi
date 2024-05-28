@@ -1,6 +1,6 @@
 package text
 
-var Image = map[string]string{
+var Images = map[string]string{
 	"uz": `So'zlar rasmga aylanganini ko'rganmisiz? Yo'q bo'lsa, *DALL-E 3* ni kutib oling!
 
 *DALL-E 3* - bu so'zlar yordamida rasm generatsiya qiladigan eng kuchli sun'iy intellektlardan biri. Endi uning yordamida Siz yuqoridagidek aql bovar qilmas rasmlar yaratishingiz mumkin. Hattoki storislar uchun yozuvli rasmlar ham, faqat yozuvlari ingliz tilida bo'ladi :) 
