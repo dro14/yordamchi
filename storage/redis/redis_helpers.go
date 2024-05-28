@@ -20,3 +20,7 @@ func lang(ctx context.Context) string {
 func model(ctx context.Context) string {
 	return ctx.Value("model").(string)
 }
+
+func translate(ctx context.Context) bool {
+	return ctx.Value("translate").(bool)
+}

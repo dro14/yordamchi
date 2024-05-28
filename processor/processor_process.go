@@ -59,6 +59,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	channel := make(chan string)
 	if p.needTranslation(ctx, message.Text, message.From.ID) {
 		ctx = context.WithValue(ctx, "stream", false)
+		ctx = context.WithValue(ctx, "translate", true)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
 		completion = utils.LaTeX(completion)
