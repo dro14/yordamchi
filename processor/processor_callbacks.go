@@ -10,7 +10,7 @@ import (
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	p.redis.DeleteContext(ctx)
-	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, nil)
+	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, tgbotapi.NewRemoveKeyboard(true))
 	if err != nil {
 		log.Println("can't send new chat callback")
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (t *Telegram) SendMessage(ctx context.Context, text string, replyToMsgID int, replyMarkup *tgbotapi.InlineKeyboardMarkup) (int, error) {
+func (t *Telegram) SendMessage(ctx context.Context, text string, replyToMsgID int, replyMarkup any) (int, error) {
 	formatted := utils.MarkdownV2(text)
 	config := tgbotapi.NewMessage(id(ctx), formatted)
 	config.ReplyToMessageID = replyToMsgID
