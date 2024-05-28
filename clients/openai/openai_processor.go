@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"log"
 	"strings"
 	"time"
@@ -69,6 +68,9 @@ Retry:
 		}
 	}
 
+	msg.PromptTokens += response.Usage.PromptTokens
+	msg.CompletionTokens += response.Usage.CompletionTokens
+
 	if len(getToolCalls(response)) > 0 {
 		messages = append(messages, response.Choices[0].Message)
 		for _, toolCall := range getToolCalls(response) {
@@ -101,7 +103,7 @@ Retry:
 		}
 
 		completion += getCompletion(response)
-		if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
+		if translate(ctx) {
 			completion += fmt.Sprintf(text.Search["en"], source)
 		} else {
 			completion += fmt.Sprintf(text.Search[lang(ctx)], source)
@@ -116,19 +118,15 @@ Retry:
 		}
 	}
 
-	msg.FinishReason = getFinishReason(response)
 	if ctx.Value("stream") == true {
 		completion = getCompletion(response)
 	} else {
 		completion += getCompletion(response)
 	}
-
-	msg.PromptTokens += response.Usage.PromptTokens
-	msg.PromptLength += length(messages)
-	msg.CompletionTokens += response.Usage.CompletionTokens
-	msg.CompletionLength += len([]rune(completion))
 	msg.Output = completion
-
+	msg.PromptLength += length(messages)
+	msg.CompletionLength += len([]rune(completion))
+	msg.FinishReason = getFinishReason(response)
 	o.redis.SetContext(ctx, prompt, completion)
 	time.Sleep(utils.ReqInterval)
 	channel <- completion

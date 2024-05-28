@@ -15,6 +15,26 @@ func (p *Processor) newChatButton(ctx context.Context) *tgbotapi.InlineKeyboardM
 	return data("new_chat", text[lang(ctx)])
 }
 
+func (p *Processor) chatButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
+	text1 := map[string]string{
+		"uz": "💬 Yangi suhbat 💬",
+		"ru": "💬 Новый разговор 💬",
+		"en": "💬 New chat 💬",
+	}
+	text2 := map[string]string{
+		"uz": "tabiiy",
+		"ru": "натурального",
+		"en": "❓ Follow-up ❓",
+	}
+	newChat := "new_chat"
+	followUp := "follow_up"
+	row := [][]tgbotapi.InlineKeyboardButton{{
+		{Text: text1[lang(ctx)], CallbackData: &newChat},
+		{Text: text2[lang(ctx)], CallbackData: &followUp},
+	}}
+	return &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: row}
+}
+
 func (p *Processor) startButton(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text := map[string]string{
 		"uz": "❔ Qanday ishlatish ❔",
