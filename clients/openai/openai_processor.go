@@ -72,28 +72,30 @@ Retry:
 	msg.CompletionTokens += response.Usage.CompletionTokens
 
 	if len(getToolCalls(response)) > 0 {
-		messages = append(messages, response.Choices[0].Message)
+		var callResults []types.Message
 		for _, toolCall := range getToolCalls(response) {
-			body := toolCall.Function.Arguments
 			var args map[string]string
-			_ = json.Unmarshal([]byte(body), &args)
-
-			var result string
+			_ = json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
 			query, ok := args["query"]
-			if ok {
-				if source == "GOOGLE" {
-					log.Printf("user %s: google search for %q", id(ctx), query)
-					result = o.service.GoogleSearch(ctx, query)
+			if !ok {
+				log.Printf("user %s: invalid JSON body from OpenAI: %s", id(ctx), toolCall.Function.Arguments)
+				if msg.Attempts < utils.RetryAttempts {
+					goto Retry
 				} else {
-					log.Printf("user %s: file search for %q", id(ctx), query)
-					result = o.service.FileSearch(ctx, query)
+					log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
+					channel <- text.RequestFailed[lang(ctx)]
+					return
 				}
-			} else {
-				log.Printf("user %s: invalid JSON body from OpenAI %q", id(ctx), body)
-				result = "no results"
 			}
 
-			messages = append(messages,
+			var result string
+			if source == "GOOGLE" {
+				result = o.service.GoogleSearch(ctx, query)
+			} else {
+				result = o.service.FileSearch(ctx, query)
+			}
+
+			callResults = append(callResults,
 				types.Message{
 					Role:       "tool",
 					Content:    result,
@@ -101,6 +103,9 @@ Retry:
 				},
 			)
 		}
+
+		messages = append(messages, response.Choices[0].Message)
+		messages = append(messages, callResults...)
 
 		completion += getCompletion(response)
 		if translate(ctx) {

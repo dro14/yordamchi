@@ -10,7 +10,7 @@ import (
 
 var keywords = []string{
 	"tarjim", "rus til", "ingliz til", "ingiliz til", "turk til", "koreys til",
-	"ruscha", "inglizcha", "ingilizcha", "turkcha", "koreyscha",
+	"translat", "ruscha", "inglizcha", "ingilizcha", "turkcha", "koreyscha",
 	"перевод", "русск", "английск", "турецк", "корейск",
 	"perevod", "russk", "angliysk", "turetsk", "koreysk",
 }
