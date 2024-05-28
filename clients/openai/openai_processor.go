@@ -227,6 +227,5 @@ func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 		}
 	}
 
-	log.Printf("user %s: follow-up questions: %v", id(ctx), questions["questions"])
 	return questions["questions"]
 }

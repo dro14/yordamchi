@@ -8,9 +8,9 @@ import (
 
 func (p *Processor) chatButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text1 := map[string]string{
-		"uz": "💬 Yangi suhbat 💬",
-		"ru": "💬 Новый разговор 💬",
-		"en": "💬 New chat 💬",
+		"uz": "💬 Yangi 💬",
+		"ru": "💬 Новый 💬",
+		"en": "💬 New 💬",
 	}
 	text2 := map[string]string{
 		"uz": "❓ Yana ❓",
