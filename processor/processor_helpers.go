@@ -52,6 +52,7 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 	ctx = context.WithValue(ctx, "start", time.Now())
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
 	ctx = context.WithValue(ctx, "stream", true)
+	ctx = context.WithValue(ctx, "json_mode", false)
 	ctx = context.WithValue(ctx, "user_status", p.redis.UserStatus(ctx))
 	if userStatus(ctx) == redis.StatusPremium {
 		ctx = context.WithValue(ctx, "model", models.GPT4)

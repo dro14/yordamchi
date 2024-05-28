@@ -28,6 +28,9 @@ func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, tool
 	if request.Stream {
 		request.StreamOptions = &types.StreamOptions{IncludeUsage: true}
 	}
+	if ctx.Value("json_mode") == true {
+		request.ResponseFormat = &types.ResponseFormat{Type: "json_object"}
+	}
 
 	resp, err := o.send(ctx, request)
 	if err != nil {

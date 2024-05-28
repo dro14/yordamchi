@@ -2,14 +2,15 @@ package types
 
 // Completions is a struct for OpenAI Completions API
 type Completions struct {
-	Model         string         `json:"model"`
-	Messages      []Message      `json:"messages"`
-	MaxTokens     int            `json:"max_tokens,omitempty"`
-	Stream        bool           `json:"stream"`
-	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
-	Temperature   float64        `json:"temperature"`
-	Tools         []Tool         `json:"tools,omitempty"`
-	User          string         `json:"user,omitempty"`
+	Model          string          `json:"model"`
+	Messages       []Message       `json:"messages"`
+	MaxTokens      int             `json:"max_tokens,omitempty"`
+	ResponseFormat *ResponseFormat `json:"response_format,omitempty"`
+	Stream         bool            `json:"stream"`
+	StreamOptions  *StreamOptions  `json:"stream_options,omitempty"`
+	Temperature    float64         `json:"temperature"`
+	Tools          []Tool          `json:"tools,omitempty"`
+	User           string          `json:"user,omitempty"`
 }
 
 type Message struct {
@@ -17,6 +18,10 @@ type Message struct {
 	Content    any        `json:"content"`
 	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
 	ToolCallID string     `json:"tool_call_id,omitempty"`
+}
+
+type ResponseFormat struct {
+	Type string `json:"type"`
 }
 
 type StreamOptions struct {
