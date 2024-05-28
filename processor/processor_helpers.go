@@ -3,8 +3,6 @@ package processor
 import (
 	"context"
 	"fmt"
-	"log"
-	"strings"
 	"sync"
 	"time"
 
@@ -15,7 +13,6 @@ import (
 )
 
 var blockedUsers sync.Map
-var keywords = []string{"tarjim", "перевод", "perevod", "translat"}
 
 func isBlocked(userID int64) bool {
 	_, ok := blockedUsers.Load(userID)
@@ -83,15 +80,5 @@ func (p *Processor) msg(ctx context.Context) string {
 }
 
 func (p *Processor) needTranslation(ctx context.Context, prompt string) bool {
-	if model(ctx) != models.GPT3 || lang(ctx) != "uz" {
-		return false
-	}
-	lowered := strings.ToLower(prompt)
-	for _, keyword := range keywords {
-		if strings.Contains(lowered, keyword) {
-			log.Printf("user %d asks for translation: %q", ctx.Value("user_id"), prompt)
-			return false
-		}
-	}
-	return true
+	return model(ctx) == models.GPT3 && lang(ctx) == "uz"
 }
