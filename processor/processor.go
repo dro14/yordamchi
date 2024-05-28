@@ -113,7 +113,7 @@ func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 		p.newChatCallback(ctx, callbackQuery)
 	case "help":
 		p.helpCallback(ctx, callbackQuery)
-	case "settings", "settings1", "settings2":
+	case "settings1", "settings2", "settings3":
 		p.settingsCallback(ctx, callbackQuery)
 	case "uz", "ru", "en":
 		p.languageCallback(ctx, callbackQuery)
