@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres"
@@ -21,7 +22,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 
 	var completion, source string
 	var tools []types.Tool
-	ctx, messages := o.redis.Context(ctx, &prompt)
+	messages := o.redis.Context(ctx, &prompt)
 	if userStatus(ctx) != redis.StatusFree {
 		source = o.service.Memory(ctx)
 		if source == "GOOGLE" {
@@ -87,14 +88,12 @@ Retry:
 					return
 				}
 			}
-
 			var result string
 			if source == "GOOGLE" {
 				result = o.service.GoogleSearch(ctx, query)
 			} else {
 				result = o.service.FileSearch(ctx, query)
 			}
-
 			callResults = append(callResults,
 				types.Message{
 					Role:       "tool",
@@ -106,7 +105,6 @@ Retry:
 
 		messages = append(messages, response.Choices[0].Message)
 		messages = append(messages, callResults...)
-
 		completion += getCompletion(response)
 		if translate(ctx) {
 			completion += fmt.Sprintf(text.Search["en"], source)
@@ -189,4 +187,46 @@ Retry:
 	}
 
 	return path, response.Data[0].RevisedPrompt
+}
+
+var template = `IN THE LANGUAGE OF CONVERSATION, GENERATE 3 VERY BRIEF FOLLOW-UP QUESTIONS THAT THE USER WOULD LIKELY ASK NEXT.
+RESPOND IN JSON FORMAT:
+{"questions":[<string>,<string>,<string>]}`
+
+func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
+	ctx = context.WithValue(ctx, "stream", false)
+	ctx = context.WithValue(ctx, "json_mode", true)
+	ctx = context.WithValue(ctx, "translate", false)
+	ctx = context.WithValue(ctx, "user_status", o.redis.UserStatus(ctx))
+	ctx = context.WithValue(ctx, "model", models.GPT3)
+
+	if userStatus(ctx) == redis.StatusExhausted {
+		return text.DefaultQuestions[lang(ctx)]
+	}
+
+	messages := []types.Message{{Role: "system", Content: template}}
+	messages = append(messages, o.redis.Messages(ctx)...)
+
+	response, err := o.Completions(ctx, messages, nil, "", make(chan string, 1))
+	if err != nil {
+		log.Printf("user %s: can't generate follow-up questions: %v", id(ctx), err)
+		return text.DefaultQuestions[lang(ctx)]
+	}
+
+	bts := []byte(response.Choices[0].Message.Content.(string))
+	var questions map[string][]string
+	err = json.Unmarshal(bts, &questions)
+	if err != nil {
+		log.Printf("user %s: can't decode response: %v\nbody: %s", id(ctx), err, bts)
+		return text.DefaultQuestions[lang(ctx)]
+	}
+
+	if userStatus(ctx) != redis.StatusPremium && lang(ctx) == "uz" {
+		for i, question := range questions["questions"] {
+			questions["questions"][i] = o.apis.Translate("en", "uz", question)
+		}
+	}
+
+	log.Printf("user %s: follow-up questions: %v", id(ctx), questions["questions"])
+	return questions["questions"]
 }

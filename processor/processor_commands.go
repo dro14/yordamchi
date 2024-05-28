@@ -92,7 +92,7 @@ func (p *Processor) memory(ctx context.Context) {
 	}
 	Text = fmt.Sprintf(text.Memory[lang(ctx)], Text, p.service.Memory(ctx))
 
-	_, err := p.telegram.SendMessage(ctx, Text, 0, p.newChatButton(ctx))
+	_, err := p.telegram.SendMessage(ctx, Text, 0, p.chatButtons(ctx))
 	if err != nil {
 		log.Println("can't send memory command")
 	}

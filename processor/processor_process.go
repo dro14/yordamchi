@@ -57,7 +57,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if p.needTranslation(ctx, message.Text, message.From.ID) {
+	if p.needTranslation(ctx, message.Text) {
 		ctx = context.WithValue(ctx, "stream", false)
 		ctx = context.WithValue(ctx, "translate", true)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
@@ -125,7 +125,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		}
 	}
 
-	err = p.telegram.EditMessage(ctx, completions[len(completions)-1], messageID, p.newChatButton(ctx))
+	err = p.telegram.EditMessage(ctx, completions[len(completions)-1], messageID, p.chatButtons(ctx))
 	if err != nil {
 		log.Printf("can't add new chat button")
 	}

@@ -19,10 +19,10 @@ var template = map[string]string{
 	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
 }
 
-func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, []types.Message) {
+func (r *Redis) Context(ctx context.Context, prompt *string) []types.Message {
 	system := r.System(ctx)
 	system, _ = strings.CutPrefix(system, "USER: ")
-	messages := r.messages(ctx)
+	messages := r.Messages(ctx)
 
 	if translate(ctx) {
 		*prompt = r.apis.Translate("uz", "en", *prompt)
@@ -45,7 +45,7 @@ func (r *Redis) Context(ctx context.Context, prompt *string) (context.Context, [
 			messages[i].Content = content
 		}
 	}
-	return ctx, messages
+	return messages
 }
 
 func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
@@ -95,7 +95,7 @@ func (r *Redis) SetSystem(ctx context.Context, system string) {
 	client.Set(ctx, "system:"+id(ctx), system, 0)
 }
 
-func (r *Redis) messages(ctx context.Context) []types.Message {
+func (r *Redis) Messages(ctx context.Context) []types.Message {
 	jsonData, err := client.Get(ctx, "context:"+id(ctx)).Bytes()
 	if err != nil {
 		return []types.Message{}

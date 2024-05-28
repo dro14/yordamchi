@@ -134,13 +134,17 @@ func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 	}
 }
 
-func (t *Telegram) SetKeyboard(ctx context.Context, text string, questions []string) error {
-	formatted := utils.MarkdownV2(text)
-	config := tgbotapi.NewMessage(id(ctx), formatted)
-	config.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+func (t *Telegram) SetKeyboard(ctx context.Context, text, placeholder string, questions []string) error {
+	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[0])),
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[1])),
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[2])))
+	keyboard.OneTimeKeyboard = true
+	keyboard.InputFieldPlaceholder = placeholder
+
+	formatted := utils.MarkdownV2(text)
+	config := tgbotapi.NewMessage(id(ctx), formatted)
+	config.ReplyMarkup = keyboard
 	config.DisableWebPagePreview = true
 	config.ParseMode = tgbotapi.ModeMarkdownV2
 Retry:

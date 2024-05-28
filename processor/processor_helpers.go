@@ -3,16 +3,19 @@ package processor
 import (
 	"context"
 	"fmt"
-	"github.com/dro14/yordamchi/clients/openai/models"
+	"log"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 var blockedUsers sync.Map
+var keywords = []string{"tarjim", "перевод", "perevod", "translat"}
 
 func isBlocked(userID int64) bool {
 	_, ok := blockedUsers.Load(userID)
@@ -77,4 +80,18 @@ func (p *Processor) msg(ctx context.Context) string {
 		template := text.Settings[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Requests(ctx))
 	}
+}
+
+func (p *Processor) needTranslation(ctx context.Context, prompt string) bool {
+	if model(ctx) != models.GPT3 || lang(ctx) != "uz" {
+		return false
+	}
+	lowered := strings.ToLower(prompt)
+	for _, keyword := range keywords {
+		if strings.Contains(lowered, keyword) {
+			log.Printf("user %d asks for translation: %q", ctx.Value("user_id"), prompt)
+			return false
+		}
+	}
+	return true
 }

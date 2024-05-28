@@ -6,15 +6,6 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) newChatButton(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
-	text := map[string]string{
-		"uz": "💬 Yangi suhbat 💬",
-		"ru": "💬 Новый разговор 💬",
-		"en": "💬 New chat 💬",
-	}
-	return data("new_chat", text[lang(ctx)])
-}
-
 func (p *Processor) chatButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text1 := map[string]string{
 		"uz": "💬 Yangi suhbat 💬",
