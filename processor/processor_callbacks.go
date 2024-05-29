@@ -23,7 +23,7 @@ func (p *Processor) moreCallback(ctx context.Context, callbackQuery *tgbotapi.Ca
 	if err != nil {
 		log.Println("can't set more callback keyboard")
 	}
-	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.More[lang(ctx)])
+	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.MoreAnswer[lang(ctx)])
 }
 
 func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {

@@ -1,11 +1,11 @@
 package text
 
 var NewChat = map[string]string{
-	"uz": `*Endi Siz boshqa mavzuda yangi suhbat boshlashingiz mumkin.*`,
+	"uz": `*Endi Siz boshqa mavzuda yangi suhbat boshlashingiz mumkin*`,
 
-	"ru": `*Теперь Вы можете начать новый разговор на другую тему.*`,
+	"ru": `*Теперь Вы можете начать новый разговор на другую тему*`,
 
-	"en": `*Now You can start a new chat on another topic.*`,
+	"en": `*Now You can start a new chat on another topic*`,
 }
 
 var NewChatAnswer = map[string]string{
