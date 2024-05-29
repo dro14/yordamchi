@@ -1,17 +1,11 @@
 package text
 
 var NewChat = map[string]string{
-	"uz": `*Suhbat tarixi*, *botning xotirasi* va *qo'shimcha ma'lumotlar manbasi* tozalandi.
+	"uz": `*Endi Siz boshqa mavzuda yangi suhbat boshlashingiz mumkin.*`,
 
-Endi Siz *boshqa mavzuda* *yangi suhbat* boshlashingiz mumkin.`,
+	"ru": `*Теперь Вы можете начать новый разговор на другую тему.*`,
 
-	"ru": `*История разговора*, *память бота* и *источник дополнительной информации* были очищены.
-
-Теперь Вы можете начать *новый разговор* на *другую тему*.`,
-
-	"en": `*Conversation history*, *bot memory* and *source of additional information* have been cleared.
-
-Now You can start a *new chat* on *another topic*.`,
+	"en": `*Now You can start a new chat on another topic.*`,
 }
 
 var NewChatAnswer = map[string]string{

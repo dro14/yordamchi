@@ -10,7 +10,7 @@ Qo'shimcha ma'lumotlar manbasi: *%s*
 
 • *Qo'shimcha ma'lumotlar manbasini* kiritish uchun shunchaki botga fayl yuboring, *20 MB*dan oshmagan
 
-• *Botning xotirasi* va *qo'shimcha ma'lumotlar manbasini* tozalash uchun «💬 *Yangi suhbat* 💬» tugmasini bosing`,
+• *Botning xotirasi* va *qo'shimcha ma'lumotlar manbasini* tozalash uchun «💬 *Yangi* 💬» tugmasini bosing`,
 
 	"ru": `%s
 
@@ -21,7 +21,7 @@ Qo'shimcha ma'lumotlar manbasi: *%s*
 
 • Для добавления *источника дополнительной информации* просто отправьте боту файл, не более чем *20 МБ*
 
-• Чтобы очистить *память бота* и *источник дополнительной информации* нажмите кнопку «💬 *Новый разговор* 💬»`,
+• Чтобы очистить *память бота* и *источник дополнительной информации* нажмите кнопку «💬 *Новый* 💬»`,
 
 	"en": `%s
 
@@ -32,7 +32,7 @@ Source of additional information: *%s*
 
 • To add a *source of additional information*, just send a file to the bot, no more than *20 MB*
 
-• To clear the *bot memory* and the *source of additional information*, click the «💬 *New chat* 💬» button`,
+• To clear the *bot memory* and the *source of additional information*, click the «💬 *New* 💬» button`,
 }
 
 var MemorySystem = map[string]string{
