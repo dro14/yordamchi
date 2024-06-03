@@ -29,9 +29,6 @@ Retry:
 	resp, err := t.bot.Request(request)
 	if err != nil {
 		if resp != nil {
-			if resp.ErrorCode != 403 {
-				log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
-			}
 			is := func(s string) bool {
 				return strings.Contains(resp.Description, s)
 			}
@@ -44,6 +41,10 @@ Retry:
 				return nil, ErrNotModified
 			case is("message can't be deleted for everyone"):
 				return nil, ErrCantDelete
+			}
+
+			log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
+			switch {
 			case is("can't parse entities"):
 				return nil, ErrMarkdown
 			case is("Bad Request"):
