@@ -3,20 +3,18 @@ package redis
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/utils"
 )
 
 var template = map[string]string{
-	"uz": "SEN %s MODEL ARXITEKTURASIGA ASOSLANGAN, TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
-	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI, ОСНОВАННЫЙ НА АРХИТЕКТУРЕ МОДЕЛИ %s.",
-	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI, BASED ON %s MODEL ARCHITECTURE.",
+	"uz": "SEN TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
+	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI.",
+	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI.",
 }
 
 func (r *Redis) Context(ctx context.Context, prompt *string) []types.Message {
@@ -78,14 +76,10 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 func (r *Redis) System(ctx context.Context) string {
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
 	if err != nil || userStatus(ctx) == StatusFree {
-		if model(ctx) == models.GPT3 {
-			if translate(ctx) {
-				return fmt.Sprintf(template["en"], "GPT-3.5")
-			} else {
-				return fmt.Sprintf(template[lang(ctx)], "GPT-3.5")
-			}
+		if translate(ctx) {
+			return template["en"]
 		} else {
-			return fmt.Sprintf(template[lang(ctx)], "GPT-4")
+			return template[lang(ctx)]
 		}
 	}
 	return "USER: " + system
