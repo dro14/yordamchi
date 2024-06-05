@@ -63,6 +63,7 @@ func (p *Processor) notify(ctx context.Context) {
 	patterns := []string{"lang:*", "context:*", "unlimited:*", "premium:*"}
 	for {
 		notificationTime := p.redis.NotificationTime(ctx)
+		log.Printf("waiting for %v until %v", time.Until(notificationTime), notificationTime)
 		time.Sleep(time.Until(notificationTime))
 		notificationTime = notificationTime.Add(utils.NotificationInterval)
 		p.redis.SetNotificationTime(ctx, notificationTime)
