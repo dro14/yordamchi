@@ -16,7 +16,7 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 
 	switch orderType {
 	case "premium", "gpt-4":
-		expiration := time.Now().UTC()
+		expiration := time.Now()
 		requests := ""
 		switch subscription {
 		case "daily":
@@ -34,7 +34,7 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 		value := expiration.Format("02.01.2006 15:04:05") + "|" + requests
 		client.Set(ctx, "premium:"+id(ctx), value, time.Until(expiration))
 	case "unlimited":
-		expiration := time.Now().UTC()
+		expiration := time.Now()
 		switch subscription {
 		case "weekly":
 			expiration = expiration.AddDate(0, 0, 7)
