@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/utils"
 )
@@ -60,7 +61,7 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 
 	var expiration time.Duration
 	if strings.Contains(prompt, utils.Delim) {
-		expiration = 15 * time.Minute
+		expiration = 1 * time.Hour
 	} else {
 		expiration = 72 * time.Hour
 	}
@@ -92,13 +93,19 @@ func (r *Redis) SetSystem(ctx context.Context, system string) {
 func (r *Redis) Messages(ctx context.Context) []types.Message {
 	jsonData, err := client.Get(ctx, "context:"+id(ctx)).Bytes()
 	if err != nil {
-		return []types.Message{}
+		return nil
 	}
 
 	var messages []types.Message
 	err = json.Unmarshal(jsonData, &messages)
 	if err != nil {
 		log.Printf("can't decode %q: %s", "context:"+id(ctx), err)
+		return nil
 	}
-	return messages
+
+	if model(ctx) == models.GPT3 && strings.Contains(messages[0].Content.(string), utils.Delim) {
+		return nil
+	} else {
+		return messages
+	}
 }
