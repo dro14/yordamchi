@@ -153,8 +153,8 @@ func (r *Redis) Lang(ctx context.Context, languageCode string) (context.Context,
 }
 
 func (r *Redis) SetLang(ctx context.Context) {
-	expiration := time.Now().AddDate(0, 1, 0)
-	client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(expiration.UTC()))
+	expiration := time.Now().UTC().AddDate(0, 1, 0)
+	client.Set(ctx, "lang:"+id(ctx), lang(ctx), time.Until(expiration))
 }
 
 func (r *Redis) PollQuestion(ctx context.Context) string {

@@ -59,13 +59,13 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 		return
 	}
 
-	expiration := time.Now()
+	expiration := time.Now().UTC()
 	if strings.Contains(prompt, utils.Delim) {
 		expiration = expiration.Add(1 * time.Hour)
 	} else {
 		expiration = expiration.Add(72 * time.Hour)
 	}
-	client.Set(ctx, "context:"+id(ctx), jsonData, time.Until(expiration.UTC()))
+	client.Set(ctx, "context:"+id(ctx), jsonData, time.Until(expiration))
 }
 
 func (r *Redis) DeleteContext(ctx context.Context) {
