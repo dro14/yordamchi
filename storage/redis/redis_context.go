@@ -60,7 +60,7 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 
 	var expiration time.Duration
 	if strings.Contains(prompt, utils.Delim) {
-		expiration = 1 * time.Hour
+		expiration = 15 * time.Minute
 	} else {
 		expiration = 72 * time.Hour
 	}

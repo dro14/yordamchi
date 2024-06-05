@@ -128,10 +128,7 @@ Retry:
 
 func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 	config := tgbotapi.NewCallback(ID, text)
-	_, err := t.makeRequest(ctx, config)
-	if err != nil {
-		log.Printf("user %d: can't answer callback query", id(ctx))
-	}
+	_, _ = t.makeRequest(ctx, config)
 }
 
 func (t *Telegram) SetKeyboard(ctx context.Context, text, placeholder string, questions []string) error {

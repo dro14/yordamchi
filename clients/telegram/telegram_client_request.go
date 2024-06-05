@@ -13,11 +13,12 @@ import (
 )
 
 var (
+	ErrForbidden     = errors.New("403 Forbidden: bot was blocked by the user")
 	ErrNotFound      = errors.New("400 Bad Request: message to edit/delete not found")
 	ErrNotModified   = errors.New("400 Bad Request: message is not modified")
 	ErrCantDelete    = errors.New("400 Bad Request: message can't be deleted for everyone")
 	ErrMarkdown      = errors.New("400 Bad Request: can't parse entities")
-	ErrForbidden     = errors.New("403 Forbidden: bot was blocked by the user")
+	ErrOldQuery      = errors.New("400 Bad Request: query is too old and response timeout expired or query ID is invalid")
 	ErrRequestFailed = errors.New("request failed")
 )
 
@@ -41,6 +42,8 @@ Retry:
 				return nil, ErrNotModified
 			case is("message can't be deleted for everyone"):
 				return nil, ErrCantDelete
+			case is("query is too old"):
+				return nil, ErrOldQuery
 			}
 
 			log.Printf("user %d: can't make request: %d %s", id(ctx), resp.ErrorCode, resp.Description)
