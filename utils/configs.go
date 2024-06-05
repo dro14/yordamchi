@@ -3,15 +3,12 @@ package utils
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func SetConfigs() {
-	time.Local, _ = time.LoadLocation("Asia/Tashkent")
-
 	file, err := os.Create("yordamchi.log")
 	if err != nil {
 		log.Fatal("can't create yordamchi.log:", err)
