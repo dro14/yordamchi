@@ -81,7 +81,7 @@ func (p *Processor) notify(ctx context.Context) {
 					if name == "" {
 						name = text.DearUser[lang(ctx)]
 					}
-					Text = fmt.Sprintf(text.Notify1[lang(ctx)], name)
+					Text = fmt.Sprintf(text.Notification1[lang(ctx)], name)
 					replyMarkup = p.startButton(ctx)
 				case "unlimited:*", "premium:*":
 					if name == "" {
@@ -93,7 +93,7 @@ func (p *Processor) notify(ctx context.Context) {
 					} else {
 						subscription = text.PremiumSubscription[lang(ctx)]
 					}
-					Text = fmt.Sprintf(text.Notify2[lang(ctx)], name, subscription, p.redis.Expiration(ctx))
+					Text = fmt.Sprintf(text.Notification2[lang(ctx)], name, subscription, p.redis.Expiration(ctx))
 					replyMarkup = p.settingsButton(ctx)
 				}
 

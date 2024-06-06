@@ -1,12 +1,18 @@
 package text
 
-var Notify1 = map[string]string{
-	"uz": `Assalomu alaykum, %s! Bugun sizga qanday yordam bera olishim mumkin?`,
-	"ru": `Здравствуйте, %s! Чем я могу вам помочь сегодня?`,
-	"en": `Hello, %s! How can I help you today?`,
+var Notification1 = map[string]string{
+	"uz": `Assalomu alaykum, %s! Bugun sizga qanday yordam bera olishim mumkin?
+
+⭐ +5ta so'rov ⭐`,
+	"ru": `Здравствуйте, %s! Чем я могу вам помочь сегодня?
+
+⭐ +5 запросов ⭐`,
+	"en": `Hello, %s! How can I help you today?
+
+⭐ +5 requests ⭐`,
 }
 
-var Notify2 = map[string]string{
+var Notification2 = map[string]string{
 	"uz": `*Qadrli %s!* Sizning *%s* tarifingiz *%s*da tugaydi. Yordamchidan to'liq foydalanishni davom ettirish uchun, iltimos, to'lovni amalga oshiring.`,
 	"ru": `*Уважаемый(ая) %s!* Ваша *%s* подписка закончится в *%s*. Чтобы продолжить пользоваться Yordamchi в полной мере, пожалуйста, совершите оплату.`,
 	"en": `*Dear %s!* Your *%s* subscription ends at *%s*. In order to continue using Yordamchi to its fullest, please make a payment.`,

@@ -2,11 +2,13 @@ package redis
 
 import (
 	"context"
-	"github.com/dro14/yordamchi/utils"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dro14/yordamchi/utils"
 )
 
 func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
@@ -27,6 +29,12 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 			_, ID, _ := strings.Cut(key, ":")
 			userID, _ := strconv.ParseInt(ID, 10, 64)
 			userIDs = append(userIDs, userID)
+		}
+	}
+
+	if pattern == "lang:*" || pattern == "context:*" {
+		for _, userID := range userIDs {
+			client.Set(ctx, fmt.Sprintf("free:%d", userID), 5, 0)
 		}
 	}
 
