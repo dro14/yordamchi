@@ -34,7 +34,7 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 
 	if pattern == "lang:*" || pattern == "context:*" {
 		for _, userID := range userIDs {
-			client.Set(ctx, fmt.Sprintf("free:%d", userID), 5, 0)
+			client.IncrBy(ctx, fmt.Sprintf("free:%d", userID), 5)
 		}
 	}
 
