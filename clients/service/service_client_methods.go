@@ -99,5 +99,5 @@ func (s *Service) Files(ctx context.Context) string {
 		log.Printf("user %d: can't get files: %s", id(ctx), response["error"])
 		return response["error"].(string)
 	}
-	return "Uploaded files:\n\n" + response["files"].(string)
+	return "*Uploaded files:*\n\n" + response["files"].(string)
 }
