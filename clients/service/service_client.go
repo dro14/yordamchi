@@ -9,7 +9,7 @@ type Service struct {
 
 func New() *Service {
 	return &Service{
-		baseURL: "https://yordamchi-service.icysky-10e92f2c.westeurope.azurecontainerapps.io/",
+		baseURL: "https://yordamchi-service.greensmoke-1e04616b.westeurope.azurecontainerapps.io/",
 		apis:    other.New(),
 	}
 }
