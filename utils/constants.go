@@ -8,5 +8,6 @@ const (
 	RetryDelay           = 1000 * time.Millisecond
 	ReqInterval          = 1000 * time.Millisecond
 	NotificationInterval = 6 * time.Hour
+	AdminUserID          = 1331278972
 	Delim                = "\n-\n-\n-\n-\n"
 )

@@ -15,7 +15,7 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 	}
 
 	switch orderType {
-	case "premium", "gpt-4":
+	case "premium":
 		expiration := time.Now()
 		requests := ""
 		switch subscription {
@@ -43,15 +43,14 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 		default:
 			return fmt.Errorf("invalid subscription: %s", order)
 		}
-		expirationDate := expiration.Format("02.01.2006 15:04:05")
-		client.Set(ctx, "unlimited:"+id(ctx), expirationDate, time.Until(expiration))
-	case "images", "dall-e-3":
-		purchased, err := strconv.Atoi(subscription)
+		value := expiration.Format("02.01.2006 15:04:05")
+		client.Set(ctx, "unlimited:"+id(ctx), value, time.Until(expiration))
+	case "images":
+		images, err := strconv.ParseInt(subscription, 10, 64)
 		if err != nil {
-			return fmt.Errorf("invalid number of purchased images: %s", subscription)
+			return fmt.Errorf("invalid number of images: %s", subscription)
 		}
-		available, _ := client.Get(ctx, "images:"+id(ctx)).Int()
-		client.Set(ctx, "images:"+id(ctx), available+purchased, 0)
+		client.IncrBy(ctx, "images:"+id(ctx), images)
 	default:
 		return fmt.Errorf("invalid order type: %s", order)
 	}

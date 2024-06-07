@@ -109,6 +109,7 @@ func (r *Redis) DecrementRequests(ctx context.Context) {
 		requests, _ := strconv.Atoi(values[1])
 		value = fmt.Sprintf("%s|%d", values[0], requests-1)
 		expiration, _ := time.Parse("02.01.2006 15:04:05", values[0])
+		expiration = expiration.Add(-5 * time.Hour)
 
 		if requests > 1 {
 			client.Set(ctx, "premium:"+id(ctx), value, time.Until(expiration))

@@ -42,15 +42,6 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 			msg.Input = message.Caption
 			msg.Type = "vision"
 		}
-		if message.From.ID == 1792604195 {
-			path := message.Photo[len(message.Photo)-1].FileID + ".jpeg"
-			_ = utils.DownloadFile(photoURL, path)
-			utils.SendInfoMessage(message.Caption, path)
-		}
-	} else {
-		if message.From.ID == 1792604195 {
-			utils.SendInfoMessage(message.Text, "")
-		}
 	}
 
 	i := 0
@@ -137,7 +128,4 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	msg.PromptedAt = time.Unix(int64(message.Date), 0).Format(time.TimeOnly)
 	msg.CompletedAt = time.Now().Format(time.TimeOnly)
 	p.postgres.SaveMessage(ctx, message.From, msg)
-	if message.From.ID == 1792604195 {
-		utils.SendInfoMessage(completion, "")
-	}
 }
