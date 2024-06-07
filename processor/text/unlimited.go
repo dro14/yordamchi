@@ -1,7 +1,7 @@
 package text
 
 var Unlimited = map[string]string{
-	"uz": `Cheksiz so'rovlar kerakmi? Unda *cheksiz obunaga* o'ting!
+	"uz": `Yordamchidan cheksiz foydalanmoqchimisiz? Unda *cheksiz obunaga* o'ting!
 
 Cheksiz obunada:
 • ChatGPT - *GPT-3.5* ✅
@@ -15,7 +15,7 @@ Cheksiz obunada:
 
 Millionlar ishongan servis - *Payme* orqali to'lang`,
 
-	"ru": `Хотите пользоваться без никаких лимитов? Тогда перейдите на *безлимитную подписку*!
+	"ru": `Хотите пользоваться Yordamchi без никаких лимитов? Тогда перейдите на *безлимитную подписку*!
 
 В безлимитной подписке:
 • ChatGPT - *GPT-3.5* ✅
@@ -29,7 +29,7 @@ Millionlar ishongan servis - *Payme* orqali to'lang`,
 
 Оплатите через *Payme* - доверянный миллионами сервис`,
 
-	"en": `Need unlimited requests? Then switch to the *unlimited subscription*!
+	"en": `Do you want unlimited access to Yordamchi? Then switch to the *unlimited subscription*!
 
 In the unlimited subscription:
 • ChatGPT - *GPT-3.5* ✅
