@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/dro14/yordamchi/clients/openai/types"
+	"github.com/dro14/yordamchi/utils"
 )
 
 const Baseurl = "https://api.openai.com/v1/"
@@ -30,6 +32,9 @@ func (o *OpenAI) Completions(ctx context.Context, messages []types.Message, tool
 	}
 	if ctx.Value("json_mode") == true {
 		request.ResponseFormat = &types.ResponseFormat{Type: "json_object"}
+	}
+	if id(ctx) == strconv.Itoa(utils.AdminUserID) {
+		request.Model = "gpt-4-turbo"
 	}
 
 	resp, err := o.send(ctx, request)
