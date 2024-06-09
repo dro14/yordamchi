@@ -63,11 +63,11 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	if blocked || !foundLang {
 		if !foundLang {
 			p.language(ctx)
-			blockedUsers.Delete(message.From.ID)
+			messageBuffer.Delete(message.From.ID)
 		}
 		return
 	}
-	defer blockedUsers.Delete(message.From.ID)
+	defer messageBuffer.Delete(message.From.ID)
 
 	p.command(ctx, message)
 	if message.IsCommand() {

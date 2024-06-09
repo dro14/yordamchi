@@ -12,22 +12,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-var blockedUsers sync.Map
-
-func isBlocked(userID int64) bool {
-	_, ok := blockedUsers.Load(userID)
-	if ok {
-		return true
-	}
-	blockedUsers.Store(userID, true)
-	go unblockUser(userID)
-	return false
-}
-
-func unblockUser(userID int64) {
-	time.Sleep(10 * time.Second)
-	blockedUsers.Delete(userID)
-}
+var messageBuffer sync.Map
 
 func start(ctx context.Context) time.Time {
 	return ctx.Value("start").(time.Time)
@@ -46,7 +31,15 @@ func model(ctx context.Context) string {
 }
 
 func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
-	if message.From.IsBot || message.Chat.Type != "private" || isBlocked(message.From.ID) {
+	value, ok := messageBuffer.Load(message.From.ID)
+	if ok {
+		message.Text = value.(string) + "\n" + message.Text
+	}
+	messageBuffer.Store(message.From.ID, message.Text)
+	time.Sleep(200 * time.Millisecond)
+	value, _ = messageBuffer.Load(message.From.ID)
+
+	if message.From.IsBot || message.Chat.Type != "private" || value != message.Text {
 		return ctx, true, true
 	}
 	ctx = context.WithValue(ctx, "start", time.Now())
@@ -79,6 +72,6 @@ func (p *Processor) msg(ctx context.Context) string {
 	}
 }
 
-func (p *Processor) needTranslation(ctx context.Context, prompt string) bool {
+func (p *Processor) needTranslation(ctx context.Context) bool {
 	return model(ctx) == models.GPT3 && lang(ctx) == "uz"
 }

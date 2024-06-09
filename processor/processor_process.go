@@ -48,7 +48,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if p.needTranslation(ctx, message.Text) {
+	if p.needTranslation(ctx) {
 		ctx = context.WithValue(ctx, "stream", false)
 		ctx = context.WithValue(ctx, "translate", true)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)

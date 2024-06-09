@@ -164,8 +164,8 @@ func getToolCallID(response *types.Response) string {
 var googleSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
-		Name:        "google_search",
-		Description: "use google search ONLY WHEN you need to find real-time information",
+		Name: "google_search",
+		//Description: "use google search ONLY WHEN you need to find real-time information",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
@@ -178,8 +178,8 @@ var googleSearch = types.Tool{
 var fileSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
-		Name:        "file_search",
-		Description: "use file search ONLY WHEN you need information from the user-uploaded file",
+		Name: "file_search",
+		//Description: "use file search ONLY WHEN you need information from the user-uploaded file",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
