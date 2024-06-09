@@ -18,6 +18,11 @@ import (
 	"github.com/dro14/yordamchi/utils"
 )
 
+const (
+	googleSearchDescription = "Searches for real-time information in Google"
+	fileSearchDescription   = "Searches for additional information in the file the user provided. File name: "
+)
+
 func streamResponse(ctx context.Context, resp *http.Response, completion string, channel chan<- string) (*types.Response, error) {
 	var stream, send atomic.Bool
 	go func() {
@@ -165,7 +170,6 @@ var googleSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
 		Name: "google_search",
-		//Description: "use google search ONLY WHEN you need to find real-time information",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
@@ -179,7 +183,6 @@ var fileSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
 		Name: "file_search",
-		//Description: "use file search ONLY WHEN you need information from the user-uploaded file",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
