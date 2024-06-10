@@ -90,8 +90,7 @@ func (s *Service) Delete(ctx context.Context) {
 }
 
 func (s *Service) Files(ctx context.Context) string {
-	request := map[string]any{"user_id": id(ctx)}
-	response, err := s.makeRequest(ctx, request, s.baseURL+"files")
+	response, err := s.makeRequest(ctx, nil, s.baseURL+"files")
 	if err != nil {
 		return "🚨 ERROR 🚨"
 	}
