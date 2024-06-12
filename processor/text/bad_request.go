@@ -1,7 +1,7 @@
 package text
 
 var BadRequest = map[string]string{
-	"uz": `🚨 *Xatolik* 🚨`,
-	"ru": `🚨 *Ошибка* 🚨`,
-	"en": `🚨 *Error* 🚨`,
+	"uz": `❗ *So'rovda xatolik bor* ❗`,
+	"ru": `❗ *Ошибка в запросе* ❗`,
+	"en": `❗ *Error in the request* ❗`,
 }

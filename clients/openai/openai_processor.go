@@ -3,6 +3,7 @@ package openai
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -45,15 +46,19 @@ Retry:
 			return strings.Contains(errMsg, s)
 		}
 		switch {
-		case is("400 Bad Request"):
+		case errors.Is(err, contextLengthExceeded):
+			channel <- text.ContextLengthExceeded[lang(ctx)]
+			return
+		case errors.Is(err, inappropriateRequest):
+			channel <- text.InappropriateRequest[lang(ctx)]
+			return
+		case errors.Is(err, badRequest):
 			channel <- text.BadRequest[lang(ctx)]
 			return
-		case is("stream error"):
-			channel <- text.Error[lang(ctx)]
+		case is("context deadline exceeded"), is("500 Internal Server Error"), is("502 Bad Gateway"):
 			retryDelay = 0
-		case is("context deadline exceeded"),
-			is("500 Internal Server Error"),
-			is("502 Bad Gateway"):
+		case is("stream error"):
+			channel <- text.StreamError[lang(ctx)]
 			retryDelay = 0
 		}
 		if msg.Attempts < utils.RetryAttempts {
@@ -61,7 +66,7 @@ Retry:
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
-			channel <- text.RequestFailed[lang(ctx)]
+			channel <- text.FailedRequest[lang(ctx)]
 			return
 		}
 	} else if msg.Attempts > 1 {
@@ -85,7 +90,7 @@ Retry:
 					goto Retry
 				} else {
 					log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
-					channel <- text.RequestFailed[lang(ctx)]
+					channel <- text.FailedRequest[lang(ctx)]
 					return
 				}
 			}
@@ -117,7 +122,7 @@ Retry:
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, msg.Attempts)
-			channel <- text.RequestFailed[lang(ctx)]
+			channel <- text.FailedRequest[lang(ctx)]
 			return
 		}
 	}
@@ -149,11 +154,13 @@ Retry:
 			return strings.Contains(errMsg, s)
 		}
 		switch {
-		case is("400 Bad Request"):
+		case errors.Is(err, contextLengthExceeded):
+			return "", text.ContextLengthExceeded[lang(ctx)]
+		case errors.Is(err, inappropriateRequest):
+			return "", text.InappropriateRequest[lang(ctx)]
+		case errors.Is(err, badRequest):
 			return "", text.BadRequest[lang(ctx)]
-		case is("context deadline exceeded"),
-			is("500 Internal Server Error"),
-			is("502 Bad Gateway"):
+		case is("context deadline exceeded"), is("500 Internal Server Error"), is("502 Bad Gateway"):
 			retryDelay = 0
 		}
 		if attempts < utils.RetryAttempts {
@@ -161,7 +168,7 @@ Retry:
 			goto Retry
 		} else {
 			log.Printf("%q failed after %d attempts", errMsg, attempts)
-			return "", text.RequestFailed[lang(ctx)]
+			return "", text.FailedRequest[lang(ctx)]
 		}
 	} else if attempts > 1 {
 		log.Printf("%q was handled after %d attempts", errMsg, attempts)
@@ -171,20 +178,20 @@ Retry:
 	path, _, found := strings.Cut(URL, ".png")
 	if !found {
 		log.Printf("user %s: can't find .png in %q", id(ctx), URL)
-		return "", text.RequestFailed[lang(ctx)]
+		return "", text.FailedRequest[lang(ctx)]
 	}
 
 	_, path, found = strings.Cut(path, "img-")
 	if !found {
 		log.Printf("user %s: can't find img- in %q", id(ctx), path)
-		return "", text.RequestFailed[lang(ctx)]
+		return "", text.FailedRequest[lang(ctx)]
 	}
 	path = "img-" + path + ".png"
 
 	err = utils.DownloadFile(URL, path)
 	if err != nil {
 		log.Printf("user %s: can't download %q: %s", id(ctx), path, err)
-		return "", text.RequestFailed[lang(ctx)]
+		return "", text.FailedRequest[lang(ctx)]
 	}
 
 	return path, response.Data[0].RevisedPrompt

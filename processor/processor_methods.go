@@ -48,7 +48,7 @@ func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) 
 	if supported, found := strings.CutPrefix(errMsg, "supported file formats:"); found {
 		Text = fmt.Sprintf(text.UnsupportedFormat[lang(ctx)], supported)
 	} else if errMsg != "" {
-		Text = text.RequestFailed[lang(ctx)]
+		Text = text.FailedRequest[lang(ctx)]
 	} else {
 		Text = fmt.Sprintf(text.FileLoaded[lang(ctx)], message.Document.FileName)
 	}

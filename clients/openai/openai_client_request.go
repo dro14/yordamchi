@@ -4,12 +4,21 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/dro14/yordamchi/clients/openai/types"
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"time"
+
+	"github.com/dro14/yordamchi/clients/openai/types"
+)
+
+var (
+	contextLengthExceeded = errors.New("context length exceeded")
+	inappropriateRequest  = errors.New("inappropriate request")
+	badRequest            = errors.New("bad request")
 )
 
 func (o *OpenAI) send(ctx context.Context, request any) (*http.Response, error) {
@@ -30,10 +39,23 @@ func (o *OpenAI) send(ctx context.Context, request any) (*http.Response, error) 
 		err = json.Unmarshal(bts, response)
 		if err != nil {
 			log.Printf("user %s: %s\ncan't decode response: %s\nbody: %s", id(ctx), resp.Status, err, bts)
-		} else {
-			log.Printf("user %s: %s\ntype: %s\nmessage: %s", id(ctx), resp.Status, response.Error.Type, response.Error.Message)
+			return nil, fmt.Errorf("user %s: %s", id(ctx), resp.Status)
 		}
-		return nil, fmt.Errorf("user %s: %s", id(ctx), resp.Status)
+
+		log.Printf("user %s: %s\ntype: %s\nmessage: %s", id(ctx), resp.Status, response.Error.Type, response.Error.Message)
+		is := func(s string) bool {
+			return regexp.MustCompile(s).MatchString(response.Error.Message)
+		}
+		switch {
+		case is(`This model's maximum context length is \d+ tokens`):
+			return nil, contextLengthExceeded
+		case is(`Your request was rejected as a result of our safety system`):
+			return nil, inappropriateRequest
+		case resp.StatusCode == http.StatusBadRequest:
+			return nil, badRequest
+		default:
+			return nil, fmt.Errorf("user %s: %s", id(ctx), resp.Status)
+		}
 	}
 }
 

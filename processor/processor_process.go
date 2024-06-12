@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/models"
@@ -94,10 +95,9 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 			msg.Requests++
 			time.Sleep(utils.ReqInterval)
 
-			switch completion {
-			case text.BadRequest[lang(ctx)], text.RequestFailed[lang(ctx)]:
+			if strings.HasPrefix(completion, "❗") && strings.HasSuffix(completion, "❗") {
 				return
-			case text.Error[lang(ctx)]:
+			} else if completion == text.StreamError[lang(ctx)] {
 				i = 0
 			}
 
