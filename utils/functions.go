@@ -39,7 +39,7 @@ func Slice(s string, maxLen int) []string {
 	slices = append(slices, string(runes))
 	for i := range slices {
 		codeTags := CodeRgx.FindAllString(slices[i], -1)
-		if len(codeTags)%2 != 0 {
+		if len(codeTags)%2 != 0 && i+1 < len(slices) {
 			slices[i] = slices[i] + "```"
 			slices[i+1] = codeTags[len(codeTags)-1] + slices[i+1]
 		}
