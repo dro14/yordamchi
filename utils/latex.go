@@ -6,6 +6,7 @@ var (
 	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*(.+?)\s*\\[)\]]`)
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	CodeRgx   = regexp.MustCompile("(?<=\\n)```\\w*(?=\\n)")
 )
 
 const (

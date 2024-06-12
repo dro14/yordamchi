@@ -36,7 +36,15 @@ func Slice(s string, maxLen int) []string {
 		slices = append(slices, string(runes[:cutIndex]))
 		runes = runes[cutIndex:]
 	}
-	return append(slices, string(runes))
+	slices = append(slices, string(runes))
+	for i := range slices {
+		codeTags := CodeRgx.FindAllString(slices[i], -1)
+		if len(codeTags)%2 != 0 {
+			slices[i] = slices[i] + "```"
+			slices[i+1] = codeTags[len(codeTags)-1] + slices[i+1]
+		}
+	}
+	return slices
 }
 
 func DownloadFile(URL, path string) error {
