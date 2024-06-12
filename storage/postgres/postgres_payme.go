@@ -14,13 +14,19 @@ import (
 )
 
 func (p *Postgres) NewOrder(userID int64, amount int, Type string) (int, error) {
-	query := "INSERT INTO orders (user_id, amount, type, created_at) VALUES ($1, $2, $3, $4) RETURNING id;"
-	args := []any{userID, amount, Type, time.Now().Format(time.DateTime)}
+	query := "SELECT id, updated_at FROM orders WHERE user_id = $1 AND amount = $2 AND type = $3 ORDER BY created_at DESC;"
+	args := []any{userID, amount, Type}
 	var id int
-	err := p.queryPayme(query, args, &id)
-	if err != nil {
-		log.Println("can't create order:", err)
-		return 0, err
+	var updatedAt string
+	err := p.queryPayme(query, args, &id, &updatedAt)
+	if err != nil || updatedAt != "" {
+		query = "INSERT INTO orders (user_id, amount, type, created_at) VALUES ($1, $2, $3, $4) RETURNING id;"
+		args = []any{userID, amount, Type, time.Now().Format(time.DateTime)}
+		err = p.queryPayme(query, args, &id)
+		if err != nil {
+			log.Println("can't create order:", err)
+			return 0, err
+		}
 	}
 	return id, nil
 }
