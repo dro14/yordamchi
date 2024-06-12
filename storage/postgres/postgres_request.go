@@ -82,6 +82,8 @@ Retry:
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return err
+		} else if strings.Contains(err.Error(), "converting NULL to string is unsupported") {
+			return err
 		} else if attempts < utils.RetryAttempts {
 			log.Printf("%s\n%s\n", query, err)
 			utils.Sleep(&retryDelay)
