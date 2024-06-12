@@ -27,8 +27,7 @@ func Slice(s string, maxLen int) []string {
 		cutIndex := maxLen
 	Loop:
 		for i := maxLen; i >= 0; i-- {
-			switch runes[i] {
-			case ' ', '\n', '\t', '\r':
+			if runes[i] == '\n' {
 				cutIndex = i
 				break Loop
 			}
