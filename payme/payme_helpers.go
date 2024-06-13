@@ -2,12 +2,17 @@ package payme
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+func lang(ctx context.Context) string {
+	return ctx.Value("language_code").(string)
+}
 
 func (p *Payme) authorized(c *gin.Context) gin.H {
 	unauthorized := gin.H{"error": gin.H{"code": -32504, "message": "Unauthorized"}}

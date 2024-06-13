@@ -68,7 +68,7 @@ func (p *Payme) CheckoutURL(ctx context.Context, amount int, Type string) string
 	}
 	buffer := bytes.NewBuffer([]byte{})
 	writer := base64.NewEncoder(base64.StdEncoding, buffer)
-	s := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d", p.merchantID, orderID, amount)
+	s := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d;l=%s", p.merchantID, orderID, amount, lang(ctx))
 	_, err = writer.Write([]byte(s))
 	if err != nil {
 		return URL
