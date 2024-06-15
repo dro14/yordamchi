@@ -13,7 +13,7 @@ func SetConfigs() {
 	if err != nil {
 		log.Fatal("can't create yordamchi.log:", err)
 	}
-	log.SetOutput(file)
+	// log.SetOutput(file)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	file, err = os.Create("gin.log")
