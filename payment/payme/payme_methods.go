@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/dro14/yordamchi/payme/types"
+	"github.com/dro14/yordamchi/payment/payme/types"
 	"github.com/gin-gonic/gin"
 )
 

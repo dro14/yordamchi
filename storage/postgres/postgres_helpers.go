@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/dro14/yordamchi/payme/types"
+	"github.com/dro14/yordamchi/payment/payme/types"
 )
 
 func lang(ctx context.Context) string {

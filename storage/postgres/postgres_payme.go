@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/payme/types"
+	"github.com/dro14/yordamchi/payment/payme/types"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/gin-gonic/gin"
 )

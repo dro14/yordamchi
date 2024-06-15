@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
+	"io"
 	"log"
 
 	"github.com/dro14/yordamchi/legacy"
-	"github.com/dro14/yordamchi/payme"
-	"github.com/dro14/yordamchi/payme/types"
+	"github.com/dro14/yordamchi/payment/payme"
+	"github.com/dro14/yordamchi/payment/payme/types"
 	"github.com/dro14/yordamchi/processor"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/gin-gonic/gin"
@@ -33,6 +35,8 @@ func (h *Handler) Run(port string) error {
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
+	h.router.POST("/click/prepare", h.ClickPrepare)
+	h.router.POST("/click/complete", h.ClickComplete)
 	h.router.GET("/logs", h.Logs)
 	return h.router.Run(":" + port)
 }
@@ -75,6 +79,32 @@ func (h *Handler) Payme(c *gin.Context) {
 	}
 	response := h.payme.Respond(c, request)
 	c.JSON(200, response)
+}
+
+func (h *Handler) ClickPrepare(c *gin.Context) {
+	fmt.Println(c.Query("click_trans_id"))
+	fmt.Println(c.Query("service_id"))
+	bts, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		fmt.Println("can't read body:", err)
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Printf("%s\n", bts)
+	c.JSON(200, gin.H{"ok": true})
+}
+
+func (h *Handler) ClickComplete(c *gin.Context) {
+	fmt.Println(c.Query("click_trans_id"))
+	fmt.Println(c.Query("service_id"))
+	bts, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		fmt.Println("can't read body:", err)
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Printf("%s\n", bts)
+	c.JSON(200, gin.H{"ok": true})
 }
 
 func (h *Handler) Logs(c *gin.Context) {

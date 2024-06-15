@@ -9,7 +9,7 @@ import (
 	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/clients/telegram"
-	"github.com/dro14/yordamchi/payme"
+	"github.com/dro14/yordamchi/payment/payme"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
 	"github.com/dro14/yordamchi/utils"
