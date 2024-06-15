@@ -27,7 +27,6 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *pos
 	if userStatus(ctx) != redis.StatusFree {
 		source = o.service.Memory(ctx)
 		if source == "GOOGLE" {
-			googleSearch.Function.Arguments = googleSearchDescription
 			tools = append(tools, googleSearch)
 		} else {
 			fileSearch.Function.Description = fileSearchDescription + source
