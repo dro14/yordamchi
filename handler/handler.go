@@ -2,12 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"io"
 	"log"
 
 	"github.com/dro14/yordamchi/legacy"
+	clickTypes "github.com/dro14/yordamchi/payment/click/types"
 	"github.com/dro14/yordamchi/payment/payme"
-	"github.com/dro14/yordamchi/payment/payme/types"
+	paymeTypes "github.com/dro14/yordamchi/payment/payme/types"
 	"github.com/dro14/yordamchi/processor"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/gin-gonic/gin"
@@ -70,7 +70,7 @@ func (h *Handler) Legacy(c *gin.Context) {
 }
 
 func (h *Handler) Payme(c *gin.Context) {
-	request := &types.Request{}
+	request := &paymeTypes.Request{}
 	err := c.ShouldBindJSON(request)
 	if err != nil {
 		log.Println("can't bind json:", err)
@@ -82,28 +82,26 @@ func (h *Handler) Payme(c *gin.Context) {
 }
 
 func (h *Handler) ClickPrepare(c *gin.Context) {
-	fmt.Println(c.Query("click_trans_id"))
-	fmt.Println(c.Query("service_id"))
-	bts, err := io.ReadAll(c.Request.Body)
+	request := &clickTypes.Request{}
+	err := c.ShouldBind(request)
 	if err != nil {
-		fmt.Println("can't read body:", err)
+		log.Println("can't bind:", err)
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Printf("%s\n", bts)
+	fmt.Println(request)
 	c.JSON(200, gin.H{"ok": true})
 }
 
 func (h *Handler) ClickComplete(c *gin.Context) {
-	fmt.Println(c.Query("click_trans_id"))
-	fmt.Println(c.Query("service_id"))
-	bts, err := io.ReadAll(c.Request.Body)
+	request := &clickTypes.Request{}
+	err := c.ShouldBind(request)
 	if err != nil {
-		fmt.Println("can't read body:", err)
+		log.Println("can't bind:", err)
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Printf("%s\n", bts)
+	fmt.Println(request)
 	c.JSON(200, gin.H{"ok": true})
 }
 
