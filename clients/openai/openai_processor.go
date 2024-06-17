@@ -12,19 +12,19 @@ import (
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/storage/postgres"
-	"github.com/dro14/yordamchi/storage/redis"
+	dbTypes "github.com/dro14/yordamchi/storage/postgres/types"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 )
 
-func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *postgres.Message, channel chan<- string) {
+func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbTypes.Message, channel chan<- string) {
 	defer close(channel)
 	defer utils.RecoverIfPanic()
 
 	var completion, source string
 	var tools []types.Tool
 	messages := o.redis.Context(ctx, &prompt)
-	if userStatus(ctx) != redis.StatusFree {
+	if userStatus(ctx) != status.Free {
 		source = o.service.Memory(ctx)
 		if source == "GOOGLE" {
 			tools = append(tools, googleSearch)
@@ -207,7 +207,7 @@ func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 	ctx = context.WithValue(ctx, "user_status", o.redis.UserStatus(ctx))
 	ctx = context.WithValue(ctx, "model", models.GPT3)
 
-	if userStatus(ctx) == redis.StatusExhausted {
+	if userStatus(ctx) == status.Exhausted {
 		return text.DefaultQuestions[lang(ctx)]
 	}
 
@@ -228,7 +228,7 @@ func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 		return text.DefaultQuestions[lang(ctx)]
 	}
 
-	if userStatus(ctx) != redis.StatusPremium && lang(ctx) == "uz" {
+	if userStatus(ctx) != status.Premium && lang(ctx) == "uz" {
 		for i, question := range questions["questions"] {
 			questions["questions"][i] = o.apis.Translate("en", "uz", question)
 		}

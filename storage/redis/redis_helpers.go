@@ -3,14 +3,16 @@ package redis
 import (
 	"context"
 	"fmt"
+
+	"github.com/dro14/yordamchi/storage/redis/status"
 )
 
 func id(ctx context.Context) string {
 	return fmt.Sprintf("%d", ctx.Value("user_id").(int64))
 }
 
-func userStatus(ctx context.Context) UserStatus {
-	return ctx.Value("user_status").(UserStatus)
+func userStatus(ctx context.Context) status.Status {
+	return ctx.Value("user_status").(status.Status)
 }
 
 func lang(ctx context.Context) string {

@@ -13,31 +13,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (p *Postgres) NewOrder(userID int64, amount int, Type string) (int, error) {
-	query := "SELECT id, created_at, updated_at FROM orders WHERE user_id = $1 AND amount = $2 AND type = $3 ORDER BY created_at DESC;"
-	args := []any{userID, amount, Type}
-	var id int
-	var createdAt, updatedAt string
-	err := p.queryPayme(query, args, &id, &createdAt, &updatedAt)
-	if err != nil || createdAt != updatedAt {
-		query = "INSERT INTO orders (user_id, amount, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id;"
-		args = []any{userID, amount, Type, time.Now().Format(time.DateTime), time.Now().Format(time.DateTime)}
-		err = p.queryPayme(query, args, &id)
-		if err != nil {
-			log.Println("can't create order:", err)
-			return 0, err
-		}
-	}
-	return id, nil
-}
-
 func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 	query := "SELECT amount, type, user_id FROM orders WHERE id = $1;"
 	args := []any{params.Account.OrderID}
 	var amount int
 	var order string
 	var userID int64
-	err := p.queryPayme(query, args, &amount, &order, &userID)
+	err := p.queryPayment(query, args, &amount, &order, &userID)
 	if err != nil {
 		log.Println("can't get order:", err)
 		return nil, -31050
@@ -56,7 +38,7 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 
 	var title string
 	switch orderType {
-	case "premium", "gpt-4":
+	case "premium":
 		switch subscription {
 		case "daily":
 			title = "Дневная премиум подписка"
@@ -78,7 +60,7 @@ func (p *Postgres) CheckPerformTransaction(params *types.Params) (gin.H, int) {
 			log.Printf("user %d: invalid subscripion: %v", userID, order)
 			return nil, -31052
 		}
-	case "images", "dall-e-3":
+	case "images":
 		_, err = strconv.Atoi(subscription)
 		if err != nil {
 			log.Println("invalid number of images:", subscription)
@@ -135,7 +117,7 @@ func (p *Postgres) CreateTransaction(params *types.Params) (gin.H, int) {
 
 	query := "INSERT INTO transactions (id, time, amount, order_id, create_time, transaction, state) VALUES ($1, $2, $3, $4, $5, $6, $7);"
 	args := []any{params.ID, params.Time, params.Amount, params.Account.OrderID, result["create_time"], result["transaction"], result["state"]}
-	err := p.execPayme(query, args)
+	err := p.execPayment(query, args)
 	if err != nil {
 		log.Println("can't create transaction:", err)
 		return nil, -32400
@@ -162,7 +144,7 @@ func (p *Postgres) PerformTransaction(params *types.Params) (gin.H, int) {
 	query := "UPDATE transactions SET state = $1, perform_time = $2 WHERE id = $3 RETURNING order_id;"
 	args := []any{result["state"], result["perform_time"], params.ID}
 	var orderID int
-	err := p.queryPayme(query, args, &orderID)
+	err := p.queryPayment(query, args, &orderID)
 	if err != nil {
 		log.Printf("can't perform transaction %s: %s", params.ID, err)
 		return nil, -32400
@@ -172,7 +154,7 @@ func (p *Postgres) PerformTransaction(params *types.Params) (gin.H, int) {
 	args = []any{time.Now().Format(time.DateTime), orderID}
 	var userID int64
 	var Type string
-	err = p.queryPayme(query, args, &userID, &Type)
+	err = p.queryPayment(query, args, &userID, &Type)
 	if err != nil {
 		log.Printf("can't update order %d: %s", orderID, err)
 		return nil, -32400
@@ -222,7 +204,7 @@ func (p *Postgres) CancelTransaction(params *types.Params) (gin.H, int) {
 	query := "UPDATE transactions SET state = $1, cancel_time = $2, reason = $3 WHERE id = $4 RETURNING order_id;"
 	args := []any{result["state"], result["cancel_time"], params.Reason, params.ID}
 	var orderID int
-	err := p.queryPayme(query, args, &orderID)
+	err := p.queryPayment(query, args, &orderID)
 	if err != nil {
 		log.Println("can't cancel transaction:", err)
 		return nil, -32400
@@ -230,7 +212,7 @@ func (p *Postgres) CancelTransaction(params *types.Params) (gin.H, int) {
 
 	query = "UPDATE orders SET updated_at = $1 WHERE id = $2;"
 	args = []any{time.Now().Format(time.DateTime), orderID}
-	err = p.execPayme(query, args)
+	err = p.execPayment(query, args)
 	if err != nil {
 		log.Println("can't update order:", err)
 		return nil, -32400
@@ -256,7 +238,7 @@ func (p *Postgres) CheckTransaction(params *types.Params) (gin.H, int) {
 	var performTime int64
 	var cancelTime int64
 	var reason int
-	err := p.queryPayme(query, args, &id, &createTime, &transaction, &state, &performTime, &cancelTime, &reason)
+	err := p.queryPayment(query, args, &id, &createTime, &transaction, &state, &performTime, &cancelTime, &reason)
 	if err != nil {
 		return nil, -31003
 	}

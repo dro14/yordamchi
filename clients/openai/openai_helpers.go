@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/dro14/yordamchi/clients/openai/types"
-	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 )
 
@@ -138,8 +138,8 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func userStatus(ctx context.Context) redis.UserStatus {
-	return ctx.Value("user_status").(redis.UserStatus)
+func userStatus(ctx context.Context) status.Status {
+	return ctx.Value("user_status").(status.Status)
 }
 
 func translate(ctx context.Context) bool {

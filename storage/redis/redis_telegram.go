@@ -9,51 +9,42 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-redis/redis/v8"
 )
 
-type UserStatus int
-
-const (
-	StatusUnknown UserStatus = iota
-	StatusExhausted
-	StatusFree
-	StatusUnlimited
-	StatusPremium
-)
-
-func (r *Redis) UserStatus(ctx context.Context) UserStatus {
+func (r *Redis) UserStatus(ctx context.Context) status.Status {
 	_, err := client.Get(ctx, "premium:"+id(ctx)).Result()
 	if err == nil {
-		return StatusPremium
+		return status.Premium
 	} else if !errors.Is(err, redis.Nil) {
 		log.Printf("user %s: can't check whether status is premium: %s", id(ctx), err)
-		return StatusUnknown
+		return status.Unknown
 	}
 
 	_, err = client.Get(ctx, "unlimited:"+id(ctx)).Result()
 	if err == nil {
-		return StatusUnlimited
+		return status.Unlimited
 	} else if !errors.Is(err, redis.Nil) {
 		log.Printf("user %s: can't check whether status is unlimited: %s", id(ctx), err)
-		return StatusUnknown
+		return status.Unknown
 	}
 
 	requests, err := client.Get(ctx, "free:"+id(ctx)).Int()
 	if err == nil {
 		if requests > 0 {
-			return StatusFree
+			return status.Free
 		}
 	} else if errors.Is(err, redis.Nil) {
 		client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeReqs, 0)
-		return StatusFree
+		return status.Free
 	} else {
 		log.Printf("user %s: can't check whether status is free: %s", id(ctx), err)
-		return StatusUnknown
+		return status.Unknown
 	}
 
-	return StatusExhausted
+	return status.Exhausted
 }
 
 func (r *Redis) Expiration(ctx context.Context) string {
@@ -98,7 +89,7 @@ func (r *Redis) Premium(ctx context.Context) (string, string) {
 }
 
 func (r *Redis) DecrementRequests(ctx context.Context) {
-	if ctx.Value("user_status") == StatusPremium {
+	if ctx.Value("user_status") == status.Premium {
 		value, err := client.Get(ctx, "premium:"+id(ctx)).Result()
 		if err != nil {
 			log.Printf("can't get %q: %s", "premium:"+id(ctx), err)
@@ -118,7 +109,7 @@ func (r *Redis) DecrementRequests(ctx context.Context) {
 		} else {
 			log.Printf("user %s: invalid number of requests: %d", id(ctx), requests)
 		}
-	} else if ctx.Value("user_status") == StatusFree {
+	} else if ctx.Value("user_status") == status.Free {
 		client.Decr(ctx, "free:"+id(ctx))
 	}
 }

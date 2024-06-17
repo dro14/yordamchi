@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/dro14/yordamchi/legacy"
+	"github.com/dro14/yordamchi/payment/click"
+	"github.com/dro14/yordamchi/payment/click/methods"
 	clickTypes "github.com/dro14/yordamchi/payment/click/types"
 	"github.com/dro14/yordamchi/payment/payme"
 	paymeTypes "github.com/dro14/yordamchi/payment/payme/types"
@@ -19,6 +20,7 @@ type Handler struct {
 	processor *processor.Processor
 	legacy    *legacy.Legacy
 	payme     *payme.Payme
+	click     *click.Click
 }
 
 func New() *Handler {
@@ -27,6 +29,7 @@ func New() *Handler {
 		processor: processor.New(),
 		legacy:    legacy.New(),
 		payme:     payme.New(),
+		click:     click.New(),
 	}
 }
 
@@ -35,8 +38,8 @@ func (h *Handler) Run(port string) error {
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
-	h.router.POST("/click/prepare", h.ClickPrepare)
-	h.router.POST("/click/complete", h.ClickComplete)
+	h.router.POST("/click/prepare", h.Click)
+	h.router.POST("/click/complete", h.Click)
 	h.router.GET("/logs", h.Logs)
 	return h.router.Run(":" + port)
 }
@@ -81,28 +84,23 @@ func (h *Handler) Payme(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-func (h *Handler) ClickPrepare(c *gin.Context) {
-	request := &clickTypes.Request{}
+func (h *Handler) Click(c *gin.Context) {
+	request, response := &clickTypes.Request{}, gin.H{}
 	err := c.ShouldBind(request)
-	if err != nil {
+	switch {
+	case err != nil:
 		log.Println("can't bind:", err)
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
+		response = gin.H{"error": -8, "error_note": "Error in request from click"}
+	case request.Error != 0:
+		response = h.click.Cancel(request)
+	case request.Action == methods.Prepare:
+		response = h.click.Prepare(request)
+	case request.Action == methods.Complete:
+		response = h.click.Complete(request)
+	default:
+		response = gin.H{"error": -3, "error_note": "Action not found"}
 	}
-	fmt.Println(request)
-	c.JSON(200, gin.H{"ok": true})
-}
-
-func (h *Handler) ClickComplete(c *gin.Context) {
-	request := &clickTypes.Request{}
-	err := c.ShouldBind(request)
-	if err != nil {
-		log.Println("can't bind:", err)
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-	fmt.Println(request)
-	c.JSON(200, gin.H{"ok": true})
+	c.JSON(200, response)
 }
 
 func (h *Handler) Logs(c *gin.Context) {

@@ -10,7 +10,7 @@ import (
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/storage/postgres"
+	"github.com/dro14/yordamchi/storage/postgres/types"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -25,7 +25,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	isTyping := p.telegram.SetTyping(ctx)
 	defer isTyping.Store(false)
 
-	msg := &postgres.Message{Type: Type}
+	msg := &types.Message{Type: Type}
 	msg.Requests++
 	msg.Input = message.Text
 	msg.FirstSend = int(time.Since(start(ctx)).Milliseconds())

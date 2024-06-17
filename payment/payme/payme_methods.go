@@ -60,19 +60,21 @@ func (p *Payme) Respond(c *gin.Context, request *types.Request) gin.H {
 }
 
 func (p *Payme) CheckoutURL(ctx context.Context, amount int, Type string) string {
-	URL := "https://checkout.paycom.uz/"
-	userID := ctx.Value("user_id").(int64)
-	orderID, err := p.postgres.NewOrder(userID, amount, Type)
+	orderID, err := p.postgres.NewOrder(id(ctx), amount, Type)
 	if err != nil {
-		return URL
+		return p.url
 	}
-	buffer := bytes.NewBuffer([]byte{})
+
+	buffer := bytes.NewBuffer(nil)
 	writer := base64.NewEncoder(base64.StdEncoding, buffer)
-	s := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d;l=%s", p.merchantID, orderID, amount, lang(ctx))
+	defer func() { _ = writer.Close() }()
+
+	s := fmt.Sprintf("m=%s;ac.order_id=%d;a=%d;l=%s;c=https://t.me/yordamchi_ai_bot",
+		p.merchantID, orderID, amount, lang(ctx))
 	_, err = writer.Write([]byte(s))
 	if err != nil {
-		return URL
+		return p.url
 	}
-	_ = writer.Close()
-	return URL + buffer.String()
+
+	return p.url + buffer.String()
 }

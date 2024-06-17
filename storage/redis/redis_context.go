@@ -9,6 +9,7 @@ import (
 
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 )
 
@@ -76,7 +77,7 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 
 func (r *Redis) System(ctx context.Context) string {
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
-	if err != nil || userStatus(ctx) == StatusFree {
+	if err != nil || userStatus(ctx) == status.Free {
 		if translate(ctx) {
 			return template["en"]
 		} else {

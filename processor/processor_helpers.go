@@ -8,7 +8,7 @@ import (
 
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -18,8 +18,8 @@ func start(ctx context.Context) time.Time {
 	return ctx.Value("start").(time.Time)
 }
 
-func userStatus(ctx context.Context) redis.UserStatus {
-	return ctx.Value("user_status").(redis.UserStatus)
+func userStatus(ctx context.Context) status.Status {
+	return ctx.Value("user_status").(status.Status)
 }
 
 func lang(ctx context.Context) string {
@@ -48,7 +48,7 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 	ctx = context.WithValue(ctx, "translate", false)
 	ctx = context.WithValue(ctx, "json_mode", false)
 	ctx = context.WithValue(ctx, "user_status", p.redis.UserStatus(ctx))
-	if userStatus(ctx) == redis.StatusPremium {
+	if userStatus(ctx) == status.Premium {
 		ctx = context.WithValue(ctx, "model", models.GPT4)
 	} else {
 		ctx = context.WithValue(ctx, "model", models.GPT3)
@@ -59,11 +59,11 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 
 func (p *Processor) msg(ctx context.Context) string {
 	switch userStatus(ctx) {
-	case redis.StatusPremium:
+	case status.Premium:
 		template := text.Settings2[lang(ctx)]
 		expiration, requests := p.redis.Premium(ctx)
 		return fmt.Sprintf(template, requests, expiration)
-	case redis.StatusUnlimited:
+	case status.Unlimited:
 		template := text.Settings1[lang(ctx)]
 		return fmt.Sprintf(template, p.redis.Expiration(ctx))
 	default:

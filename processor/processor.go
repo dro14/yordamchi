@@ -12,6 +12,7 @@ import (
 	"github.com/dro14/yordamchi/payment/payme"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -75,25 +76,25 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	}
 
 	switch userStatus(ctx) {
-	case redis.StatusPremium:
+	case status.Premium:
 		if message.Text != "" || message.Photo != nil {
 			p.process(ctx, message, "premium")
 		} else if message.Document != nil {
 			p.processFile(ctx, message)
 		}
-	case redis.StatusUnlimited:
+	case status.Unlimited:
 		if message.Text != "" || message.Photo != nil {
 			p.process(ctx, message, "unlimited")
 		} else if message.Document != nil {
 			p.processFile(ctx, message)
 		}
-	case redis.StatusFree:
+	case status.Free:
 		if message.Text != "" {
 			p.process(ctx, message, "free")
 		} else if message.Photo != nil || message.Document != nil {
 			p.paidFeature(ctx)
 		}
-	case redis.StatusExhausted:
+	case status.Exhausted:
 		if message.Text != "" {
 			p.exhausted(ctx)
 		} else if message.Photo != nil || message.Document != nil {

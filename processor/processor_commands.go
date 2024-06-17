@@ -8,10 +8,12 @@ import (
 
 	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/storage/redis"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
+
+var underPrivileged = []status.Status{status.Free, status.Exhausted, status.Unknown}
 
 func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 	switch message.Command() {
@@ -77,11 +79,11 @@ func (p *Processor) language(ctx context.Context) {
 }
 
 func (p *Processor) memory(ctx context.Context) {
-	switch userStatus(ctx) {
-	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
-		p.paidFeature(ctx)
-		return
-	default:
+	for _, sts := range underPrivileged {
+		if sts == userStatus(ctx) {
+			p.paidFeature(ctx)
+			return
+		}
 	}
 
 	var Text string
@@ -142,11 +144,11 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
-	switch userStatus(ctx) {
-	case redis.StatusFree, redis.StatusExhausted, redis.StatusUnknown:
-		p.paidFeature(ctx)
-		return
-	default:
+	for _, sts := range underPrivileged {
+		if sts == userStatus(ctx) {
+			p.paidFeature(ctx)
+			return
+		}
 	}
 
 	system, _ := strings.CutPrefix(message.Text, "/system")

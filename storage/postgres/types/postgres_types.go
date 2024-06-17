@@ -1,4 +1,4 @@
-package postgres
+package types
 
 type Message struct {
 	ID               int

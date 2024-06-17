@@ -53,7 +53,7 @@ Retry:
 	return nil
 }
 
-func (p *Postgres) execPayme(query string, args []any) error {
+func (p *Postgres) execPayment(query string, args []any) error {
 	retryDelay := utils.RetryDelay
 	attempts := 0
 Retry:
@@ -73,7 +73,7 @@ Retry:
 	return nil
 }
 
-func (p *Postgres) queryPayme(query string, args []any, results ...any) error {
+func (p *Postgres) queryPayment(query string, args []any, results ...any) error {
 	retryDelay := utils.RetryDelay
 	attempts := 0
 Retry:
