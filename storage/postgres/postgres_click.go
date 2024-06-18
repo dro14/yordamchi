@@ -89,6 +89,7 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request) gin.H {
 	}
 
 	ctx := context.WithValue(context.Background(), "user_id", userID)
+	ctx, _ = p.redis.Lang(ctx, "uz")
 	var message string
 	if request.Error == 0 {
 		err = p.redis.PerformTransaction(ctx, Type)
@@ -106,7 +107,6 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request) gin.H {
 		message = text.Cancel[lang(ctx)]
 	}
 
-	ctx, _ = p.redis.Lang(ctx, "uz")
 	_, err = p.telegram.SendMessage(ctx, message, 0, nil)
 	if err != nil {
 		log.Printf("user %d: can't send message: %s", userID, err)
