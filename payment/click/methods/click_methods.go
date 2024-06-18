@@ -1,7 +1,7 @@
 package methods
 
 const (
-	Prepare = iota
+	Cancel = iota - 1
+	Prepare
 	Complete
-	Cancel
 )
