@@ -57,3 +57,27 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 
 	return nil
 }
+
+func (r *Redis) CancelTransaction(ctx context.Context, order string) error {
+	subscription, orderType, found := strings.Cut(order, ":")
+	if !found {
+		return fmt.Errorf("invalid order: %s", order)
+	}
+
+	switch orderType {
+	case "premium":
+		client.Del(ctx, "premium:"+id(ctx))
+	case "unlimited":
+		client.Del(ctx, "unlimited:"+id(ctx))
+	case "images":
+		images, err := strconv.Atoi(subscription)
+		if err != nil {
+			return fmt.Errorf("invalid number of images: %s", subscription)
+		}
+		client.DecrBy(ctx, "images:"+id(ctx), int64(images))
+	default:
+		return fmt.Errorf("invalid order type: %s", order)
+	}
+
+	return nil
+}

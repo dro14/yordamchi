@@ -210,12 +210,27 @@ func (p *Postgres) CancelTransaction(params *types.Params) (gin.H, int) {
 		return nil, -32400
 	}
 
-	query = "UPDATE orders SET updated_at = $1 WHERE id = $2;"
+	query = "UPDATE orders SET updated_at = $1 WHERE id = $2 RETURNING user_id, type;"
 	args = []any{time.Now().Format(time.DateTime), orderID}
-	err = p.execPayment(query, args)
+	var userID int64
+	var Type string
+	err = p.queryPayment(query, args, &userID, &Type)
 	if err != nil {
-		log.Println("can't update order:", err)
+		log.Printf("can't update order %d: %s", orderID, err)
 		return nil, -32400
+	}
+
+	ctx := context.WithValue(context.Background(), "user_id", userID)
+	err = p.redis.CancelTransaction(ctx, Type)
+	if err != nil {
+		log.Printf("user %d: can't cancel transaction: %s", userID, err)
+		return nil, -32400
+	}
+
+	ctx, _ = p.redis.Lang(ctx, "uz")
+	_, err = p.telegram.SendMessage(ctx, text.Cancel[lang(ctx)], 0, nil)
+	if err != nil {
+		log.Printf("user %d: can't send cencel message: %s", userID, err)
 	}
 
 	delete(result, "create_time")

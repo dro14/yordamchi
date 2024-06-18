@@ -39,6 +39,8 @@ func (c *Click) Complete(request *types.Request) gin.H {
 func (c *Click) Cancel(request *types.Request) gin.H {
 	if request.SignString != c.singString(request, false) {
 		return gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
+	} else if h := c.postgres.CheckOrder(request.MerchantTransID, request.Amount); h != nil {
+		return h
 	}
 
 	response := c.postgres.UpdateClickTransaction(request, false)

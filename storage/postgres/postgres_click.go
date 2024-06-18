@@ -88,19 +88,28 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete boo
 		return gin.H{"error": -7, "error_note": "Failed to update user"}
 	}
 
+	ctx := context.WithValue(context.Background(), "user_id", userID)
+	var message string
 	if isComplete {
-		ctx := context.WithValue(context.Background(), "user_id", userID)
 		err = p.redis.PerformTransaction(ctx, Type)
 		if err != nil {
 			log.Printf("user %d: can't perform transaction: %s", userID, err)
 			return gin.H{"error": -7, "error_note": "Failed to update user"}
 		}
-
-		ctx, _ = p.redis.Lang(ctx, "uz")
-		_, err = p.telegram.SendMessage(ctx, text.Success[lang(ctx)], 0, nil)
+		message = text.Success[lang(ctx)]
+	} else {
+		err = p.redis.CancelTransaction(ctx, Type)
 		if err != nil {
-			log.Printf("user %d: can't send success message: %s", userID, err)
+			log.Printf("user %d: can't cancel transaction: %s", userID, err)
+			return gin.H{"error": -7, "error_note": "Failed to update user"}
 		}
+		message = text.Cancel[lang(ctx)]
+	}
+
+	ctx, _ = p.redis.Lang(ctx, "uz")
+	_, err = p.telegram.SendMessage(ctx, message, 0, nil)
+	if err != nil {
+		log.Printf("user %d: can't send message: %s", userID, err)
 	}
 
 	return nil
