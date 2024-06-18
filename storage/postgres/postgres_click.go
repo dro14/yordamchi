@@ -1,10 +1,13 @@
 package postgres
 
 import (
+	"context"
 	"log"
+	"time"
 
 	"github.com/dro14/yordamchi/payment/click/methods"
 	"github.com/dro14/yordamchi/payment/click/types"
+	"github.com/dro14/yordamchi/processor/text"
 	"github.com/gin-gonic/gin"
 )
 
@@ -73,6 +76,31 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete boo
 	if err != nil {
 		log.Println("can't update click transaction:", err)
 		return gin.H{"error": -7, "error_note": "Failed to update user"}
+	}
+
+	query = "UPDATE orders SET updated_at = $1 WHERE id = $2 RETURNING user_id, type;"
+	args = []any{time.Now().Format(time.DateTime), request.MerchantTransID}
+	var userID int64
+	var Type string
+	err = p.queryPayment(query, args, &userID, &Type)
+	if err != nil {
+		log.Printf("can't update order %d: %s", request.MerchantTransID, err)
+		return gin.H{"error": -7, "error_note": "Failed to update user"}
+	}
+
+	if isComplete {
+		ctx := context.WithValue(context.Background(), "user_id", userID)
+		err = p.redis.PerformTransaction(ctx, Type)
+		if err != nil {
+			log.Printf("user %d: can't perform transaction: %s", userID, err)
+			return gin.H{"error": -7, "error_note": "Failed to update user"}
+		}
+
+		ctx, _ = p.redis.Lang(ctx, "uz")
+		_, err = p.telegram.SendMessage(ctx, text.Success[lang(ctx)], 0, nil)
+		if err != nil {
+			log.Printf("user %d: can't send success message: %s", userID, err)
+		}
 	}
 
 	return nil

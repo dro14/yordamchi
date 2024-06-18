@@ -46,11 +46,11 @@ func (r *Redis) PerformTransaction(ctx context.Context, order string) error {
 		value := expiration.Format("02.01.2006 15:04:05")
 		client.Set(ctx, "unlimited:"+id(ctx), value, time.Until(expiration))
 	case "images":
-		images, err := strconv.ParseInt(subscription, 10, 64)
+		images, err := strconv.Atoi(subscription)
 		if err != nil {
 			return fmt.Errorf("invalid number of images: %s", subscription)
 		}
-		client.IncrBy(ctx, "images:"+id(ctx), images)
+		client.IncrBy(ctx, "images:"+id(ctx), int64(images))
 	default:
 		return fmt.Errorf("invalid order type: %s", order)
 	}
