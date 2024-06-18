@@ -43,7 +43,7 @@ func (p *Postgres) CreateClickTransaction(request *types.Request) gin.H {
 	}
 }
 
-func (p *Postgres) PerformClickTransaction(request *types.Request) gin.H {
+func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete bool) gin.H {
 	query := "SELECT action FROM click_transactions WHERE id = $1;"
 	args := []any{request.MerchantPrepareID}
 	var action int
@@ -61,48 +61,19 @@ func (p *Postgres) PerformClickTransaction(request *types.Request) gin.H {
 		return gin.H{"error": -9, "error_note": "Transaction cancelled"}
 	}
 
-	query = "UPDATE click_transactions SET click_trans_id = $1, action = $2, error = $3, error_note = $4, sign_time = $5, sign_string = $6 WHERE id = $7;"
-	args = []any{request.ClickTransID, methods.Complete, request.Error, request.ErrorNote, request.SignTime, request.SignString, request.MerchantPrepareID}
+	if isComplete {
+		action = methods.Complete
+	} else {
+		action = methods.Cancel
+	}
+
+	query = "UPDATE click_transactions SET click_trans_id = $1, service_id = $2, click_paydoc_id = $3, merchant_trans_id = $4, amount = $5, action = $6, error = $7, error_note = $8, sign_time = $9, sign_string = $10 WHERE id = $11;"
+	args = []any{request.ClickTransID, request.ServiceID, request.ClickPaydocID, request.MerchantTransID, request.Amount, action, request.Error, request.ErrorNote, request.SignTime, request.SignString, request.MerchantPrepareID}
 	err = p.execPayment(query, args)
 	if err != nil {
 		log.Println("can't update click transaction:", err)
 		return gin.H{"error": -7, "error_note": "Failed to update user"}
 	}
 
-	return gin.H{
-		"click_trans_id":      request.ClickTransID,
-		"merchant_trans_id":   request.MerchantTransID,
-		"merchant_confirm_id": request.MerchantPrepareID,
-		"error":               0,
-		"error_note":          "Success",
-	}
-}
-
-func (p *Postgres) CancelClickTransaction(request *types.Request) gin.H {
-	query := "SELECT action FROM click_transactions WHERE id = $1;"
-	args := []any{request.MerchantPrepareID}
-	var action int
-	err := p.queryPayment(query, args, &action)
-	if err != nil {
-		log.Println("can't get click transaction:", err)
-		return gin.H{"error": -6, "error_note": "Transaction does not exist"}
-	}
-
-	if action == methods.Complete {
-		log.Println("transaction has been performed:", request.MerchantPrepareID)
-		return gin.H{"error": -4, "error_note": "Already paid"}
-	}
-
-	query = "UPDATE click_transactions SET click_trans_id = $1, action = $2, error = $3, error_note = $4, sign_time = $5, sign_string = $6 WHERE id = $7;"
-	args = []any{request.ClickTransID, methods.Cancel, request.Error, request.ErrorNote, request.SignTime, request.SignString, request.MerchantPrepareID}
-	err = p.execPayment(query, args)
-	if err != nil {
-		log.Println("can't update click transaction:", err)
-		return gin.H{"error": -7, "error_note": "Failed to update user"}
-	}
-
-	return gin.H{
-		"error":      -9,
-		"error_note": "Transaction cancelled",
-	}
+	return nil
 }

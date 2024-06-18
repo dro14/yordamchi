@@ -22,7 +22,18 @@ func (c *Click) Complete(request *types.Request) gin.H {
 		return h
 	}
 
-	return c.postgres.PerformClickTransaction(request)
+	response := c.postgres.UpdateClickTransaction(request, true)
+	if response != nil {
+		return response
+	}
+
+	return gin.H{
+		"click_trans_id":      request.ClickTransID,
+		"merchant_trans_id":   request.MerchantTransID,
+		"merchant_confirm_id": request.MerchantPrepareID,
+		"error":               0,
+		"error_note":          "Success",
+	}
 }
 
 func (c *Click) Cancel(request *types.Request) gin.H {
@@ -30,5 +41,13 @@ func (c *Click) Cancel(request *types.Request) gin.H {
 		return gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
 	}
 
-	return c.postgres.CancelClickTransaction(request)
+	response := c.postgres.UpdateClickTransaction(request, false)
+	if response != nil {
+		return response
+	}
+
+	return gin.H{
+		"error":      -9,
+		"error_note": "Transaction cancelled",
+	}
 }
