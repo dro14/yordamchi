@@ -35,17 +35,22 @@ func New() *Handler {
 
 func (h *Handler) Run(port string) error {
 	h.router.GET("/", h.Root)
+	h.router.GET("/logs", h.Logs)
 	h.router.POST("/main", h.Main)
 	h.router.POST("/legacy", h.Legacy)
 	h.router.POST("/payme", h.Payme)
 	h.router.POST("/click/prepare", h.Click)
 	h.router.POST("/click/complete", h.Click)
-	h.router.GET("/logs", h.Logs)
 	return h.router.Run(":" + port)
 }
 
 func (h *Handler) Root(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "Hello, World!"})
+	c.JSON(200, gin.H{"ok": true})
+}
+
+func (h *Handler) Logs(c *gin.Context) {
+	utils.SendLogFiles()
+	c.JSON(200, gin.H{"ok": true})
 }
 
 func (h *Handler) Main(c *gin.Context) {
@@ -75,10 +80,11 @@ func (h *Handler) Legacy(c *gin.Context) {
 func (h *Handler) Payme(c *gin.Context) {
 	request, response := &paymeTypes.Request{}, gin.H{}
 	err := c.ShouldBindJSON(request)
-	if err != nil {
-		log.Println("can't bind json:", err)
+	switch {
+	case err != nil:
+		log.Println("can't bind Payme body:", err)
 		response = gin.H{"error": gin.H{"code": -32700, "message": "Parse error"}}
-	} else {
+	default:
 		response = h.payme.Process(c, request)
 	}
 	c.JSON(200, response)
@@ -89,7 +95,7 @@ func (h *Handler) Click(c *gin.Context) {
 	err := c.ShouldBind(request)
 	switch {
 	case err != nil:
-		log.Println("can't bind:", err)
+		log.Println("can't bind Click body:", err)
 		response = gin.H{"error": -8, "error_note": "Error in request from click"}
 	case request.SignString != h.click.SingString(request):
 		response = gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
@@ -103,9 +109,4 @@ func (h *Handler) Click(c *gin.Context) {
 		response = gin.H{"error": -3, "error_note": "Action not found"}
 	}
 	c.JSON(200, response)
-}
-
-func (h *Handler) Logs(c *gin.Context) {
-	utils.SendLogFiles()
-	c.JSON(200, gin.H{"ok": true})
 }
