@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (p *Payme) Respond(c *gin.Context, request *types.Request) gin.H {
+func (p *Payme) Process(c *gin.Context, request *types.Request) gin.H {
 	response := p.authorized(c)
 	if response == nil {
 		var code int

@@ -46,7 +46,7 @@ func (p *Postgres) CreateClickTransaction(request *types.Request) gin.H {
 	}
 }
 
-func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete bool) gin.H {
+func (p *Postgres) UpdateClickTransaction(request *types.Request) gin.H {
 	query := "SELECT action FROM click_transactions WHERE id = $1;"
 	args := []any{request.MerchantPrepareID}
 	var action int
@@ -64,7 +64,7 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete boo
 		return gin.H{"error": -9, "error_note": "Transaction cancelled"}
 	}
 
-	if isComplete {
+	if request.Error != 0 {
 		action = methods.Complete
 	} else {
 		action = methods.Cancel
@@ -90,7 +90,7 @@ func (p *Postgres) UpdateClickTransaction(request *types.Request, isComplete boo
 
 	ctx := context.WithValue(context.Background(), "user_id", userID)
 	var message string
-	if isComplete {
+	if request.Error != 0 {
 		err = p.redis.PerformTransaction(ctx, Type)
 		if err != nil {
 			log.Printf("user %d: can't perform transaction: %s", userID, err)

@@ -3,12 +3,13 @@ package click
 import (
 	"crypto/md5"
 	"fmt"
+
 	"github.com/dro14/yordamchi/payment/click/types"
 )
 
-func (c *Click) singString(request *types.Request, isPrepare bool) string {
+func (c *Click) SingString(request *types.Request) string {
 	var str string
-	if isPrepare {
+	if request.MerchantPrepareID == 0 {
 		str = fmt.Sprintf("%d%d%s%d%.0f%d%s",
 			request.ClickTransID,
 			request.ServiceID,

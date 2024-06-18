@@ -6,23 +6,21 @@ import (
 )
 
 func (c *Click) Prepare(request *types.Request) gin.H {
-	if request.SignString != c.singString(request, true) {
-		return gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
-	} else if h := c.postgres.CheckOrder(request.MerchantTransID, request.Amount); h != nil {
-		return h
+	response := c.postgres.CheckOrder(request.MerchantTransID, request.Amount)
+	if response != nil {
+		return response
 	}
 
 	return c.postgres.CreateClickTransaction(request)
 }
 
 func (c *Click) Complete(request *types.Request) gin.H {
-	if request.SignString != c.singString(request, false) {
-		return gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
-	} else if h := c.postgres.CheckOrder(request.MerchantTransID, request.Amount); h != nil {
-		return h
+	response := c.postgres.CheckOrder(request.MerchantTransID, request.Amount)
+	if response != nil {
+		return response
 	}
 
-	response := c.postgres.UpdateClickTransaction(request, true)
+	response = c.postgres.UpdateClickTransaction(request)
 	if response != nil {
 		return response
 	}
@@ -37,13 +35,7 @@ func (c *Click) Complete(request *types.Request) gin.H {
 }
 
 func (c *Click) Cancel(request *types.Request) gin.H {
-	if request.SignString != c.singString(request, false) {
-		return gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
-	} else if h := c.postgres.CheckOrder(request.MerchantTransID, request.Amount); h != nil {
-		return h
-	}
-
-	response := c.postgres.UpdateClickTransaction(request, false)
+	response := c.postgres.UpdateClickTransaction(request)
 	if response != nil {
 		return response
 	}

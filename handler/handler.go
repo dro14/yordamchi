@@ -73,14 +73,14 @@ func (h *Handler) Legacy(c *gin.Context) {
 }
 
 func (h *Handler) Payme(c *gin.Context) {
-	request := &paymeTypes.Request{}
+	request, response := &paymeTypes.Request{}, gin.H{}
 	err := c.ShouldBindJSON(request)
 	if err != nil {
 		log.Println("can't bind json:", err)
-		c.JSON(200, gin.H{"error": gin.H{"code": -32700, "message": "Parse error"}})
-		return
+		response = gin.H{"error": gin.H{"code": -32700, "message": "Parse error"}}
+	} else {
+		response = h.payme.Process(c, request)
 	}
-	response := h.payme.Respond(c, request)
 	c.JSON(200, response)
 }
 
@@ -91,6 +91,8 @@ func (h *Handler) Click(c *gin.Context) {
 	case err != nil:
 		log.Println("can't bind:", err)
 		response = gin.H{"error": -8, "error_note": "Error in request from click"}
+	case request.SignString != h.click.SingString(request):
+		response = gin.H{"error": -1, "error_note": "SIGN CHECK FAILED!"}
 	case request.Error != 0:
 		response = h.click.Cancel(request)
 	case request.Action == methods.Prepare:
