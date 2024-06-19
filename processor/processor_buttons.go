@@ -69,6 +69,18 @@ func (p *Processor) examplesButton(ctx context.Context) *tgbotapi.InlineKeyboard
 	return data("help", text[lang(ctx)])
 }
 
+func (p *Processor) unlimitedPayments() *tgbotapi.InlineKeyboardMarkup {
+	return data("payme:unlimited", "click:unlimited", "Payme", "Click")
+}
+
+func (p *Processor) premiumPayments() *tgbotapi.InlineKeyboardMarkup {
+	return data("payme:premium", "click:premium", "Payme", "Click")
+}
+
+func (p *Processor) imagePayments() *tgbotapi.InlineKeyboardMarkup {
+	return data("payme:images", "click:images", "Payme", "Click")
+}
+
 func (p *Processor) unlimitedButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text := map[string][]string{
 		"uz": {"⭐️ Haftalik ⭐️", "🔥 Oylik 🔥"},
@@ -99,7 +111,7 @@ func (p *Processor) premiumButtons(ctx context.Context) *tgbotapi.InlineKeyboard
 	return url(args...)
 }
 
-func (p *Processor) imageButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
+func (p *Processor) imagesButtons(ctx context.Context) *tgbotapi.InlineKeyboardMarkup {
 	text := map[string][]string{
 		"uz": {"⭐️ 10ta rasm ⭐️", "🔥 50ta rasm 🔥", "🚀 100ta rasm 🚀"},
 		"ru": {"⭐️ 10 изображений ⭐️", "🔥 50 изображений 🔥", "🚀 100 изображений 🚀"},

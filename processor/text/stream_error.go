@@ -1,7 +1,7 @@
 package text
 
 var StreamError = map[string]string{
-	"uz": `*Xatolik yuz berdi. So'rovingiz qaytadan yuborildi.*`,
-	"ru": `*Произошла ошибка. Ваш запрос был отправлен повторно.*`,
-	"en": `*An error occurred. Your request has been resent.*`,
+	"uz": `*Xatolik yuz berdi, so'rovingiz qaytadan yuborildi*`,
+	"ru": `*Произошла ошибка, ваш запрос был отправлен повторно*`,
+	"en": `*An error occurred, your request has been resent*`,
 }

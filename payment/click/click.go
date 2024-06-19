@@ -44,7 +44,7 @@ func New() *Click {
 		merchantID: merchantID,
 		serviceID:  serviceID,
 		secretKey:  secretKey,
-		url:        "https://my.click.uz/services/pay?service_id=%d&merchant_id=%d&amount=%.0f&transaction_param=%d&return_url=https://t.me/yordamchi_ai_bot",
+		url:        "https://my.click.uz/services/pay?service_id=%d&merchant_id=%d&amount=%d&transaction_param=%d&return_url=https://t.me/yordamchi_ai_bot",
 		postgres:   postgres.New(),
 	}
 }

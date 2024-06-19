@@ -1,9 +1,51 @@
 package click
 
 import (
+	"context"
+	"crypto/md5"
+	"fmt"
+
 	"github.com/dro14/yordamchi/payment/click/types"
 	"github.com/gin-gonic/gin"
 )
+
+func (c *Click) CheckoutURL(ctx context.Context, amount int, Type string) string {
+	orderID, err := c.postgres.NewOrder(id(ctx), amount, Type)
+	if err != nil {
+		return c.url
+	}
+
+	return fmt.Sprintf(c.url, c.serviceID, c.merchantID, amount/100, orderID)
+}
+
+func (c *Click) SingString(request *types.Request) string {
+	var str string
+	if request.MerchantPrepareID == 0 {
+		str = fmt.Sprintf("%d%d%s%d%.0f%d%s",
+			request.ClickTransID,
+			request.ServiceID,
+			c.secretKey,
+			request.MerchantTransID,
+			request.Amount,
+			request.Action,
+			request.SignTime,
+		)
+	} else {
+		str = fmt.Sprintf("%d%d%s%d%d%.0f%d%s",
+			request.ClickTransID,
+			request.ServiceID,
+			c.secretKey,
+			request.MerchantTransID,
+			request.MerchantPrepareID,
+			request.Amount,
+			request.Action,
+			request.SignTime,
+		)
+	}
+	hash := md5.New()
+	hash.Write([]byte(str))
+	return fmt.Sprintf("%x", hash.Sum(nil))
+}
 
 func (c *Click) Cancel(request *types.Request) gin.H {
 	response := c.postgres.CheckOrder(request.MerchantTransID, request.Amount)

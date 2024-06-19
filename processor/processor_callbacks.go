@@ -10,20 +10,20 @@ import (
 
 func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	p.redis.DeleteContext(ctx)
-	_, err := p.telegram.SendMessage(ctx, text.NewChat[lang(ctx)], 0, tgbotapi.NewRemoveKeyboard(true))
+	_, err := p.telegram.SendMessage(ctx, "*"+text.NewChat[lang(ctx)]+"*", 0, tgbotapi.NewRemoveKeyboard(true))
 	if err != nil {
 		log.Println("can't send new chat callback")
 	}
-	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.NewChatAnswer[lang(ctx)])
+	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.NewChat[lang(ctx)])
 }
 
 func (p *Processor) moreCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	questions := p.openai.ProcessFollowUps(ctx)
-	err := p.telegram.SetKeyboard(ctx, text.More[lang(ctx)], text.Waiting[lang(ctx)], questions)
+	err := p.telegram.SetKeyboard(ctx, "*"+text.More[lang(ctx)]+"*", text.Waiting[lang(ctx)], questions)
 	if err != nil {
 		log.Println("can't set more callback keyboard")
 	}
-	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.MoreAnswer[lang(ctx)])
+	p.telegram.AnswerCallbackQuery(ctx, callbackQuery.ID, text.More[lang(ctx)])
 }
 
 func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {

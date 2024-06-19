@@ -10,11 +10,7 @@ Premium obunada:
 • *Fayllar* bilan ishlash ✅
 • Bot *xotirasi* ✅
 
-  10 000 so'm - *Kunlik: 50ta* so'rov
-  50 000 so'm - *Haftalik: 250ta* so'rov
-150 000 so'm - *Oylik: 750ta* so'rov
-
-Millionlar ishongan servis - *Payme* orqali to'lang`,
+O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 	"ru": `Хотите увидеть, насколько далеко продвинулся последний технологический прогресс? Тогда станьте *премиум-пользователем*!
 
@@ -25,11 +21,7 @@ Millionlar ishongan servis - *Payme* orqali to'lang`,
 • Работа с *файлами* ✅
 • *Память* бота ✅
 
-  10 000 сум - *Дневная: 50* запросов
-  50 000 сум - *Недельная: 250* запросов
-150 000 сум - *Месячная: 750* запросов
-
-Оплатите через *Payme* - доверянный миллионами сервис`,
+Выберите удобную для вас платежную систему:`,
 
 	"en": `Want to see how far the latest technological progress has come? Then become a *premium user*!
 
@@ -40,9 +32,25 @@ In the premium subscription:
 • Working with *files* ✅
 • Bot *memory* ✅
 
+Choose a payment system that suits you:`,
+}
+
+var PremiumPayments = map[string]string{
+	"uz": `Premium foydalanuvchiga aylanib zamon bilan hamnafas bo'ling!
+
+  10 000 so'm - *Kunlik: 50ta* so'rov
+  50 000 so'm - *Haftalik: 250ta* so'rov
+150 000 so'm - *Oylik: 750ta* so'rov`,
+
+	"ru": `Станьте премиум-пользователем и будьте на одной волне со временем!
+
+  10 000 сум - *Дневная: 50* запросов
+  50 000 сум - *Недельная: 250* запросов
+150 000 сум - *Месячная: 750* запросов`,
+
+	"en": `Become a premium user and stay in tune with the times!
+
   10 000 UZS - *Daily: 50* requests
   50 000 UZS - *Weekly: 250* requests
-150 000 UZS - *Monthly: 750* requests
-
-Pay via *Payme* - service trusted by millions`,
+150 000 UZS - *Monthly: 750* requests`,
 }

@@ -16,7 +16,7 @@ var Examples = map[string]string{
 • Xotirani kuchaytirish usullari haqida post yozib ber
 • Backend-dasturchi bo'lish uchun nimalarni o'rganish kerak?
 
-*Xullas, so'rovlarning xilma-xilligi faqat Sizning tasavvuringiz bilan cheklangan. Bot rasm bilan ishlashi uchun esa, rasmni shunchaki unga yuboring va so'rovingizni izoh qilib qo'shing. Botning imkoniyatlari Sizni faqat hayratga soladi* 😳`,
+*Xullas, so'rovlarning xilma-xilligi faqat sizning tasavvuringiz bilan cheklangan. Bot rasm bilan ishlashi uchun esa, rasmni shunchaki unga yuboring va so'rovingizni izoh qilib qo'shing. Botning imkoniyatlari sizni faqat hayratga soladi* 😳`,
 
 	"ru": `*Примеры запросов:*
 
@@ -33,7 +33,7 @@ var Examples = map[string]string{
 • Напиши пост про методы улучшения памяти
 • Что нужно изучить чтобы стать backend-разработчиком?
 
-*Короче, разновидность запросов зависит от Вашего воображения. А чтобы бот работал с изображениями, просто отправьте ему изображение и добавьте свой запрос как подпись. Возможности бота Вас просто удивят* 😳`,
+*Короче, разновидность запросов зависит от вашего воображения. А чтобы бот работал с изображениями, просто отправьте ему изображение и добавьте свой запрос как подпись. Возможности бота вас просто удивят* 😳`,
 
 	"en": `*Example requests:*
 
@@ -50,5 +50,5 @@ var Examples = map[string]string{
 • Write a post on memory improvement methods
 • What should I learn to become a backend developer?
 
-*In short, the variety of requests depends on Your imagination. For the bot to work with images, just send an image and add Your prompt as a caption. And let its capabilities simply amaze You* 😳`,
+*In short, the variety of requests depends on your imagination. For the bot to work with images, just send an image and add your prompt as a caption. And let its capabilities simply amaze you* 😳`,
 }

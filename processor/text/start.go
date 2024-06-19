@@ -4,7 +4,7 @@ var Start = map[string]string{
 	"uz": `*Assalomu alaykum, %s!* 😊
 
 O'zimni tanishtirishga ijozat bering:
-• Men Sizning *topshiriq* va *savollaringizda* yordam berish uchun yaratilgan sun'iy intellektman 🤖
+• Men sizning *topshiriq* va *savollaringizda* yordam berish uchun yaratilgan sun'iy intellektman 🤖
 • *Matn* bilan bog'liq har qanday topshiriqni bajara olaman 📝
 • Pullik obunalarda esa, hattoki *rasmlarni* ham tahlil qila olaman 🧐
 • Quyida, chap burchakda *ko'k rangdagi menyu tugmachasi* bor; shu orqali men haqimda batafsilroq bilib olishingiz mumkin 😉`,
@@ -12,7 +12,7 @@ O'zimni tanishtirishga ijozat bering:
 	"ru": `*Добро пожаловать, %s!* 😊
 
 Позвольте мне представиться:
-• Я являюсь искусственным интеллектом, созданный помочь Вам с любыми *вопросами* и *заданиями* 🤖
+• Я являюсь искусственным интеллектом, созданный помочь вам с любыми *вопросами* и *заданиями* 🤖
 • Я обладаю навыками обработки *текстов* 📝
 • А в рамках платных подписок, я также могу работать с *изображениями* 🧐
 • Чтобы ознакомиться подробнее с моими функциями, можете воспользоваться *синей кнопкой меню*, расположенной в левом нижнем углу 😉`,

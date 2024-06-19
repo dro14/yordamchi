@@ -3,7 +3,7 @@ package text
 var Images = map[string]string{
 	"uz": `So'zlar rasmga aylanganini ko'rganmisiz? Yo'q bo'lsa, *DALL-E 3* ni kutib oling!
 
-*DALL-E 3* - bu so'zlar yordamida rasm generatsiya qiladigan eng kuchli sun'iy intellektlardan biri. Endi uning yordamida Siz yuqoridagidek aql bovar qilmas rasmlar yaratishingiz mumkin. Hattoki storislar uchun yozuvli rasmlar ham, faqat yozuvlari ingliz tilida bo'ladi :) 
+*DALL-E 3* - bu so'zlar yordamida rasm generatsiya qiladigan eng kuchli sun'iy intellektlardan biri. Endi uning yordamida siz yuqoridagidek aql bovar qilmas rasmlar yaratishingiz mumkin. Hattoki storislar uchun yozuvli rasmlar ham, faqat yozuvlari ingliz tilida bo'ladi :) 
 
 Rasm yaratish uchun so'rovingizni quyidagi shaklda yuboring:
 
@@ -13,7 +13,7 @@ Rasm yaratish uchun so'rovingizni quyidagi shaklda yuboring:
 
 /generate *"Tezlik" nomli YouTube kanalga banner*
 
-Rasmni tavsiflashda qancha ko'p detallari bo'lsa, natija ham shuncha yaxshi bo'ladi. **Tabiiy** uslubda rasmlar haqiqiy hayotga yaqinroq bo'ladi, **yorqin** uslubda esa rasmlar ko'proq rang-barang bo'ladi.
+Rasmni tasvirlashda qancha ko'p detallari bo'lsa, natija ham shuncha yaxshi bo'ladi. **Tabiiy** uslubda rasmlar haqiqiy hayotga yaqinroq bo'ladi, **yorqin** uslubda esa rasmlar ko'proq rang-barang bo'ladi.
 
 Mavjud generatsiyalar soni: *%d*
 
@@ -23,7 +23,7 @@ Mavjud generatsiyalar soni: *%d*
 
 	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте *DALL-E 3*!
 
-*DALL-E 3* - один из самых мощных искусственных интеллектов, генерирующий изображения из слов. Теперь с его помощью Вы можете создавать ошеломляющие изображения, как те выше. Даже изображения с текстами для сторис, но только тексты будут на английском :)
+*DALL-E 3* - один из самых мощных искусственных интеллектов, генерирующий изображения из слов. Теперь с его помощью вы можете создавать ошеломляющие изображения, как те выше. Даже изображения с текстами для сторис, но только тексты будут на английском :)
 
 Для создания изображения отправьте запрос в следующем формате:
 
