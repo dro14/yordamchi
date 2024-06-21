@@ -37,12 +37,12 @@ func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.Ca
 func (p *Processor) settingsCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	switch callbackQuery.Data {
 	case "settings1":
-		err := p.telegram.EditMessage(ctx, text.Unlimited[lang(ctx)], callbackQuery.Message.MessageID, p.unlimitedPayments())
+		err := p.telegram.EditMessage(ctx, text.Unlimited[lang(ctx)], callbackQuery.Message.MessageID, p.unlimitedButtons(ctx, "payme"))
 		if err != nil {
 			log.Println("can't edit settings1 callback")
 		}
 	case "settings2":
-		err := p.telegram.EditMessage(ctx, text.Premium[lang(ctx)], callbackQuery.Message.MessageID, p.premiumPayments())
+		err := p.telegram.EditMessage(ctx, text.Premium[lang(ctx)], callbackQuery.Message.MessageID, p.premiumButtons(ctx, "payme"))
 		if err != nil {
 			log.Println("can't edit settings2 callback")
 		}
