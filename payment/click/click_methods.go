@@ -22,24 +22,15 @@ func (c *Click) SingString(request *types.Request) string {
 	var str string
 	if request.MerchantPrepareID == 0 {
 		str = fmt.Sprintf("%d%d%s%d%.0f%d%s",
-			request.ClickTransID,
-			request.ServiceID,
-			c.secretKey,
-			request.MerchantTransID,
-			request.Amount,
-			request.Action,
+			request.ClickTransID, request.ServiceID, c.secretKey,
+			request.MerchantTransID, request.Amount, request.Action,
 			request.SignTime,
 		)
 	} else {
 		str = fmt.Sprintf("%d%d%s%d%d%.0f%d%s",
-			request.ClickTransID,
-			request.ServiceID,
-			c.secretKey,
-			request.MerchantTransID,
-			request.MerchantPrepareID,
-			request.Amount,
-			request.Action,
-			request.SignTime,
+			request.ClickTransID, request.ServiceID, c.secretKey,
+			request.MerchantTransID, request.MerchantPrepareID,
+			request.Amount, request.Action, request.SignTime,
 		)
 	}
 	hash := md5.New()
@@ -48,12 +39,7 @@ func (c *Click) SingString(request *types.Request) string {
 }
 
 func (c *Click) Cancel(request *types.Request) gin.H {
-	response := c.postgres.CheckOrder(request.MerchantTransID, request.Amount)
-	if response != nil {
-		return response
-	}
-
-	response = c.postgres.UpdateClickTransaction(request)
+	response := c.postgres.UpdateClickTransaction(request)
 	if response != nil {
 		return response
 	}

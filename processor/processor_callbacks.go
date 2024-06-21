@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -36,18 +37,40 @@ func (p *Processor) helpCallback(ctx context.Context, callbackQuery *tgbotapi.Ca
 func (p *Processor) settingsCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	switch callbackQuery.Data {
 	case "settings1":
-		err := p.telegram.EditMessage(ctx, text.Unlimited[lang(ctx)], callbackQuery.Message.MessageID, p.unlimitedButtons(ctx))
+		err := p.telegram.EditMessage(ctx, text.Unlimited[lang(ctx)], callbackQuery.Message.MessageID, p.unlimitedPayments())
 		if err != nil {
 			log.Println("can't edit settings1 callback")
 		}
 	case "settings2":
-		err := p.telegram.EditMessage(ctx, text.Premium[lang(ctx)], callbackQuery.Message.MessageID, p.premiumButtons(ctx))
+		err := p.telegram.EditMessage(ctx, text.Premium[lang(ctx)], callbackQuery.Message.MessageID, p.premiumPayments())
 		if err != nil {
 			log.Println("can't edit settings2 callback")
 		}
 	case "settings3":
 		p.telegram.DeleteMessage(ctx, callbackQuery.Message.MessageID)
 		p.images(ctx)
+	}
+}
+
+func (p *Processor) paymentsCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
+	splits := strings.Split(callbackQuery.Data, ":")
+	gateway, order := splits[0], splits[1]
+	var replyMarkup *tgbotapi.InlineKeyboardMarkup
+	var message string
+	switch order {
+	case "unlimited":
+		message = text.UnlimitedPayments[lang(ctx)]
+		replyMarkup = p.unlimitedButtons(ctx, gateway)
+	case "premium":
+		message = text.PremiumPayments[lang(ctx)]
+		replyMarkup = p.premiumButtons(ctx, gateway)
+	case "images":
+		message = text.ImagesPayments[lang(ctx)]
+		replyMarkup = p.imagesButtons(ctx, gateway)
+	}
+	err := p.telegram.EditMessage(ctx, message, callbackQuery.Message.MessageID, replyMarkup)
+	if err != nil {
+		log.Println("can't edit payments callback")
 	}
 }
 

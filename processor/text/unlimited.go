@@ -36,17 +36,17 @@ Choose a payment system that suits you:`,
 }
 
 var UnlimitedPayments = map[string]string{
-	"uz": `Cheksiz obuna bilan kundalik samaradorligingizni oshiring!
+	"uz": `*Cheksiz obuna* bilan kundalik samaradorligingizni oshiring!
 
 10 000 so'm - *Haftalik: cheksiz* so'rovlar
 30 000 so'm - *Oylik: cheksiz* so'rovlar`,
 
-	"ru": `Увеличьте свою ежедневную продуктивность с безлимитной подпиской!
+	"ru": `Увеличьте свою ежедневную продуктивность с *безлимитной подпиской*!
 
 10 000 сум - *Недельная: безлимитные* запросы
 30 000 сум - *Месячная: безлимитные* запросы`,
 
-	"en": `Increase your daily productivity with the unlimited subscription!
+	"en": `Increase your daily productivity with the *unlimited subscription*!
 
 10 000 UZS - *Weekly: unlimited* requests
 30 000 UZS - *Monthly: unlimited* requests`,

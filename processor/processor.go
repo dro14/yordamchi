@@ -9,6 +9,7 @@ import (
 	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/clients/telegram"
+	"github.com/dro14/yordamchi/payment/click"
 	"github.com/dro14/yordamchi/payment/payme"
 	"github.com/dro14/yordamchi/storage/postgres"
 	"github.com/dro14/yordamchi/storage/redis"
@@ -23,6 +24,7 @@ type Processor struct {
 	openai   *openai.OpenAI
 	redis    *redis.Redis
 	payme    *payme.Payme
+	click    *click.Click
 	service  *service.Service
 	apis     *other.APIs
 	activity atomic.Int64
@@ -35,6 +37,7 @@ func New() *Processor {
 		openai:   openai.New(),
 		redis:    redis.New(),
 		payme:    payme.New(),
+		click:    click.New(),
 		service:  service.New(),
 		apis:     other.New(),
 	}
@@ -124,6 +127,8 @@ func (p *Processor) callbackQuery(ctx context.Context, callbackQuery *tgbotapi.C
 		p.examplesCallback(ctx, callbackQuery)
 	case "vivid", "natural":
 		p.generateCallback(ctx, callbackQuery)
+	case "payme:unlimited", "payme:premium", "payme:images", "click:unlimited", "click:premium", "click:images":
+		p.paymentsCallback(ctx, callbackQuery)
 	default:
 		log.Println("unknown callback data:", callbackQuery.Data)
 	}

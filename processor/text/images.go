@@ -17,9 +17,7 @@ Rasmni tasvirlashda qancha ko'p detallari bo'lsa, natija ham shuncha yaxshi bo'l
 
 Mavjud generatsiyalar soni: *%d*
 
-  20 000 so'm -  *10ta rasm*
-  80 000 so'm -  *50ta rasm*
-130 000 so'm - *100ta rasm*`,
+O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте *DALL-E 3*!
 
@@ -37,9 +35,7 @@ Mavjud generatsiyalar soni: *%d*
 
 Количество доступных генераций: *%d*
 
-  20 000 сум -  *10 изображений*
-  80 000 сум -  *50 изображений*
-130 000 сум - *100 изображений*`,
+Выберите удобную для вас платежную систему:`,
 
 	"en": `Have you seen how words turn into images? If not, then meet *DALL-E 3*!
 
@@ -56,6 +52,22 @@ To create an image, send a request in the following format:
 The more details in the description of the image, the better the result. In the **natural** style, the images will be closer to real life, while in the **vivid** style - brighter and more colorful.
 
 Number of available generations: *%d*
+
+Choose a payment system that suits you:`,
+}
+
+var ImagesPayments = map[string]string{
+	"uz": `*DALL-E* bilan tasavvuringizni rasmlarga aylantiring!
+
+  20 000 so'm -  *10ta rasm*
+  80 000 so'm -  *50ta rasm*
+130 000 so'm - *100ta rasm*`,
+	"ru": `Превращайте свое воображение в изображения с *DALL-E*!
+
+  20 000 сум -  *10 изображений*
+  80 000 сум -  *50 изображений*
+130 000 сум - *100 изображений*`,
+	"en": `Turn your imagination into images with *DALL-E*!
 
   20 000 UZS -  *10 images*
   80 000 UZS -  *50 images*

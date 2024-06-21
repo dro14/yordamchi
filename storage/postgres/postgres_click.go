@@ -12,18 +12,25 @@ import (
 )
 
 func (p *Postgres) CheckOrder(orderID int, orderAmount float64) gin.H {
-	query := "SELECT amount FROM orders WHERE id = $1;"
+	query := "SELECT amount, created_at, updated_at FROM orders WHERE id = $1;"
 	args := []any{orderID}
 	var amount int
-	err := p.queryPayment(query, args, &amount)
+	var createdAt, updatedAt string
+	err := p.queryPayment(query, args, &amount, &createdAt, &updatedAt)
 	if err != nil {
 		log.Println("can't get order:", err)
 		return gin.H{"error": -5, "error_note": "User does not exist"}
 	}
-	if amount != int(orderAmount*100) {
-		log.Printf("invalid amount: %d != %d", amount, int(orderAmount*100))
+
+	amount /= 100
+	if amount != int(orderAmount) {
+		log.Printf("invalid amount: %d != %d", amount, int(orderAmount))
 		return gin.H{"error": -2, "error_note": "Incorrect parameter amount"}
+	} else if createdAt != updatedAt {
+		log.Println("order has been updated:", orderID)
+		return gin.H{"error": -4, "error_note": "Already paid"}
 	}
+
 	return nil
 }
 
