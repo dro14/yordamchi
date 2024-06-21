@@ -17,7 +17,9 @@ Rasmni tasvirlashda qancha ko'p detallari bo'lsa, natija ham shuncha yaxshi bo'l
 
 Mavjud generatsiyalar soni: *%d*
 
-O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
+  20 000 so'm -  *10ta rasm*
+  80 000 so'm -  *50ta rasm*
+130 000 so'm - *100ta rasm*`,
 
 	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте *DALL-E 3*!
 
@@ -35,7 +37,9 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 Количество доступных генераций: *%d*
 
-Выберите удобную для вас платежную систему:`,
+  20 000 сум -  *10 изображений*
+  80 000 сум -  *50 изображений*
+130 000 сум - *100 изображений*`,
 
 	"en": `Have you seen how words turn into images? If not, then meet *DALL-E 3*!
 
@@ -53,7 +57,9 @@ The more details in the description of the image, the better the result. In the 
 
 Number of available generations: *%d*
 
-Choose a payment system that suits you:`,
+  20 000 UZS -  *10 images*
+  80 000 UZS -  *50 images*
+130 000 UZS - *100 images*`,
 }
 
 var ImagesPayments = map[string]string{

@@ -10,7 +10,9 @@ Premium obunada:
 • *Fayllar* bilan ishlash ✅
 • Bot *xotirasi* ✅
 
-O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
+  10 000 so'm - *Kunlik: 50ta* so'rov
+  50 000 so'm - *Haftalik: 250ta* so'rov
+150 000 so'm - *Oylik: 750ta* so'rov`,
 
 	"ru": `Хотите увидеть, насколько далеко продвинулся последний технологический прогресс? Тогда станьте *премиум-пользователем*!
 
@@ -21,7 +23,9 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 • Работа с *файлами* ✅
 • *Память* бота ✅
 
-Выберите удобную для вас платежную систему:`,
+  10 000 сум - *Дневная: 50* запросов
+  50 000 сум - *Недельная: 250* запросов
+150 000 сум - *Месячная: 750* запросов`,
 
 	"en": `Want to see how far the latest technological progress has come? Then become a *premium user*!
 
@@ -32,7 +36,9 @@ In the premium subscription:
 • Working with *files* ✅
 • Bot *memory* ✅
 
-Choose a payment system that suits you:`,
+  10 000 UZS - *Daily: 50* requests
+  50 000 UZS - *Weekly: 250* requests
+150 000 UZS - *Monthly: 750* requests`,
 }
 
 var PremiumPayments = map[string]string{
