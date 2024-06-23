@@ -1,7 +1,7 @@
 package text
 
 var NewChat = map[string]string{
-	"uz": `Yangi suhbat`,
-	"ru": `Новый разговор`,
-	"en": `New chat`,
+	"uz": `Botning xotirasi tozalandi va yangi suhbat boshlandi`,
+	"ru": `Память бота очищена и новый разговор начат`,
+	"en": `Bot memory has been cleared and a new chat has started`,
 }
