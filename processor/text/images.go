@@ -51,9 +51,9 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 To create an image, send a request in the following format:
 
-/generate *Sunset over the sandy beach. People are gathering for an evening meal on a boat. The holiday is in full swing*
+/generate *Sunset over the sandy beach. People are gathering for an evening meal on a boat*
 
-/generate *You are standing on a bridge. Evening's city was covered with fog. People are returning from work. In apartments, the lights are on*
+/generate *You are standing on a bridge. Evening's city was covered with fog. People are returning from work*
 
 /generate *Banner for YouTube channel "Speed"*
 
