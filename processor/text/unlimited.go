@@ -11,7 +11,9 @@ Cheksiz obunada:
 • Bot *xotirasi* ✅
 
 10 000 so'm - *Haftalik: cheksiz* so'rovlar
-30 000 so'm - *Oylik: cheksiz* so'rovlar`,
+30 000 so'm - *Oylik: cheksiz* so'rovlar
+
+O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 	"ru": `Хотите пользоваться Yordamchi без никаких лимитов? Тогда перейдите на *безлимитную подписку*!
 
@@ -23,7 +25,9 @@ Cheksiz obunada:
 • *Память* бота ✅
 
 10 000 сум - *Недельная: безлимитные* запросы
-30 000 сум - *Месячная: безлимитные* запросы`,
+30 000 сум - *Месячная: безлимитные* запросы
+
+Выберите удобную для вас платежную систему:`,
 
 	"en": `Do you want unlimited access to Yordamchi? Then switch to the *unlimited subscription*!
 
@@ -35,7 +39,9 @@ In the unlimited subscription:
 • Bot *memory* ✅
 
 10 000 UZS - *Weekly: unlimited* requests
-30 000 UZS - *Monthly: unlimited* requests`,
+30 000 UZS - *Monthly: unlimited* requests
+
+Choose a payment system that suits you:`,
 }
 
 var UnlimitedPayments = map[string]string{

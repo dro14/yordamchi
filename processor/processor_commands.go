@@ -109,14 +109,14 @@ func (p *Processor) examples(ctx context.Context) {
 }
 
 func (p *Processor) unlimited(ctx context.Context) {
-	_, err := p.telegram.SendMessage(ctx, text.Unlimited[lang(ctx)], 0, p.unlimitedButtons(ctx, "payme"))
+	_, err := p.telegram.SendMessage(ctx, text.Unlimited[lang(ctx)], 0, p.unlimitedPayments())
 	if err != nil {
 		log.Println("can't send unlimited command")
 	}
 }
 
 func (p *Processor) premium(ctx context.Context) {
-	_, err := p.telegram.SendMessage(ctx, text.Premium[lang(ctx)], 0, p.premiumButtons(ctx, "payme"))
+	_, err := p.telegram.SendMessage(ctx, text.Premium[lang(ctx)], 0, p.premiumPayments())
 	if err != nil {
 		log.Println("can't send premium command")
 	}
@@ -124,7 +124,7 @@ func (p *Processor) premium(ctx context.Context) {
 
 func (p *Processor) images(ctx context.Context) {
 	caption := fmt.Sprintf(text.Images[lang(ctx)], p.redis.Images(ctx))
-	err := p.telegram.SendPhoto(ctx, "images.jpeg", caption, p.imagesButtons(ctx, "payme"))
+	err := p.telegram.SendPhoto(ctx, "images.jpeg", caption, p.imagesPayments())
 	if err != nil {
 		log.Println("can't send images command")
 	}

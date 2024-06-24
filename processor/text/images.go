@@ -19,7 +19,9 @@ Mavjud generatsiyalar soni: *%d*
 
   20 000 so'm -  *10ta rasm*
   80 000 so'm -  *50ta rasm*
-130 000 so'm - *100ta rasm*`,
+130 000 so'm - *100ta rasm*
+
+O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 	"ru": `Вы видели, как слова превращаются в изображение? Если нет, то встречайте *DALL-E 3*!
 
@@ -39,7 +41,9 @@ Mavjud generatsiyalar soni: *%d*
 
   20 000 сум -  *10 изображений*
   80 000 сум -  *50 изображений*
-130 000 сум - *100 изображений*`,
+130 000 сум - *100 изображений*
+
+Выберите удобную для вас платежную систему:`,
 
 	"en": `Have you seen how words turn into images? If not, then meet *DALL-E 3*!
 
@@ -59,7 +63,9 @@ Number of available generations: *%d*
 
   20 000 UZS -  *10 images*
   80 000 UZS -  *50 images*
-130 000 UZS - *100 images*`,
+130 000 UZS - *100 images*
+
+Choose a payment system that suits you:`,
 }
 
 var ImagesPayments = map[string]string{
