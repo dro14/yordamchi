@@ -61,16 +61,25 @@ func (p *Processor) paymentsCallback(ctx context.Context, callbackQuery *tgbotap
 	case "unlimited":
 		message = text.UnlimitedPayments[lang(ctx)]
 		replyMarkup = p.unlimitedButtons(ctx, gateway)
+		err := p.telegram.EditMessage(ctx, message, callbackQuery.Message.MessageID, replyMarkup)
+		if err != nil {
+			log.Println("can't edit unlimited payments callback")
+		}
 	case "premium":
 		message = text.PremiumPayments[lang(ctx)]
 		replyMarkup = p.premiumButtons(ctx, gateway)
+		err := p.telegram.EditMessage(ctx, message, callbackQuery.Message.MessageID, replyMarkup)
+		if err != nil {
+			log.Println("can't edit premium payments callback")
+		}
 	case "images":
 		message = text.ImagesPayments[lang(ctx)]
 		replyMarkup = p.imagesButtons(ctx, gateway)
-	}
-	err := p.telegram.EditMessage(ctx, message, callbackQuery.Message.MessageID, replyMarkup)
-	if err != nil {
-		log.Println("can't edit payments callback")
+		_, err := p.telegram.SendMessage(ctx, message, 0, replyMarkup)
+		if err != nil {
+			log.Println("can't send images payments callback")
+		}
+		p.telegram.DeleteMessage(ctx, callbackQuery.Message.MessageID)
 	}
 }
 
