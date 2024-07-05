@@ -129,8 +129,9 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 
 	var info []string
 	for i, match := range matches {
+		text[i] = "`" + text[i] + "`"
 		info = append(info, match+" ➡️ "+text[i])
-		str = strings.Replace(str, match, "`"+text[i]+"`", 1)
+		str = strings.Replace(str, match, text[i], 1)
 	}
 	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
