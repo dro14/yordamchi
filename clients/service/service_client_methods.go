@@ -112,9 +112,7 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 		latex = append(latex, ltx[1])
 	}
 
-	request := map[string]any{
-		"latex": latex,
-	}
+	request := map[string]any{"latex": latex}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"latex2text")
 	if err != nil {
 		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
@@ -130,6 +128,9 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	var info []string
 	for i, match := range matches {
 		temp := "`" + text[i].(string) + "`"
+		for _, script := range scripts {
+			temp = strings.ReplaceAll(temp, script[0], script[1])
+		}
 		info = append(info, match+" ➡️\n"+temp)
 		str = strings.Replace(str, match, temp, 1)
 	}
