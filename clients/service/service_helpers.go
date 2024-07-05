@@ -16,7 +16,11 @@ func model(ctx context.Context) string {
 	return ctx.Value("model").(string)
 }
 
-var scripts = [][]string{
+var preProcessing = [][]string{
+	{`\cot`, `cot`},
+}
+
+var postProcessing = [][]string{
 
 	// Subscripts
 	{`_0`, `₀`},

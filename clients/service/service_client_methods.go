@@ -108,6 +108,9 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	}
 	var matches, latex []string
 	for _, ltx := range LaTeXes {
+		for _, item := range preProcessing {
+			ltx[1] = strings.ReplaceAll(ltx[1], item[0], item[1])
+		}
 		matches = append(matches, ltx[0])
 		latex = append(latex, ltx[1])
 	}
@@ -128,8 +131,8 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	var info []string
 	for i, match := range matches {
 		temp := "`" + text[i].(string) + "`"
-		for _, script := range scripts {
-			temp = strings.ReplaceAll(temp, script[0], script[1])
+		for _, item := range postProcessing {
+			temp = strings.ReplaceAll(temp, item[0], item[1])
 		}
 		info = append(info, match+" ➡️\n"+temp)
 		str = strings.Replace(str, match, temp, 1)
