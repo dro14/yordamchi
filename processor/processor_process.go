@@ -54,7 +54,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		ctx = context.WithValue(ctx, "translate", true)
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		completion = <-channel
-		completion = utils.LaTeX(completion)
+		completion = p.service.Latex2Text(ctx, completion)
 		completion = p.apis.Translate("en", "uz", completion)
 		completions = utils.Slice(completion, 4096)
 
@@ -81,6 +81,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	} else {
 		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
 		for completion = range channel {
+			completion = p.service.Latex2Text(ctx, completion)
 			completions = utils.Slice(completion, 4096)
 			if i >= len(completions) {
 				i = len(completions) - 1

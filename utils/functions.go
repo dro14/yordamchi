@@ -70,7 +70,6 @@ func DownloadFile(URL, path string) error {
 }
 
 func MarkdownV2(s string) string {
-	s = LaTeX(s)
 	escapeChars := "\\_[]()~>#+-=|{}.!"
 	for i := range escapeChars {
 		s = strings.ReplaceAll(s, escapeChars[i:i+1], "\\"+escapeChars[i:i+1])

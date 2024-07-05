@@ -100,3 +100,32 @@ func (s *Service) Files(ctx context.Context) string {
 	}
 	return "*Uploaded files:*\n\n" + response["files"].(string)
 }
+
+func (s *Service) Latex2Text(ctx context.Context, str string) string {
+	LaTeXes := utils.LaTeXRgx.FindAllStringSubmatch(str, -1)
+	if len(LaTeXes) == 0 {
+		return str
+	}
+	var matches, latex []string
+	for _, ltx := range LaTeXes {
+		matches = append(matches, ltx[0])
+		latex = append(latex, ltx[1])
+	}
+
+	request := map[string]any{
+		"latex": latex,
+	}
+	response, err := s.makeRequest(ctx, request, s.baseURL+"latex2text")
+	if err != nil {
+		return str
+	}
+
+	var info []string
+	text := response["text"].([]string)
+	for i, match := range matches {
+		info = append(info, match+" ➡️ "+text[i])
+		str = strings.Replace(str, match, text[i], 1)
+	}
+	utils.SendInfoMessage(strings.Join(info, "\n\n"))
+	return str
+}
