@@ -121,7 +121,7 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 		return str
 	}
 
-	text, ok := response["text"].([]string)
+	text, ok := response["text"].([]any)
 	if !ok {
 		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
 		return str
@@ -129,9 +129,9 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 
 	var info []string
 	for i, match := range matches {
-		text[i] = "`" + text[i] + "`"
-		info = append(info, match+" ➡️ "+text[i])
-		str = strings.Replace(str, match, text[i], 1)
+		temp := "`" + text[i].(string) + "`"
+		info = append(info, match+" ➡️\n"+temp)
+		str = strings.Replace(str, match, temp, 1)
 	}
 	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
