@@ -165,6 +165,7 @@ func MarkdownV2(s string) string {
 
 func LaTeX(s string) string {
 	LaTeXes := LaTeXRgx.FindAllString(s, -1)
+	SendInfoMessage(strings.Join(LaTeXes, "\n\n"))
 	for i, latex := range LaTeXes {
 		latex = "`" + LaTeXRgx.FindStringSubmatch(latex)[1] + "`"
 		for j := range LaTeXReplacements {
