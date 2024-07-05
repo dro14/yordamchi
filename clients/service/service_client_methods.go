@@ -117,14 +117,20 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"latex2text")
 	if err != nil {
+		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
+		return str
+	}
+
+	text, ok := response["text"].([]string)
+	if !ok {
+		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
 		return str
 	}
 
 	var info []string
-	text := response["text"].([]string)
 	for i, match := range matches {
 		info = append(info, match+" ➡️ "+text[i])
-		str = strings.Replace(str, match, text[i], 1)
+		str = strings.Replace(str, match, "`"+text[i]+"`", 1)
 	}
 	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
