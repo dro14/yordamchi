@@ -32,7 +32,7 @@ func preProcess(s string) string {
 	for _, item := range preProcessing {
 		s = strings.ReplaceAll(s, item[0], item[1])
 	}
-	i, temp := 0, ""
+	i, builder := 0, strings.Builder{}
 	for i < len(s) {
 		if strings.HasPrefix(s, `\frac`) {
 			for j := 0; j < 2; j++ {
@@ -40,32 +40,32 @@ func preProcess(s string) string {
 				for ; i < len(s); i++ {
 					if s[i] == '{' {
 						if stack == 0 {
-							temp += "{"
+							builder.WriteString("{")
 							start = i + 1
 						}
 						stack++
 					} else if s[i] == '}' {
 						if stack == 1 {
 							if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
-								temp += "(" + s[start:i] + ")}"
+								builder.WriteString("(" + s[start:i] + ")}")
 							} else {
-								temp += s[start:i] + "}"
+								builder.WriteString(s[start:i] + "}")
 							}
 							i++
 							break
 						}
 						stack--
 					} else if start == -1 {
-						temp += string(s[i])
+						builder.WriteString(string(s[i]))
 					}
 				}
 			}
 		} else {
-			temp += string(s[i])
+			builder.WriteString(string(s[i]))
 			i++
 		}
 	}
-	return s
+	return builder.String()
 }
 
 var postProcessing = [][]string{

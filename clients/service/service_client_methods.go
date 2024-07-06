@@ -108,9 +108,8 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	}
 	var matches, latex []string
 	for _, ltx := range LaTeXes {
-		ltx[1] = preProcess(ltx[1])
 		matches = append(matches, ltx[0])
-		latex = append(latex, ltx[1])
+		latex = append(latex, preProcess(ltx[1]))
 	}
 
 	request := map[string]any{"latex": latex}
@@ -128,9 +127,9 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 
 	var info []string
 	for i, match := range matches {
-		temp := postProcess(text[i].(string))
-		info = append(info, latex[i]+" ➡️\n"+temp)
-		str = strings.Replace(str, match, temp, 1)
+		unicode := postProcess(text[i].(string))
+		info = append(info, latex[i]+" ➡️ "+unicode)
+		str = strings.Replace(str, match, unicode, 1)
 	}
 	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
