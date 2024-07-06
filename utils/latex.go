@@ -3,12 +3,13 @@ package utils
 import "regexp"
 
 var (
-	CodeRgx   = regexp.MustCompile("(?m)^```\\w*$")
-	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
-	FracRgx   = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
-	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
-	LaTeXRgx  = regexp.MustCompile(`\\\s*[(\[{<]\s*(.+?)\s*\\\s*[)\]}>]`)
-	TableRgx  = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
+	CodeRgx     = regexp.MustCompile("(?m)^```\\w*$")
+	SubSuperRgx = regexp.MustCompile(`_{(.+?)}\^{(.+?)}`)
+	HeaderRgx   = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
+	FracRgx     = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
+	LinkRgx     = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	LaTeXRgx    = regexp.MustCompile(`\\\s*[(\[{<]\s*(.+?)\s*\\\s*[)\]}>]`)
+	TableRgx    = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
 const (
@@ -18,9 +19,6 @@ const (
 )
 
 var LaTeXReplacements = [][]string{
-	{`\\det`, "det"},
-	{`\\dot`, "dot"},
-
 	{`C{(.+?)}{(.+?)}`, "C_{(REPLACE)}^{(REPLACE)}"},
 	{`P{(.+?)}{(.+?)}`, "P_{(REPLACE)}^{(REPLACE)}"},
 	{`C\((.+?), ?(.+?)\)`, "C_{(REPLACE)}^{(REPLACE)}"},
@@ -155,15 +153,15 @@ var Superscripts = map[rune]string{
 }
 
 var PreProcessing = [][]string{
-	{`\cot`, `cot`},
-	{`\cross`, `×`},
-	{`\implies`, `⇒`},
-	{`\times`, `×`},
-	{`\cdot`, `·`},
-	{`\div`, `÷`},
-	{`\dfrac`, `\frac`},
-	{`\cfrac`, `\frac`},
-	{`\det`, `det`},
+	{`\\cot`, `cot`},
+	{`\\cross`, `×`},
+	{`\\implies`, `⇒`},
+	{`\\times`, `×`},
+	{`\\cdot`, `·`},
+	{`\\div`, `÷`},
+	{`\\dfrac`, `\\frac`},
+	{`\\cfrac`, `\\frac`},
+	{`\\det`, `det`},
 }
 
 var PostProcessing = [][]string{

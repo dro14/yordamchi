@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/dro14/yordamchi/utils"
@@ -21,7 +23,7 @@ func model(ctx context.Context) string {
 
 func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
-		s = strings.ReplaceAll(s, item[0], item[1])
+		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[1])
 	}
 	i, builder := 0, strings.Builder{}
 	for i < len(s) {
@@ -69,6 +71,11 @@ func postProcess(s string) string {
 			fraction := strings.Replace(original, "/", " / ", 1)
 			s = strings.ReplaceAll(s, original, fraction)
 		}
+	}
+	subSupers := utils.SubSuperRgx.FindAllStringSubmatch(s, -1)
+	for _, match := range subSupers {
+		subSuper := fmt.Sprintf("(%s, %s)", match[1], match[2])
+		s = strings.Replace(s, match[0], subSuper, 1)
 	}
 	chars := []rune(s)
 	i, builder, buffer := 0, strings.Builder{}, strings.Builder{}
