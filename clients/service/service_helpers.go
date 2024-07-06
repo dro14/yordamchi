@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/dro14/yordamchi/utils"
@@ -23,7 +22,7 @@ func model(ctx context.Context) string {
 
 func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
-		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[1])
+		s = strings.ReplaceAll(s, item[0], item[1])
 	}
 	i, builder := 0, strings.Builder{}
 	for i < len(s) {
@@ -39,7 +38,7 @@ func preProcess(s string) string {
 						stack++
 					} else if s[i] == '}' {
 						if stack == 1 {
-							if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
+							if strings.ContainsAny(s[start:i], `+-*×/÷^ `) {
 								builder.WriteString("(" + s[start:i] + ")}")
 							} else {
 								builder.WriteString(s[start:i] + "}")
@@ -119,5 +118,5 @@ func postProcess(s string) string {
 			i++
 		}
 	}
-	return "`" + builder.String() + "`"
+	return builder.String()
 }

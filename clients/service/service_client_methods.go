@@ -129,7 +129,7 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	for i, match := range matches {
 		unicode := postProcess(text[i].(string))
 		info = append(info, latex[i]+" ➡️ "+unicode)
-		str = strings.Replace(str, match, unicode, 1)
+		str = strings.Replace(str, match, "`"+unicode+"`", 1)
 	}
 	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
