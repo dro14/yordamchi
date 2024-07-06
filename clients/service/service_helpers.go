@@ -21,6 +21,9 @@ var preProcessing = [][]string{
 	{`\cot`, `cot`},
 	{`\cross`, `×`},
 	{`\implies`, `⇒`},
+	{`\times`, `×`},
+	{`\cdot`, `·`},
+	{`\div`, `÷`},
 }
 
 func preProcess(s string) string {
@@ -30,50 +33,29 @@ func preProcess(s string) string {
 	i, temp := 0, ""
 	for i < len(s) {
 		if strings.HasPrefix(s, `\frac`) {
-			start, stack := -1, 0
-			for ; i < len(s); i++ {
-				if s[i] == '{' {
-					if stack == 0 {
-						temp += "{"
-						start = i + 1
-					}
-					stack++
-				} else if s[i] == '}' {
-					if stack == 1 {
-						if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
-							temp += "(" + s[start:i] + ")}"
-						} else {
-							temp += s[start:i] + "}"
+			for j := 0; j < 2; j++ {
+				start, stack := -1, 0
+				for ; i < len(s); i++ {
+					if s[i] == '{' {
+						if stack == 0 {
+							temp += "{"
+							start = i + 1
 						}
-						i++
-						break
-					}
-					stack--
-				} else if start == -1 {
-					temp += string(s[i])
-				}
-			}
-			start, stack = -1, 0
-			for ; i < len(s); i++ {
-				if s[i] == '{' {
-					if stack == 0 {
-						temp += "{"
-						start = i + 1
-					}
-					stack++
-				} else if s[i] == '}' {
-					if stack == 1 {
-						if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
-							temp += "(" + s[start:i] + ")}"
-						} else {
-							temp += s[start:i] + "}"
+						stack++
+					} else if s[i] == '}' {
+						if stack == 1 {
+							if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
+								temp += "(" + s[start:i] + ")}"
+							} else {
+								temp += s[start:i] + "}"
+							}
+							i++
+							break
 						}
-						i++
-						break
+						stack--
+					} else if start == -1 {
+						temp += string(s[i])
 					}
-					stack--
-				} else if start == -1 {
-					temp += string(s[i])
 				}
 			}
 		} else {
