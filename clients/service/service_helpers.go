@@ -67,8 +67,11 @@ func postProcess(s string) string {
 	fractions := utils.FracRgx.FindAllString(s, -1)
 	for _, original := range fractions {
 		if len(original) > 20 {
-			fraction := strings.Replace(original, "/", " / ", 1)
-			s = strings.ReplaceAll(s, original, fraction)
+			fraction := strings.ReplaceAll(original, "/", " / ")
+			for strings.Contains(fraction, "  ") {
+				fraction = strings.ReplaceAll(fraction, "  ", " ")
+			}
+			s = strings.Replace(s, original, fraction, 1)
 		}
 	}
 	subSupers := utils.SubSuperRgx.FindAllStringSubmatch(s, -1)
@@ -76,47 +79,5 @@ func postProcess(s string) string {
 		subSuper := fmt.Sprintf("(%s, %s)", match[1], match[2])
 		s = strings.Replace(s, match[0], subSuper, 1)
 	}
-	chars := []rune(s)
-	i, builder, buffer := 0, strings.Builder{}, strings.Builder{}
-	for i < len(chars) {
-		if strings.HasPrefix(string(chars[i:]), `_{`) {
-			start := i
-			i += 2
-			for ; i < len(chars); i++ {
-				if chars[i] == '}' {
-					builder.WriteString(buffer.String())
-					buffer.Reset()
-					i++
-					break
-				}
-				char, ok := utils.Subscripts[chars[i]]
-				if !ok {
-					builder.WriteString(string(chars[start:i]))
-					break
-				}
-				buffer.WriteString(char)
-			}
-		} else if strings.HasPrefix(string(chars[i:]), `^{`) {
-			start := i
-			i += 2
-			for ; i < len(chars); i++ {
-				if chars[i] == '}' {
-					builder.WriteString(buffer.String())
-					buffer.Reset()
-					i++
-					break
-				}
-				char, ok := utils.Superscripts[chars[i]]
-				if !ok {
-					builder.WriteString(string(chars[start:i]))
-					break
-				}
-				buffer.WriteString(char)
-			}
-		} else {
-			builder.WriteRune(chars[i])
-			i++
-		}
-	}
-	return builder.String()
+	return s
 }

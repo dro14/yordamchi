@@ -8,7 +8,7 @@ var (
 	HeaderRgx   = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	FracRgx     = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
 	LinkRgx     = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
-	LaTeXRgx    = regexp.MustCompile(`\\\s*[(\[{<]\s*(.+?)\s*\\\s*[)\]}>]`)
+	LaTeXRgx    = regexp.MustCompile(`\\\s*[(\[{<]\s*([\s\S]+?)\s*\\\s*[)\]}>]`)
 	TableRgx    = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
