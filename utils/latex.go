@@ -5,8 +5,8 @@ import "regexp"
 var (
 	CodeRgx   = regexp.MustCompile("(?m)^```\\w*$")
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
-	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*(.+?)\s*\\[)\]]`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	LaTeXRgx  = regexp.MustCompile(`\\\s*[(\[{<]\s*(.+?)\s*\\\s*[)\]}>]`)
 	TableRgx  = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 

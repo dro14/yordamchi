@@ -9,7 +9,8 @@ import (
 var bot *tgbotapi.BotAPI
 
 func SendInfoMessage(text string) {
-	config := tgbotapi.NewMessage(AdminUserID, text)
+	slices := Slice(text, 4096)
+	config := tgbotapi.NewMessage(AdminUserID, slices[0])
 	_, err := bot.Request(config)
 	if err != nil {
 		log.Println("can't send info message:", err)

@@ -24,6 +24,8 @@ var preProcessing = [][]string{
 	{`\times`, `×`},
 	{`\cdot`, `·`},
 	{`\div`, `÷`},
+	{`\dfrac`, `\frac`},
+	{`\cfrac`, `\frac`},
 }
 
 func preProcess(s string) string {
