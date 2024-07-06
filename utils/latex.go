@@ -3,10 +3,11 @@ package utils
 import "regexp"
 
 var (
-	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*(.+?)\s*\\[)\]]`)
-	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
-	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
 	CodeRgx   = regexp.MustCompile("(?m)^```\\w*$")
+	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
+	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*(.+?)\s*\\[)\]]`)
+	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	TableRgx  = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
 const (

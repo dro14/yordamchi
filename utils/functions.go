@@ -233,8 +233,7 @@ func LaTeX(s string) string {
 }
 
 func Table(input string) string {
-	tableRgx := regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
-	tablesIndexes := tableRgx.FindAllStringIndex(input, -1)
+	tablesIndexes := TableRgx.FindAllStringIndex(input, -1)
 	start := 0
 	var result strings.Builder
 	for _, loc := range tablesIndexes {

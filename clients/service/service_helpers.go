@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 )
 
 func id(ctx context.Context) int64 {
@@ -18,6 +19,69 @@ func model(ctx context.Context) string {
 
 var preProcessing = [][]string{
 	{`\cot`, `cot`},
+	{`\cross`, `×`},
+	{`\implies`, `⇒`},
+}
+
+func preProcess(s string) string {
+	for _, item := range preProcessing {
+		s = strings.ReplaceAll(s, item[0], item[1])
+	}
+	i, temp := 0, ""
+	for i < len(s) {
+		if strings.HasPrefix(s, `\frac`) {
+			start, stack := -1, 0
+			for ; i < len(s); i++ {
+				if s[i] == '{' {
+					if stack == 0 {
+						temp += "{"
+						start = i + 1
+					}
+					stack++
+				} else if s[i] == '}' {
+					if stack == 1 {
+						if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
+							temp += "(" + s[start:i] + ")}"
+						} else {
+							temp += s[start:i] + "}"
+						}
+						i++
+						break
+					}
+					stack--
+				} else if start == -1 {
+					temp += string(s[i])
+				}
+			}
+			start, stack = -1, 0
+			for ; i < len(s); i++ {
+				if s[i] == '{' {
+					if stack == 0 {
+						temp += "{"
+						start = i + 1
+					}
+					stack++
+				} else if s[i] == '}' {
+					if stack == 1 {
+						if strings.ContainsAny(s[start:i], `+-*·×/÷^ `) {
+							temp += "(" + s[start:i] + ")}"
+						} else {
+							temp += s[start:i] + "}"
+						}
+						i++
+						break
+					}
+					stack--
+				} else if start == -1 {
+					temp += string(s[i])
+				}
+			}
+		} else {
+			temp += string(s[i])
+			i++
+		}
+	}
+	return s
 }
 
 var postProcessing = [][]string{
@@ -54,8 +118,6 @@ var postProcessing = [][]string{
 	{`_-`, `₋`},
 	{`_+`, `₊`},
 	{`_=`, `₌`},
-	{`_(`, `₍`},
-	{`_)`, `₎`},
 	{`_*`, `⁎`},
 	{`_π`, `ₚᵢ`},
 
@@ -117,9 +179,15 @@ var postProcessing = [][]string{
 	{`^-`, `⁻`},
 	{`^+`, `⁺`},
 	{`^=`, `⁼`},
-	{`^(`, `⁽`},
-	{`^)`, `⁾`},
 	{`^*`, `ˣ`},
 	{`^π`, `ᵖⁱ`},
 	{`^∘`, `°`},
+}
+
+func postProcess(s string) string {
+	s = "`" + s + "`"
+	for _, item := range postProcessing {
+		s = strings.ReplaceAll(s, item[0], item[1])
+	}
+	return s
 }
