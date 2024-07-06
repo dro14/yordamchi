@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"strings"
+
+	"github.com/dro14/yordamchi/utils"
 )
 
 func id(ctx context.Context) int64 {
@@ -17,24 +19,13 @@ func model(ctx context.Context) string {
 	return ctx.Value("model").(string)
 }
 
-var preProcessing = [][]string{
-	{`\cot`, `cot`},
-	{`\cross`, `×`},
-	{`\implies`, `⇒`},
-	{`\times`, `×`},
-	{`\cdot`, `·`},
-	{`\div`, `÷`},
-	{`\dfrac`, `\frac`},
-	{`\cfrac`, `\frac`},
-}
-
 func preProcess(s string) string {
-	for _, item := range preProcessing {
+	for _, item := range utils.PreProcessing {
 		s = strings.ReplaceAll(s, item[0], item[1])
 	}
 	i, builder := 0, strings.Builder{}
 	for i < len(s) {
-		if strings.HasPrefix(s, `\frac`) {
+		if strings.HasPrefix(s[i:], `\frac`) {
 			for j := 0; j < 2; j++ {
 				start, stack := -1, 0
 				for ; i < len(s); i++ {
@@ -68,110 +59,58 @@ func preProcess(s string) string {
 	return builder.String()
 }
 
-var postProcessing = [][]string{
-
-	// Subscripts
-	{`_0`, `₀`},
-	{`_1`, `₁`},
-	{`_2`, `₂`},
-	{`_3`, `₃`},
-	{`_4`, `₄`},
-	{`_5`, `₅`},
-	{`_6`, `₆`},
-	{`_7`, `₇`},
-	{`_8`, `₈`},
-	{`_9`, `₉`},
-	{`_a`, `ₐ`},
-	{`_e`, `ₑ`},
-	{`_h`, `ₕ`},
-	{`_i`, `ᵢ`},
-	{`_j`, `ⱼ`},
-	{`_k`, `ₖ`},
-	{`_l`, `ₗ`},
-	{`_m`, `ₘ`},
-	{`_n`, `ₙ`},
-	{`_o`, `ₒ`},
-	{`_p`, `ₚ`},
-	{`_r`, `ᵣ`},
-	{`_s`, `ₛ`},
-	{`_t`, `ₜ`},
-	{`_u`, `ᵤ`},
-	{`_v`, `ᵥ`},
-	{`_x`, `ₓ`},
-	{`_y`, `ᵧ`},
-	{`_-`, `₋`},
-	{`_+`, `₊`},
-	{`_=`, `₌`},
-	{`_*`, `⁎`},
-	{`_π`, `ₚᵢ`},
-
-	// Superscripts
-	{`^0`, `⁰`},
-	{`^1`, `¹`},
-	{`^2`, `²`},
-	{`^3`, `³`},
-	{`^4`, `⁴`},
-	{`^5`, `⁵`},
-	{`^6`, `⁶`},
-	{`^7`, `⁷`},
-	{`^8`, `⁸`},
-	{`^9`, `⁹`},
-	{`^a`, `ᵃ`},
-	{`^b`, `ᵇ`},
-	{`^c`, `ᶜ`},
-	{`^d`, `ᵈ`},
-	{`^e`, `ᵉ`},
-	{`^f`, `ᶠ`},
-	{`^g`, `ᵍ`},
-	{`^h`, `ʰ`},
-	{`^i`, `ⁱ`},
-	{`^j`, `ʲ`},
-	{`^k`, `ᵏ`},
-	{`^l`, `ˡ`},
-	{`^m`, `ᵐ`},
-	{`^n`, `ⁿ`},
-	{`^o`, `ᵒ`},
-	{`^p`, `ᵖ`},
-	{`^r`, `ʳ`},
-	{`^s`, `ˢ`},
-	{`^t`, `ᵗ`},
-	{`^u`, `ᵘ`},
-	{`^v`, `ᵛ`},
-	{`^w`, `ʷ`},
-	{`^x`, `ˣ`},
-	{`^y`, `ʸ`},
-	{`^z`, `ᶻ`},
-	{`^A`, `ᴬ`},
-	{`^B`, `ᴮ`},
-	{`^D`, `ᴰ`},
-	{`^E`, `ᴱ`},
-	{`^G`, `ᴳ`},
-	{`^H`, `ᴴ`},
-	{`^I`, `ᴵ`},
-	{`^J`, `ᴶ`},
-	{`^K`, `ᴷ`},
-	{`^L`, `ᴸ`},
-	{`^M`, `ᴹ`},
-	{`^N`, `ᴺ`},
-	{`^O`, `ᴼ`},
-	{`^P`, `ᴾ`},
-	{`^R`, `ᴿ`},
-	{`^T`, `ᵀ`},
-	{`^U`, `ᵁ`},
-	{`^V`, `ⱽ`},
-	{`^W`, `ᵂ`},
-	{`^-`, `⁻`},
-	{`^+`, `⁺`},
-	{`^=`, `⁼`},
-	{`^*`, `ˣ`},
-	{`^π`, `ᵖⁱ`},
-	{`^∘`, `°`},
-}
-
 func postProcess(s string) string {
-	s = "`" + s + "`"
-	for _, item := range postProcessing {
+	for _, item := range utils.PostProcessing {
 		s = strings.ReplaceAll(s, item[0], item[1])
 	}
-	return s
+	fractions := utils.FracRgx.FindAllString(s, -1)
+	for _, original := range fractions {
+		if len(original) > 20 {
+			fraction := strings.Replace(original, "/", " / ", 1)
+			s = strings.ReplaceAll(s, original, fraction)
+		}
+	}
+	chars := []rune(s)
+	i, builder, buffer := 0, strings.Builder{}, strings.Builder{}
+	for i < len(chars) {
+		if strings.HasPrefix(string(chars[i:]), `_{`) {
+			start := i
+			i += 2
+			for ; i < len(chars); i++ {
+				if chars[i] == '}' {
+					builder.WriteString(buffer.String())
+					buffer.Reset()
+					i++
+					break
+				}
+				char, ok := utils.Subscripts[chars[i]]
+				if !ok {
+					builder.WriteString(string(chars[start:i]))
+					break
+				}
+				buffer.WriteString(char)
+			}
+		} else if strings.HasPrefix(string(chars[i:]), `^{`) {
+			start := i
+			i += 2
+			for ; i < len(chars); i++ {
+				if chars[i] == '}' {
+					builder.WriteString(buffer.String())
+					buffer.Reset()
+					i++
+					break
+				}
+				char, ok := utils.Superscripts[chars[i]]
+				if !ok {
+					builder.WriteString(string(chars[start:i]))
+					break
+				}
+				buffer.WriteString(char)
+			}
+		} else {
+			builder.WriteRune(chars[i])
+			i++
+		}
+	}
+	return "`" + builder.String() + "`"
 }
