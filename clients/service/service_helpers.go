@@ -68,9 +68,6 @@ func postProcess(s string) string {
 	for _, original := range fractions {
 		if len(original) > 20 {
 			fraction := strings.ReplaceAll(original, "/", " / ")
-			for strings.Contains(fraction, "  ") {
-				fraction = strings.ReplaceAll(fraction, "  ", " ")
-			}
 			s = strings.Replace(s, original, fraction, 1)
 		}
 	}
@@ -78,6 +75,9 @@ func postProcess(s string) string {
 	for _, match := range subSupers {
 		subSuper := fmt.Sprintf("(%s, %s)", match[1], match[2])
 		s = strings.Replace(s, match[0], subSuper, 1)
+	}
+	for strings.Contains(s, "  ") {
+		s = strings.ReplaceAll(s, "  ", " ")
 	}
 	return s
 }
