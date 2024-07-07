@@ -43,14 +43,15 @@ var LaTeXReplacements = [][]string{
 }
 
 var PreProcessing = [][]string{
-	{`\cot`, `cot`},
-	{`\cross`, `×`},
-	{`\implies`, `⇒`},
-	{`\times`, `×`},
-	{`\div`, `÷`},
-	{`\dfrac`, `\frac`},
-	{`\cfrac`, `\frac`},
-	{`\det`, `det`},
+	{"\\cot", "cot"},
+	{"\\cross", "×"},
+	{"\\implies", "⇒"},
+	{"\\cdot", "·"},
+	{"\\times", "×"},
+	{"\\div", "÷"},
+	{"\\dfrac", "\\frac"},
+	{"\\cfrac", "\\frac"},
+	{"\\det", "det"},
 }
 
 var PostProcessing = [][]string{

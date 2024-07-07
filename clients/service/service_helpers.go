@@ -26,7 +26,7 @@ func preProcess(s string) string {
 	}
 	i, builder := 0, strings.Builder{}
 	for i < len(s) {
-		if strings.HasPrefix(s[i:], `\frac`) {
+		if strings.HasPrefix(s[i:], "\\frac") {
 			for j := 0; j < 2; j++ {
 				start, stack := -1, 0
 				for ; i < len(s); i++ {
@@ -38,7 +38,7 @@ func preProcess(s string) string {
 						stack++
 					} else if s[i] == '}' {
 						if stack == 1 {
-							if strings.ContainsAny(s[start:i], `+-*×/÷^ `) {
+							if strings.ContainsAny(s[start:i], "+-*·×/÷^ ") {
 								builder.WriteString("(" + s[start:i] + ")}")
 							} else {
 								builder.WriteString(s[start:i] + "}")
