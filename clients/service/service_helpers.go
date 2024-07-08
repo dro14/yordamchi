@@ -23,7 +23,7 @@ func model(ctx context.Context) string {
 
 func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
-		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[0])
+		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[1])
 	}
 	runes := []rune(s)
 	i, builder := 0, strings.Builder{}
