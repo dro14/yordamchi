@@ -25,29 +25,29 @@ func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
 		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[1])
 	}
-	runes := []rune(s)
+	r := []rune(s)
 	i, builder := 0, strings.Builder{}
-	for i < len(runes) {
-		if strings.HasPrefix(string(runes[i:]), "\\frac{") && runes[i+6] != '(' {
-			runes = append(runes[:i+6], []rune(preProcess(string(runes[i+6:])))...)
+	for i < len(r) {
+		if strings.HasPrefix(string(r[i:]), `\frac{`) && r[i+6] != '(' {
+			r = append(r[:i+6], []rune(preProcess(string(r[i+6:])))...)
 			for j := 0; j < 2; j++ {
 				start, stack := -1, 0
-				for ; i < len(runes); i++ {
-					if runes[i] == '{' {
+				for ; i < len(r); i++ {
+					if r[i] == '{' {
 						if stack == 0 {
 							builder.WriteRune('{')
 							start = i + 1
 						}
 						stack++
-					} else if runes[i] == '}' {
+					} else if r[i] == '}' {
 						if stack == 1 {
-							if strings.ContainsAny(string(runes[start:i]), "+-*·×/÷^ ") {
+							if strings.ContainsAny(string(r[start:i]), "+-*·×/÷^ ") {
 								builder.WriteRune('(')
-								builder.WriteString(string(runes[start:i]))
+								builder.WriteString(string(r[start:i]))
 								builder.WriteRune(')')
 								builder.WriteRune('}')
 							} else {
-								builder.WriteString(string(runes[start:i]))
+								builder.WriteString(string(r[start:i]))
 								builder.WriteRune('}')
 							}
 							i++
@@ -55,12 +55,12 @@ func preProcess(s string) string {
 						}
 						stack--
 					} else if start == -1 {
-						builder.WriteRune(runes[i])
+						builder.WriteRune(r[i])
 					}
 				}
 			}
 		} else {
-			builder.WriteRune(runes[i])
+			builder.WriteRune(r[i])
 			i++
 		}
 	}

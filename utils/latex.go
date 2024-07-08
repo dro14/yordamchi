@@ -48,7 +48,7 @@ var PreProcessing = [][]string{
 	{`\\cdot`, `·`},
 	{`\\(?:times|cross)`, `×`},
 	{`\\div`, `÷`},
-	{`\\[cd]?frac ?{`, `\\frac{`},
+	{`\\[cd]?frac ?{`, `\frac{`},
 	{`\\implies`, `⇒`},
 }
 
