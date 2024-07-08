@@ -82,19 +82,18 @@ func postProcess(s string) string {
 	}
 	r := []rune(s)
 	var builder, buffer strings.Builder
-	for i := 0; i < len(r); {
+	for i := 0; i < len(r); i++ {
 		if strings.HasPrefix(string(r[i:]), `_{`) {
 			start := i
 			for i += 2; i < len(r); i++ {
 				if r[i] == '}' {
 					builder.WriteString(buffer.String())
 					buffer.Reset()
-					i++
 					break
 				}
 				repl, ok := utils.Subscripts[r[i]]
 				if !ok {
-					builder.WriteString(string(r[start:i]))
+					builder.WriteString(string(r[start : i+1]))
 					break
 				}
 				buffer.WriteString(repl)
@@ -105,19 +104,17 @@ func postProcess(s string) string {
 				if r[i] == '}' {
 					builder.WriteString(buffer.String())
 					buffer.Reset()
-					i++
 					break
 				}
 				repl, ok := utils.Superscripts[r[i]]
 				if !ok {
-					builder.WriteString(string(r[start:i]))
+					builder.WriteString(string(r[start : i+1]))
 					break
 				}
 				buffer.WriteString(repl)
 			}
 		} else {
 			builder.WriteRune(r[i])
-			i++
 		}
 	}
 	return builder.String()
