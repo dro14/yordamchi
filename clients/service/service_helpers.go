@@ -25,8 +25,8 @@ func preProcess(s string) string {
 		s = item[0].(*regexp.Regexp).ReplaceAllString(s, item[1].(string))
 	}
 	r := []rune(s)
-	i, builder := 0, strings.Builder{}
-	for i < len(r) {
+	var builder strings.Builder
+	for i := 0; i < len(r); {
 		if strings.HasPrefix(string(r[i:]), `\frac{`) && r[i+6] != '(' {
 			r = append(r[:i+6], []rune(preProcess(string(r[i+6:])))...)
 			for j := 0; j < 2; j++ {
@@ -80,5 +80,45 @@ func postProcess(s string) string {
 	for strings.Contains(s, "  ") {
 		s = strings.ReplaceAll(s, "  ", " ")
 	}
-	return s
+	r := []rune(s)
+	var builder, buffer strings.Builder
+	for i := 0; i < len(r); {
+		if strings.HasPrefix(string(r[i:]), `_{`) {
+			start := i
+			for i += 2; i < len(r); i++ {
+				if r[i] == '}' {
+					builder.WriteString(buffer.String())
+					buffer.Reset()
+					i++
+					break
+				}
+				repl, ok := utils.Subscripts[r[i]]
+				if !ok {
+					builder.WriteString(string(r[start:i]))
+					break
+				}
+				buffer.WriteString(repl)
+			}
+		} else if strings.HasPrefix(string(r[i:]), `^{`) {
+			start := i
+			for i += 2; i < len(r); i++ {
+				if r[i] == '}' {
+					builder.WriteString(buffer.String())
+					buffer.Reset()
+					i++
+					break
+				}
+				repl, ok := utils.Superscripts[r[i]]
+				if !ok {
+					builder.WriteString(string(r[start:i]))
+					break
+				}
+				buffer.WriteString(repl)
+			}
+		} else {
+			builder.WriteRune(r[i])
+			i++
+		}
+	}
+	return builder.String()
 }
