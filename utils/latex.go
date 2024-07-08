@@ -3,8 +3,8 @@ package utils
 import "regexp"
 
 var (
+	LeftoverRgx = regexp.MustCompile(`{(.+?)}`)
 	CodeRgx     = regexp.MustCompile("(?m)^```\\w*$")
-	SubSuperRgx = regexp.MustCompile(`_{(.+?)}\^{(.+?)}`)
 	HeaderRgx   = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	FracRgx     = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
 	LinkRgx     = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
@@ -12,50 +12,28 @@ var (
 	TableRgx    = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
-const (
-	Text        = `\\(?:text|math|d|bold|over|wide)?(?:bf|cal|symbol|rm|rightarrow|line|bar|vec|hat|dot)?{(.+?)}`
-	Subscript   = `_{(.+?)}`
-	Superscript = `\^{(.+?)}`
-)
-
-var LaTeXReplacements = [][]string{
-	{`C{(.+?)}{(.+?)}`, `C_{(REPLACE)}^{(REPLACE)}`},
-	{`P{(.+?)}{(.+?)}`, `P_{(REPLACE)}^{(REPLACE)}`},
-	{`C\((.+?), ?(.+?)\)`, `C_{(REPLACE)}^{(REPLACE)}`},
-	{`P\((.+?), ?(.+?)\)`, `P_{(REPLACE)}^{(REPLACE)}`},
-	{`{(.+?) \\choose (.+?)}`, `C_{(REPLACE)}^{(REPLACE)}`},
-	{`\\pmod{(.+?)}`, `(mod (REPLACE))`},
-	{`\\mod{(.+?)}`, `mod (REPLACE)`},
-	{`\\pm`, `±`},
-	{`\\cancelto{(.+?)}`, `→ (REPLACE)`},
-	{`\\xrightarrow{(.+?})}`, `+ (REPLACE) →`},
-	{Text, `REPLACE`},
-	{Subscript, `REPLACE`},
-	{`\\[cd]?frac ?{(.+?)} ?{(.+?)}`, `(REPLACE)/(REPLACE)`},
-	{`\\[cd]?frac ?{(.+?){(.+?)}}`, `(REPLACE)/(REPLACE)`},
-	{`\\sqrt{(.+?)}`, `√(REPLACE)`},
-	{`\\sqrt\[3\]{(.+?)}`, `∛(REPLACE)`},
-	{`\\sqrt\[4\]{(.+?)}`, `∜(REPLACE)`},
-	{Superscript, `REPLACE`},
-	{`\\(?: |,|;|:|quad)`, ` `},
-	{`(?:limits|nolimits)`, ``},
-	{`\\(?:left|right|[Bb]igg?|d)?`, ``},
-}
-
 var PreProcessing = [][]string{
 	{`\\cot`, `cot`},
 	{`\\det`, `det`},
-	{`\\cdot`, `·`},
+
 	{`\\(?:times|cross)`, `×`},
+	{`\\cdot`, `·`},
 	{`\\div`, `÷`},
-	{`\\[cd]?frac ?{`, `\frac{`},
 	{`\\implies`, `⇒`},
-	{`\\pmod{([^}]+)}`, `(mod ($1))`},
-	{`\\mod{([^}]+)}`, `mod ($1)`},
+	{`\\[cd]?frac ?{`, `\frac{`},
+
+	{`\\mod{(.+?)}`, `mod $1`},
+	{`\\pmod{(.+?)}`, `(mod $1)`},
+	{`\\cancelto{(.+?)}`, `→ $1`},
+	{`\\xrightarrow{(.+?})}`, `+ $1 →`},
+
+	{`P{(.+?)}{(.+?)}`, `P($1; $2)`},
+	{`_{(.+?)}\^{(.+?)}`, `($1; $2)`},
+	{`{(.+?) \\choose (.+?)}`, `C($1; $2)`},
+	{`\\(?:C|binom){(.+?)}{(.+?)}`, `C($1; $2)`},
 }
 
 var PostProcessing = [][]string{
-
 	// Subscripts
 	{`_0`, `₀`},
 	{`_1`, `₁`},
@@ -152,114 +130,4 @@ var PostProcessing = [][]string{
 	{`^*`, `ˣ`},
 	{`^π`, `ᵖⁱ`},
 	{`^∘`, `°`},
-}
-
-var Subscripts = map[rune]string{
-	'0': `₀`,
-	'1': `₁`,
-	'2': `₂`,
-	'3': `₃`,
-	'4': `₄`,
-	'5': `₅`,
-	'6': `₆`,
-	'7': `₇`,
-	'8': `₈`,
-	'9': `₉`,
-
-	'a': `ₐ`,
-	'e': `ₑ`,
-	'h': `ₕ`,
-	'i': `ᵢ`,
-	'j': `ⱼ`,
-	'k': `ₖ`,
-	'l': `ₗ`,
-	'm': `ₘ`,
-	'n': `ₙ`,
-	'o': `ₒ`,
-	'p': `ₚ`,
-	'r': `ᵣ`,
-	's': `ₛ`,
-	't': `ₜ`,
-	'u': `ᵤ`,
-	'v': `ᵥ`,
-	'x': `ₓ`,
-	'y': `ᵧ`,
-
-	'-': `₋`,
-	'+': `₊`,
-	'=': `₌`,
-	'(': `₍`,
-	')': `₎`,
-	'*': `⁎`,
-	'π': `ₚᵢ`,
-	' ': ` `,
-}
-
-var Superscripts = map[rune]string{
-	'0': `⁰`,
-	'1': `¹`,
-	'2': `²`,
-	'3': `³`,
-	'4': `⁴`,
-	'5': `⁵`,
-	'6': `⁶`,
-	'7': `⁷`,
-	'8': `⁸`,
-	'9': `⁹`,
-
-	'a': `ᵃ`,
-	'b': `ᵇ`,
-	'c': `ᶜ`,
-	'd': `ᵈ`,
-	'e': `ᵉ`,
-	'f': `ᶠ`,
-	'g': `ᵍ`,
-	'h': `ʰ`,
-	'i': `ⁱ`,
-	'j': `ʲ`,
-	'k': `ᵏ`,
-	'l': `ˡ`,
-	'm': `ᵐ`,
-	'n': `ⁿ`,
-	'o': `ᵒ`,
-	'p': `ᵖ`,
-	'r': `ʳ`,
-	's': `ˢ`,
-	't': `ᵗ`,
-	'u': `ᵘ`,
-	'v': `ᵛ`,
-	'w': `ʷ`,
-	'x': `ˣ`,
-	'y': `ʸ`,
-	'z': `ᶻ`,
-
-	'A': `ᴬ`,
-	'B': `ᴮ`,
-	'D': `ᴰ`,
-	'E': `ᴱ`,
-	'G': `ᴳ`,
-	'H': `ᴴ`,
-	'I': `ᴵ`,
-	'J': `ᴶ`,
-	'K': `ᴷ`,
-	'L': `ᴸ`,
-	'M': `ᴹ`,
-	'N': `ᴺ`,
-	'O': `ᴼ`,
-	'P': `ᴾ`,
-	'R': `ᴿ`,
-	'T': `ᵀ`,
-	'U': `ᵁ`,
-	'V': `ⱽ`,
-	'W': `ᵂ`,
-
-	'-': `⁻`,
-	'+': `⁺`,
-	'=': `⁼`,
-	'(': `⁽`,
-	')': `⁾`,
-	'*': `ˣ`,
-	'π': `ᵖⁱ`,
-	'∘': `°`,
-	' ': ` `,
 }

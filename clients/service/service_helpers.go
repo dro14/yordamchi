@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -78,11 +77,7 @@ func postProcess(s string) string {
 			s = strings.Replace(s, original, fraction, 1)
 		}
 	}
-	subSupers := utils.SubSuperRgx.FindAllStringSubmatch(s, -1)
-	for _, match := range subSupers {
-		subSuper := fmt.Sprintf("(%s, %s)", match[1], match[2])
-		s = strings.Replace(s, match[0], subSuper, 1)
-	}
+	s = utils.LeftoverRgx.ReplaceAllLiteralString(s, "$1")
 	for strings.Contains(s, "  ") {
 		s = strings.ReplaceAll(s, "  ", " ")
 	}
