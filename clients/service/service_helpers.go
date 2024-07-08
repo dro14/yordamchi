@@ -22,7 +22,7 @@ func model(ctx context.Context) string {
 
 func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
-		s = regexp.MustCompile(item[0]).ReplaceAllString(s, item[1])
+		s = item[0].(*regexp.Regexp).ReplaceAllString(s, item[1].(string))
 	}
 	r := []rune(s)
 	i, builder := 0, strings.Builder{}
@@ -77,7 +77,6 @@ func postProcess(s string) string {
 			s = strings.Replace(s, original, fraction, 1)
 		}
 	}
-	s = utils.LeftoverRgx.ReplaceAllLiteralString(s, "$1")
 	for strings.Contains(s, "  ") {
 		s = strings.ReplaceAll(s, "  ", " ")
 	}

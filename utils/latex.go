@@ -3,34 +3,33 @@ package utils
 import "regexp"
 
 var (
-	LeftoverRgx = regexp.MustCompile(`{(.+?)}`)
-	CodeRgx     = regexp.MustCompile("(?m)^```\\w*$")
-	HeaderRgx   = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
-	FracRgx     = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
-	LinkRgx     = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
-	LaTeXRgx    = regexp.MustCompile(`\\\s*[(\[]\s*([\s\S]+?)\s*\\\s*[)\]]`)
-	TableRgx    = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
+	CodeRgx   = regexp.MustCompile("(?m)^```\\w*$")
+	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
+	FracRgx   = regexp.MustCompile(`\(.+?\)/\(.+?\)|\w+/\w+`)
+	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*([\s\S]+?)\s*\\[)\]]`)
+	TableRgx  = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
 )
 
-var PreProcessing = [][]string{
-	{`\\cot`, `cot`},
-	{`\\det`, `det`},
+var PreProcessing = [][]any{
+	{regexp.MustCompile(`\\cot`), `cot`},
+	{regexp.MustCompile(`\\det`), `det`},
 
-	{`\\(?:times|cross)`, `×`},
-	{`\\cdot`, `·`},
-	{`\\div`, `÷`},
-	{`\\implies`, `⇒`},
-	{`\\[cd]?frac ?{`, `\frac{`},
+	{regexp.MustCompile(`\\(?:times|cross)`), `×`},
+	{regexp.MustCompile(`\\cdot`), `·`},
+	{regexp.MustCompile(`\\div`), `÷`},
+	{regexp.MustCompile(`\\implies`), `⇒`},
+	{regexp.MustCompile(`\\[cd]?frac ?{`), `\frac{`},
 
-	{`\\mod{(.+?)}`, `mod $1`},
-	{`\\pmod{(.+?)}`, `(mod $1)`},
-	{`\\cancelto{(.+?)}`, `→ $1`},
-	{`\\xrightarrow{(.+?})}`, `+ $1 →`},
+	{regexp.MustCompile(`\\mod{(.+?)}`), `mod $1`},
+	{regexp.MustCompile(`\\pmod{(.+?)}`), `(mod $1)`},
+	{regexp.MustCompile(`\\cancelto{(.+?)}`), `→ $1`},
+	{regexp.MustCompile(`\\xrightarrow{(.+?})}`), `+ $1 →`},
 
-	{`P{(.+?)}{(.+?)}`, `P($1; $2)`},
-	{`_{(.+?)}\^{(.+?)}`, `($1; $2)`},
-	{`{(.+?) \\choose (.+?)}`, `C($1; $2)`},
-	{`\\(?:C|binom){(.+?)}{(.+?)}`, `C($1; $2)`},
+	{regexp.MustCompile(`P{(.+?)}{(.+?)}`), `P($1; $2)`},
+	{regexp.MustCompile(`_{(.+?)}\^{(.+?)}`), `($1; $2)`},
+	{regexp.MustCompile(`{(.+?) \\choose (.+?)}`), `C($1; $2)`},
+	{regexp.MustCompile(`\\(?:C|binom){(.+?)}{(.+?)}`), `C($1; $2)`},
 }
 
 var PostProcessing = [][]string{
