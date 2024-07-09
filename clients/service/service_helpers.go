@@ -32,13 +32,13 @@ func preProcess(s string) string {
 			for j := 0; j < 2; j++ {
 				start, stack := -1, 0
 				for ; i < len(r); i++ {
-					if r[i] == '{' {
+					if r[i] == '{' && r[i+1] != '(' {
 						if stack == 0 {
 							builder.WriteRune('{')
 							start = i + 1
 						}
 						stack++
-					} else if r[i] == '}' {
+					} else if r[i] == '}' && stack != 0 {
 						if stack == 1 {
 							if strings.ContainsAny(string(r[start:i]), "+-*·×/÷^ ") {
 								builder.WriteRune('(')
