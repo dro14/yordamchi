@@ -3,9 +3,11 @@ package utils
 import "regexp"
 
 var (
-	CodeRgx   = regexp.MustCompile("(?m)^```\\w*$")
+	PreRgx    = regexp.MustCompile("(?m)^```\\w*$")
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
+	BoldRgx   = regexp.MustCompile(`(?<!\\)\*[\s\S]+?[^\\]\*`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	CodeRgx   = regexp.MustCompile("(?<!\\\\)`[\\s\\S]+?[^\\\\]`")
 	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*([\s\S]+?)\s*\\[)\]]`)
 	FracRgx   = regexp.MustCompile(`\w+/\w+|\w+/\(.+?\)|\(.+?\)/\w+|\(.+?\)/\(.+?\)`)
 	TableRgx  = regexp.MustCompile("(?m)(^```.*$\\s*)?(^\\|.*\\|$\\s*^\\|[-| :]*\\|$\\s*)(^\\|.*\\|$\\s*)*(^```$\\s*)?")
@@ -19,17 +21,17 @@ var PreProcessing = [][]any{
 	{regexp.MustCompile(`\\cdot`), `·`},
 	{regexp.MustCompile(`\\div`), `÷`},
 	{regexp.MustCompile(`\\implies`), `⇒`},
-	{regexp.MustCompile(`\\[cd]?frac ?{`), `\frac{`},
+	{regexp.MustCompile(`\\[cd]?frac ?\{`), `\frac{`},
 
-	{regexp.MustCompile(`\\mod{(.+?)}`), `mod $1`},
-	{regexp.MustCompile(`\\pmod{(.+?)}`), `(mod $1)`},
-	{regexp.MustCompile(`\\cancelto{(.+?)}`), `→ $1`},
-	{regexp.MustCompile(`\\xrightarrow{(.+?})}`), `+ $1 →`},
+	{regexp.MustCompile(`\\mod\{(.+?)\}`), `mod $1`},
+	{regexp.MustCompile(`\\pmod\{(.+?)\}`), `(mod $1)`},
+	{regexp.MustCompile(`\\cancelto\{(.+?)\}`), `→ $1`},
+	{regexp.MustCompile(`\\xrightarrow\{(.+?})\}`), `+ $1 →`},
 
-	{regexp.MustCompile(`P{(.+?)}{(.+?)}`), `P($1; $2)`},
-	{regexp.MustCompile(`_{(.+?)}\^{(.+?)}`), `($1; $2)`},
-	{regexp.MustCompile(`{(.+?) \\choose (.+?)}`), `C($1; $2)`},
-	{regexp.MustCompile(`\\(?:C|binom){(.+?)}{(.+?)}`), `C($1; $2)`},
+	{regexp.MustCompile(`P\{(.+?)\}\{(.+?)\}`), `P($1; $2)`},
+	{regexp.MustCompile(`_\{(.+?)\}\^\{(.+?)\}`), `($1; $2)`},
+	{regexp.MustCompile(`\{(.+?) \\choose (.+?)\}`), `C($1; $2)`},
+	{regexp.MustCompile(`\\(?:C|binom)\{(.+?)\}\{(.+?)\}`), `C($1; $2)`},
 }
 
 var PostProcessing = [][]string{

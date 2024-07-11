@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ func Slice(s string, maxLen int) []string {
 	}
 	slices = append(slices, string(runes))
 	for i := range slices {
-		codeTags := CodeRgx.FindAllString(slices[i], -1)
+		codeTags := PreRgx.FindAllString(slices[i], -1)
 		if len(codeTags)%2 != 0 && i+1 < len(slices) {
 			slices[i] = slices[i] + "```"
 			slices[i+1] = codeTags[len(codeTags)-1] + slices[i+1]
@@ -93,26 +92,24 @@ func MarkdownV2(s string) string {
 
 		for {
 			before2, before1, found2 = strings.Cut(before1, "**")
-			code := regexp.MustCompile("`.+?`")
-			matches := code.FindAllString(before2, -1)
+			matches := CodeRgx.FindAllString(before2, -1)
 			for _, match := range matches {
 				escaped := strings.ReplaceAll(match, "*", "\\*")
 				before2 = strings.Replace(before2, match, escaped, 1)
 			}
-			matches = code.Split(before2, -1)
+			matches = CodeRgx.Split(before2, -1)
 			for _, match := range matches {
 				if strings.Count(match, "*")%2 != 0 {
 					escaped := strings.ReplaceAll(match, "*", "\\*")
 					before2 = strings.Replace(before2, match, escaped, 1)
 				}
 			}
-			bold := regexp.MustCompile(`[^\\]\*.+?\*[^\\]`)
-			matches = bold.FindAllString(before2, -1)
+			matches = BoldRgx.FindAllString(before2, -1)
 			for _, match := range matches {
 				escaped := strings.ReplaceAll(match, "`", "\\`")
 				before2 = strings.Replace(before2, match, escaped, 1)
 			}
-			matches = bold.Split(before2, -1)
+			matches = BoldRgx.Split(before2, -1)
 			for _, match := range matches {
 				if strings.Count(match, "`")%2 != 0 {
 					escaped := strings.ReplaceAll(match, "`", "\\`")
