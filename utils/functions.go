@@ -94,6 +94,7 @@ func MarkdownV2(s string) string {
 			before2, before1, found2 = strings.Cut(before1, "**")
 			matches := CodeRgx.FindAllString(before2, -1)
 			for _, match := range matches {
+				match = match[1:]
 				escaped := strings.ReplaceAll(match, "*", "\\*")
 				before2 = strings.Replace(before2, match, escaped, 1)
 			}
@@ -106,6 +107,7 @@ func MarkdownV2(s string) string {
 			}
 			matches = BoldRgx.FindAllString(before2, -1)
 			for _, match := range matches {
+				match = match[1:]
 				escaped := strings.ReplaceAll(match, "`", "\\`")
 				before2 = strings.Replace(before2, match, escaped, 1)
 			}
