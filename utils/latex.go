@@ -5,6 +5,7 @@ import "regexp"
 var (
 	PreRgx    = regexp.MustCompile("(?m)^```\\w*$")
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
+	SubSupRgx = regexp.MustCompile(`_\{(.+?)\}\^\{(.+?)\}`)
 	BoldRgx   = regexp.MustCompile(`(?<!\\)\*[\s\S]+?[^\\]\*`)
 	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
 	CodeRgx   = regexp.MustCompile("(?<!\\\\)`[\\s\\S]+?[^\\\\]`")
@@ -29,7 +30,6 @@ var PreProcessing = [][]any{
 	{regexp.MustCompile(`\\xrightarrow\{(.+?})\}`), `+ $1 →`},
 
 	{regexp.MustCompile(`P\{(.+?)\}\{(.+?)\}`), `P($1; $2)`},
-	{regexp.MustCompile(`_\{(.+?)\}\^\{(.+?)\}`), `($1; $2)`},
 	{regexp.MustCompile(`\{(.+?) \\choose (.+?)\}`), `C($1; $2)`},
 	{regexp.MustCompile(`\\(?:C|binom)\{(.+?)\}\{(.+?)\}`), `C($1; $2)`},
 }

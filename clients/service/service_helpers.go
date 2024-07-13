@@ -27,7 +27,7 @@ func preProcess(s string) string {
 	r := []rune(s)
 	var builder strings.Builder
 	for i := 0; i < len(r); {
-		if strings.HasPrefix(string(r[i:]), `\frac{`) && r[i+6] != '(' {
+		if strings.HasPrefix(string(r[i:]), "\\frac{") && r[i+6] != '(' {
 			r = append(r[:i+6], []rune(preProcess(string(r[i+6:])))...)
 			for j := 0; j < 2; j++ {
 				start, stack := -1, 0
@@ -70,6 +70,7 @@ func postProcess(s string) string {
 	for _, item := range utils.PostProcessing {
 		s = strings.ReplaceAll(s, item[0], item[1])
 	}
+	s = utils.SubSupRgx.ReplaceAllString(s, "($1; $2)")
 	fractions := utils.FracRgx.FindAllString(s, -1)
 	for _, original := range fractions {
 		if len(original) > 20 {
@@ -83,7 +84,7 @@ func postProcess(s string) string {
 	r := []rune(s)
 	var builder, buffer strings.Builder
 	for i := 0; i < len(r); i++ {
-		if strings.HasPrefix(string(r[i:]), `_{`) {
+		if strings.HasPrefix(string(r[i:]), "_{") {
 			start := i
 			for i += 2; i < len(r); i++ {
 				if r[i] == '}' {
@@ -98,7 +99,7 @@ func postProcess(s string) string {
 				}
 				buffer.WriteString(repl)
 			}
-		} else if strings.HasPrefix(string(r[i:]), `^{`) {
+		} else if strings.HasPrefix(string(r[i:]), "^{") {
 			start := i
 			for i += 2; i < len(r); i++ {
 				if r[i] == '}' {
