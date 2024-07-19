@@ -1,15 +1,9 @@
 package text
 
 var Notification1 = map[string]string{
-	"uz": `Assalomu alaykum, %s! Bugun sizga qanday yordam bera olishim mumkin?
-
-⭐ +5ta bepul so'rov ⭐`,
-	"ru": `Здравствуйте, %s! Чем я могу вам помочь сегодня?
-
-⭐ +5 бесплатных запросов ⭐`,
-	"en": `Hello, %s! How can I help you today?
-
-⭐ +5 free requests ⭐`,
+	"uz": `Assalomu alaykum, %s! Bugun sizga qanday yordam bera olishim mumkin?`,
+	"ru": `Здравствуйте, %s! Чем я могу вам помочь сегодня?`,
+	"en": `Hello, %s! How can I help you today?`,
 }
 
 var Notification2 = map[string]string{

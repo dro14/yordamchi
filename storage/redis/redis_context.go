@@ -7,9 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/openai/types"
-	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 )
 
@@ -73,14 +71,11 @@ func (r *Redis) DeleteContext(ctx context.Context) {
 
 func (r *Redis) System(ctx context.Context) string {
 	system, err := client.Get(ctx, "system:"+id(ctx)).Result()
-	if err != nil || userStatus(ctx) == status.Free {
-		if translate(ctx) {
-			return template["en"]
-		} else {
-			return template[lang(ctx)]
-		}
+	if err != nil {
+		return template[lang(ctx)]
+	} else {
+		return "USER: " + system
 	}
-	return "USER: " + system
 }
 
 func (r *Redis) SetSystem(ctx context.Context, system string) {
@@ -100,9 +95,5 @@ func (r *Redis) Messages(ctx context.Context) []types.Message {
 		return nil
 	}
 
-	if model(ctx) == models.GPT3 && strings.Contains(messages[0].Content.(string), utils.Delim) {
-		return nil
-	} else {
-		return messages
-	}
+	return messages
 }

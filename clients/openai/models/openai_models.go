@@ -1,6 +1,6 @@
 package models
 
 const (
-	GPT3 = "gpt-4o-mini"
-	GPT4 = "gpt-4o"
+	GPT4oMini = "gpt-4o-mini"
+	GPT4o     = "gpt-4o"
 )

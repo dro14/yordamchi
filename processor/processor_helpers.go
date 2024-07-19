@@ -26,10 +26,6 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func model(ctx context.Context) string {
-	return ctx.Value("model").(string)
-}
-
 func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message) (context.Context, bool, bool) {
 	value, ok := messageBuffer.Load(message.From.ID)
 	if ok {
@@ -45,13 +41,12 @@ func (p *Processor) messageUpdate(ctx context.Context, message *tgbotapi.Message
 	ctx = context.WithValue(ctx, "start", time.Now())
 	ctx = context.WithValue(ctx, "user_id", message.From.ID)
 	ctx = context.WithValue(ctx, "stream", true)
-	ctx = context.WithValue(ctx, "translate", false)
 	ctx = context.WithValue(ctx, "json_mode", false)
 	ctx = context.WithValue(ctx, "user_status", p.redis.UserStatus(ctx))
 	if userStatus(ctx) == status.Premium {
-		ctx = context.WithValue(ctx, "model", models.GPT4)
+		ctx = context.WithValue(ctx, "model", models.GPT4o)
 	} else {
-		ctx = context.WithValue(ctx, "model", models.GPT3)
+		ctx = context.WithValue(ctx, "model", models.GPT4oMini)
 	}
 	ctx, foundLang := p.redis.Lang(ctx, message.From.LanguageCode)
 	return ctx, false, foundLang
@@ -61,17 +56,15 @@ func (p *Processor) msg(ctx context.Context) string {
 	switch userStatus(ctx) {
 	case status.Premium:
 		template := text.Settings2[lang(ctx)]
-		expiration, requests := p.redis.Premium(ctx)
+		requests, expiration := p.redis.Requests(ctx), p.redis.Expiration(ctx)
 		return fmt.Sprintf(template, requests, expiration)
 	case status.Unlimited:
 		template := text.Settings1[lang(ctx)]
-		return fmt.Sprintf(template, p.redis.Expiration(ctx))
+		expiration := p.redis.Expiration(ctx)
+		return fmt.Sprintf(template, expiration)
 	default:
 		template := text.Settings[lang(ctx)]
-		return fmt.Sprintf(template, p.redis.Requests(ctx))
+		requests, expiration := p.redis.Requests(ctx), p.redis.Expiration(ctx)
+		return fmt.Sprintf(template, requests, expiration)
 	}
-}
-
-func (p *Processor) needTranslation(ctx context.Context) bool {
-	return false
 }

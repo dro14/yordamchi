@@ -106,22 +106,17 @@ func (s *Service) Latex2Text(ctx context.Context, str string) string {
 	request := map[string]any{"latex": latex}
 	response, err := s.makeRequest(ctx, request, s.baseURL+"latex2text")
 	if err != nil {
-		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
 		return str
 	}
 
 	text, ok := response["text"].([]any)
 	if !ok {
-		utils.SendInfoMessage(strings.Join(matches, "\n\n"))
 		return str
 	}
 
-	var info []string
 	for i, match := range matches {
 		unicode := postProcess(text[i].(string))
-		info = append(info, latex[i]+" ➡️ "+unicode)
 		str = strings.Replace(str, match, "`"+unicode+"`", 1)
 	}
-	utils.SendInfoMessage(strings.Join(info, "\n\n"))
 	return str
 }

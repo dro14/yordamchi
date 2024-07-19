@@ -37,7 +37,7 @@ func (r *Redis) UserStatus(ctx context.Context) status.Status {
 			return status.Free
 		}
 	} else if errors.Is(err, redis.Nil) {
-		client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeReqs, 0)
+		client.Set(ctx, "free:"+id(ctx), utils.NumOfFreeReqs, untilMidnight())
 		return status.Free
 	} else {
 		log.Printf("user %s: can't check whether status is free: %s", id(ctx), err)
@@ -59,7 +59,7 @@ func (r *Redis) Expiration(ctx context.Context) string {
 	}
 
 	log.Printf("can't get expiration for %s: %v", id(ctx), err)
-	return ""
+	return midnight()
 }
 
 func (r *Redis) Requests(ctx context.Context) string {
@@ -70,22 +70,11 @@ func (r *Redis) Requests(ctx context.Context) string {
 
 	requests, err = client.Get(ctx, "free:"+id(ctx)).Result()
 	if err == nil {
-		return requests
+		return requests + " / " + strconv.Itoa(utils.NumOfFreeReqs)
 	}
 
 	log.Printf("can't get requests for %s: %v", id(ctx), err)
 	return ""
-}
-
-func (r *Redis) Premium(ctx context.Context) (string, string) {
-	value, err := client.Get(ctx, "premium:"+id(ctx)).Result()
-	if err != nil {
-		log.Printf("can't get %q: %s", "premium:"+id(ctx), err)
-		return "", ""
-	}
-
-	values := strings.Split(value, "|")
-	return values[0], values[1]
 }
 
 func (r *Redis) DecrementRequests(ctx context.Context) {

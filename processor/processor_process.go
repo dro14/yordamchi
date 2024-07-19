@@ -10,11 +10,12 @@ import (
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres/types"
+	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type string) {
+func (p *Processor) process(ctx context.Context, message *tgbotapi.Message) {
 	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
 	if err != nil {
 		log.Println("can't send loading message")
@@ -24,7 +25,7 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 	isTyping := p.telegram.SetTyping(ctx)
 	defer isTyping.Store(false)
 
-	msg := &types.Message{Type: Type}
+	msg := &types.Message{}
 	msg.Requests++
 	msg.Input = message.Text
 	msg.FirstSend = int(time.Since(start(ctx)).Milliseconds())
@@ -35,21 +36,19 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		photoURL := p.telegram.PhotoURL(ctx, message.Photo)
 		message.Text = photoURL + utils.Delim + message.Caption
 		msg.Input = message.Caption
-		msg.Type = "vision"
 	}
 
 	i := 0
 	var completion string
 	var completions []string
 	channel := make(chan string)
-	if p.needTranslation(ctx) {
-		ctx = context.WithValue(ctx, "stream", false)
-		ctx = context.WithValue(ctx, "translate", true)
-		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
-		completion = <-channel
+	go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
+	for completion = range channel {
 		completion = p.service.Latex2Text(ctx, completion)
-		completion = p.apis.Translate("en", "uz", completion)
 		completions = utils.Slice(completion, 4096)
+		if i >= len(completions) {
+			i = len(completions) - 1
+		}
 
 		err = p.telegram.EditMessage(ctx, completions[i], messageID, nil)
 		if errors.Is(err, telegram.ErrForbidden) {
@@ -60,53 +59,23 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		msg.Requests++
 		time.Sleep(utils.ReqInterval)
 
-		for i++; i < len(completions); i++ {
+		if strings.HasPrefix(completion, "❗") && strings.HasSuffix(completion, "❗") {
+			return
+		} else if completion == text.StreamError[lang(ctx)] {
+			i = 0
+		}
+
+		for i < len(completions)-1 {
+			i++
 			messageID, err = p.telegram.SendMessage(ctx, completions[i], 0, nil)
 			if errors.Is(err, telegram.ErrForbidden) {
 				return
 			} else if err != nil {
-				log.Println("can't send completion")
+				log.Println("can't send next message")
 				i--
 			}
 			msg.Requests++
 			time.Sleep(utils.ReqInterval)
-		}
-	} else {
-		go p.openai.ProcessCompletions(ctx, message.Text, msg, channel)
-		for completion = range channel {
-			completion = p.service.Latex2Text(ctx, completion)
-			completions = utils.Slice(completion, 4096)
-			if i >= len(completions) {
-				i = len(completions) - 1
-			}
-
-			err = p.telegram.EditMessage(ctx, completions[i], messageID, nil)
-			if errors.Is(err, telegram.ErrForbidden) {
-				return
-			} else if errors.Is(err, telegram.ErrNotFound) {
-				i--
-			}
-			msg.Requests++
-			time.Sleep(utils.ReqInterval)
-
-			if strings.HasPrefix(completion, "❗") && strings.HasSuffix(completion, "❗") {
-				return
-			} else if completion == text.StreamError[lang(ctx)] {
-				i = 0
-			}
-
-			for i < len(completions)-1 {
-				i++
-				messageID, err = p.telegram.SendMessage(ctx, completions[i], 0, nil)
-				if errors.Is(err, telegram.ErrForbidden) {
-					return
-				} else if err != nil {
-					log.Println("can't send next message")
-					i--
-				}
-				msg.Requests++
-				time.Sleep(utils.ReqInterval)
-			}
 		}
 	}
 
@@ -115,6 +84,17 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 		log.Printf("can't add new chat button")
 	}
 	msg.Requests++
+
+	switch userStatus(ctx) {
+	case status.Premium:
+		msg.Type = "premium"
+	case status.Unlimited:
+		msg.Type = "unlimited"
+	case status.Free:
+		msg.Type = "free"
+	default:
+		msg.Type = "unknown"
+	}
 
 	p.redis.DecrementRequests(ctx)
 	msg.LastEdit = int(time.Since(start(ctx)).Milliseconds())

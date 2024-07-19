@@ -24,14 +24,12 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbT
 	var completion, source string
 	var tools []types.Tool
 	messages := o.redis.Context(ctx, prompt)
-	if userStatus(ctx) != status.Free {
-		source = o.service.Memory(ctx)
-		if source == "GOOGLE" {
-			tools = append(tools, googleSearch)
-		} else {
-			fileSearch.Function.Description = fileSearchDescription + source
-			tools = append(tools, fileSearch)
-		}
+	source = o.service.Memory(ctx)
+	if source == "GOOGLE" {
+		tools = append(tools, googleSearch)
+	} else {
+		fileSearch.Function.Description = fileSearchDescription + source
+		tools = append(tools, fileSearch)
 	}
 
 	retryDelay := 10 * utils.RetryDelay
@@ -111,11 +109,7 @@ Retry:
 		messages = append(messages, response.Choices[0].Message)
 		messages = append(messages, callResults...)
 		completion += getCompletion(response)
-		if translate(ctx) {
-			completion += fmt.Sprintf(text.Search["en"], source)
-		} else {
-			completion += fmt.Sprintf(text.Search[lang(ctx)], source)
-		}
+		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
 
 		if msg.Attempts < utils.RetryAttempts {
 			goto Retry
@@ -205,7 +199,7 @@ func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 	ctx = context.WithValue(ctx, "json_mode", true)
 	ctx = context.WithValue(ctx, "translate", false)
 	ctx = context.WithValue(ctx, "user_status", o.redis.UserStatus(ctx))
-	ctx = context.WithValue(ctx, "model", models.GPT3)
+	ctx = context.WithValue(ctx, "model", models.GPT4oMini)
 
 	if userStatus(ctx) == status.Exhausted {
 		return text.DefaultQuestions[lang(ctx)]

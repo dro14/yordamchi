@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -29,12 +28,6 @@ func (r *Redis) SoonExpires(ctx context.Context, pattern string) []int64 {
 			_, ID, _ := strings.Cut(key, ":")
 			userID, _ := strconv.ParseInt(ID, 10, 64)
 			userIDs = append(userIDs, userID)
-		}
-	}
-
-	if pattern == "lang:*" || pattern == "context:*" {
-		for _, userID := range userIDs {
-			client.IncrBy(ctx, fmt.Sprintf("free:%d", userID), 5)
 		}
 	}
 

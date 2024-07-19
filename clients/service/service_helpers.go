@@ -16,10 +16,6 @@ func lang(ctx context.Context) string {
 	return ctx.Value("language_code").(string)
 }
 
-func model(ctx context.Context) string {
-	return ctx.Value("model").(string)
-}
-
 func preProcess(s string) string {
 	for _, item := range utils.PreProcessing {
 		s = item[0].(*regexp.Regexp).ReplaceAllString(s, item[1].(string))
@@ -70,7 +66,6 @@ func postProcess(s string) string {
 	for _, item := range utils.PostProcessing {
 		s = strings.ReplaceAll(s, item[0], item[1])
 	}
-	s = utils.SubSupRgx.ReplaceAllString(s, "($1; $2)")
 	fractions := utils.FracRgx.FindAllString(s, -1)
 	for _, original := range fractions {
 		if len(original) > 20 {

@@ -1,7 +1,7 @@
 package text
 
 var Exhausted = map[string]string{
-	"uz": `*Afsuski, sizda so'rovlar qolmadi. Pullik tariflar bilan ko'proq so'rovlarga ega bo'ling:*`,
-	"ru": `*К сожалению, у вас не осталось запросов. С платными подписками, получите больше запросов:*`,
-	"en": `*Unfortunately, you have no requests left. Get more requests with paid subscriptions:*`,
+	"uz": `*Bugungi bepul so'rovlar tugadi. Pullik obunalar bilan ko'proq so'rovlarga ega bo'ling!*`,
+	"ru": `*Сегодняшние бесплатные запросы закончились. Получите больше запросов с платными подписками!*`,
+	"en": `*Today's free requests are exhausted. Get more requests with premium subscriptions!*`,
 }

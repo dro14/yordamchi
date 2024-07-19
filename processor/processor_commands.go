@@ -7,12 +7,9 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
-
-var underPrivileged = []status.Status{status.Free, status.Exhausted, status.Unknown}
 
 func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 	switch message.Command() {
@@ -78,13 +75,6 @@ func (p *Processor) language(ctx context.Context) {
 }
 
 func (p *Processor) memory(ctx context.Context) {
-	for _, sts := range underPrivileged {
-		if sts == userStatus(ctx) {
-			p.paidFeature(ctx)
-			return
-		}
-	}
-
 	var Text string
 	system, found := strings.CutPrefix(p.redis.System(ctx), "USER: ")
 	if found {
@@ -143,13 +133,6 @@ func (p *Processor) generate(ctx context.Context, message *tgbotapi.Message) {
 }
 
 func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
-	for _, sts := range underPrivileged {
-		if sts == userStatus(ctx) {
-			p.paidFeature(ctx)
-			return
-		}
-	}
-
 	system, _ := strings.CutPrefix(message.Text, "/system")
 	system = strings.TrimSpace(system)
 	p.redis.SetSystem(ctx, system)

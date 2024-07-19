@@ -142,10 +142,6 @@ func userStatus(ctx context.Context) status.Status {
 	return ctx.Value("user_status").(status.Status)
 }
 
-func translate(ctx context.Context) bool {
-	return ctx.Value("translate").(bool)
-}
-
 func getCompletion(response *types.Response) string {
 	content, ok := response.Choices[0].Message.Content.(string)
 	if !ok {

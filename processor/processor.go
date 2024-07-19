@@ -79,30 +79,14 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 	}
 
 	switch userStatus(ctx) {
-	case status.Premium:
+	case status.Premium, status.Unlimited, status.Free:
 		if message.Text != "" || message.Photo != nil {
-			p.process(ctx, message, "premium")
+			p.process(ctx, message)
 		} else if message.Document != nil {
 			p.processFile(ctx, message)
-		}
-	case status.Unlimited:
-		if message.Text != "" || message.Photo != nil {
-			p.process(ctx, message, "unlimited")
-		} else if message.Document != nil {
-			p.processFile(ctx, message)
-		}
-	case status.Free:
-		if message.Text != "" {
-			p.process(ctx, message, "free")
-		} else if message.Photo != nil || message.Document != nil {
-			p.paidFeature(ctx)
 		}
 	case status.Exhausted:
-		if message.Text != "" {
-			p.exhausted(ctx)
-		} else if message.Photo != nil || message.Document != nil {
-			p.paidFeature(ctx)
-		}
+		p.exhausted(ctx)
 	default:
 		log.Println("unknown user status:", message.From.ID)
 	}

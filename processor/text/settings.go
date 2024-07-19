@@ -4,32 +4,35 @@ var Settings = map[string]string{
 	"uz": `Obuna: *bepul*
 Versiya: *GPT-4o-mini*
 So'rovlar soni: *%s*
-Rasmni tushunish: *mavjud emas* 🚫
-Googledan qidirish: *mavjud emas* 🚫
-Fayllar bilan ishlash: *mavjud emas* 🚫
-Bot xotirasi: *mavjud emas* 🚫
+Tugash muddati: *%s*
+Rasmni tushunish: *mavjud* ✅
+Googleda qidirish: *mavjud* ✅
+Fayllar bilan ishlash: *mavjud* ✅
+Bot xotirasi: *mavjud* ✅
 
-*Qo'shimcha funksiyalarni* sinab ko'rmoqchimisiz? Unda *pullik obunalarga* o'ting!`,
+*Yordamchi*dan *maksimal foyda* olmoqchimisiz? Unda *pullik obunalarga* o'ting!`,
 
 	"ru": `Подписка: *бесплатная*
 Версия: *GPT-4o-mini*
 Количество запросов: *%s*
-Понимание изображений: *недоступно* 🚫
-Google поиск: *недоступно* 🚫
-Работа с файлами: *недоступно* 🚫
-Память бота: *недоступно* 🚫
+Срок истечения: *%s*
+Понимание изображений: *доступно* ✅
+Google поиск: *доступно* ✅
+Работа с файлами: *доступно* ✅
+Память бота: *доступно* ✅
 
-Хотите попробовать *дополнительные функции*? Тогда перейдите на *платные подписки*!`,
+Желаете получить *максимум* от *Yordamchi*? Тогда переходите на *платные подписки*!`,
 
 	"en": `Subscription: *free*
 Version: *GPT-4o-mini*
 Number of requests: *%s*
-Image understanding: *unavailable* 🚫
-Google search: *unavailable* 🚫
-Working with files: *unavailable* 🚫
-Bot memory: *unavailable* 🚫
+Expiration date: *%s*
+Image understanding: *available* ✅
+Google search: *available* ✅
+Working with files: *available* ✅
+Bot memory: *available* ✅
 
-Want to try *additional features*? Then switch to the *paid subscriptions*!`,
+Want to get the *most* out of *Yordamchi*? Then switch to *premium subscriptions*!`,
 }
 
 var Settings1 = map[string]string{
