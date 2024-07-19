@@ -20,7 +20,7 @@ func (p *Processor) newChatCallback(ctx context.Context, callbackQuery *tgbotapi
 
 func (p *Processor) moreCallback(ctx context.Context, callbackQuery *tgbotapi.CallbackQuery) {
 	questions := p.openai.ProcessFollowUps(ctx)
-	err := p.telegram.SetKeyboard(ctx, "*"+text.More[lang(ctx)]+"*", text.Waiting[lang(ctx)], questions)
+	err := p.telegram.SetKeyboard(ctx, "*"+text.More[lang(ctx)]+"*", questions)
 	if err != nil {
 		log.Println("can't set more callback keyboard")
 	}

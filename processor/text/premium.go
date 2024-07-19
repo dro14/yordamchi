@@ -4,8 +4,8 @@ var Premium = map[string]string{
 	"uz": `So'nggi texnologik rivojlanish qay darajaga yetganini ko'rmoqchimisiz? Unda *premium foydalanuvchi* bo'ling!
 
 Premium obunada:
-• Eng kuchli sun'iy intellekt - *GPT-4* ✅
-• Rasmni tushunish - *GPT-4 Vision* ✅
+• *GPT-4o* ✅
+• *Rasmni tushunish* ✅
 • *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
 • *Fayllar* bilan ishlash ✅
 • Bot *xotirasi* ✅
@@ -19,8 +19,8 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 	"ru": `Хотите увидеть, насколько далеко продвинулся последний технологический прогресс? Тогда станьте *премиум-пользователем*!
 
 В премиум подписке:
-• Самый мощный искусственный интеллект - *GPT-4* ✅
-• Понимание изображений - *GPT-4 Vision* ✅
+• *GPT-4o* ✅
+• *Понимание изображений* ✅
 • Доступ к новостям и последним данным с *Google* ✅
 • Работа с *файлами* ✅
 • *Память* бота ✅
@@ -34,8 +34,8 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 	"en": `Want to see how far the latest technological progress has come? Then become a *premium user*!
 
 In the premium subscription:
-• Most powerful artificial intelligence - *GPT-4* ✅
-• Image understanding - *GPT-4 Vision* ✅
+• *GPT-4o* ✅
+• *Image understanding* ✅
 • Access to news and up-to-date information from *Google* ✅
 • Working with *files* ✅
 • Bot *memory* ✅

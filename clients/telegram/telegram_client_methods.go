@@ -131,13 +131,12 @@ func (t *Telegram) AnswerCallbackQuery(ctx context.Context, ID, text string) {
 	_, _ = t.makeRequest(ctx, config)
 }
 
-func (t *Telegram) SetKeyboard(ctx context.Context, text, placeholder string, questions []string) error {
+func (t *Telegram) SetKeyboard(ctx context.Context, text string, questions []string) error {
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[0])),
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[1])),
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton(questions[2])))
 	keyboard.OneTimeKeyboard = true
-	keyboard.InputFieldPlaceholder = placeholder
 
 	formatted := utils.MarkdownV2(text)
 	config := tgbotapi.NewMessage(id(ctx), formatted)

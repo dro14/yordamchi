@@ -3,7 +3,7 @@ package utils
 import "time"
 
 const (
-	NumOfFreeReqs        = 10
+	NumOfFreeReqs        = 20
 	RetryAttempts        = 10
 	RetryDelay           = 1000 * time.Millisecond
 	ReqInterval          = 1000 * time.Millisecond

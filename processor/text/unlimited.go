@@ -4,8 +4,8 @@ var Unlimited = map[string]string{
 	"uz": `Yordamchidan cheksiz foydalanmoqchimisiz? Unda *cheksiz obunaga* o'ting!
 
 Cheksiz obunada:
-• ChatGPT - *GPT-3.5* ✅
-• *Rasmni tushunish* (faqat rasmdagi matnlarni) ✅
+• *GPT-4o-mini* ✅
+• *Rasmni tushunish* ✅
 • *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
 • *Fayllar* bilan ishlash ✅
 • Bot *xotirasi* ✅
@@ -18,8 +18,8 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 	"ru": `Хотите пользоваться Yordamchi без никаких лимитов? Тогда перейдите на *безлимитную подписку*!
 
 В безлимитной подписке:
-• ChatGPT - *GPT-3.5* ✅
-• *Понимание изображений* (только текст в изображениях) ✅
+• *GPT-4o-mini* ✅
+• *Понимание изображений* ✅
 • Доступ к новостям и последним данным с *Google* ✅
 • Работа с *файлами* ✅
 • *Память* бота ✅
@@ -32,8 +32,8 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 	"en": `Do you want unlimited access to Yordamchi? Then switch to the *unlimited subscription*!
 
 In the unlimited subscription:
-• ChatGPT - *GPT-3.5* ✅
-• *Image understanding* (only text in the images) ✅
+• *GPT-4o-mini* ✅
+• *Image understanding* ✅
 • Access to news and up-to-date information from *Google* ✅
 • Working with *files* ✅
 • Bot *memory* ✅

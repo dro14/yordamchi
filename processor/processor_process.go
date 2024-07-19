@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/postgres/types"
@@ -34,15 +33,9 @@ func (p *Processor) process(ctx context.Context, message *tgbotapi.Message, Type
 
 	if message.Photo != nil {
 		photoURL := p.telegram.PhotoURL(ctx, message.Photo)
-		if model(ctx) == models.GPT3 {
-			message.Text = p.apis.OCR(ctx, photoURL, message.Caption)
-			msg.Input = message.Text
-			msg.Type = "ocr"
-		} else {
-			message.Text = photoURL + utils.Delim + message.Caption
-			msg.Input = message.Caption
-			msg.Type = "vision"
-		}
+		message.Text = photoURL + utils.Delim + message.Caption
+		msg.Input = message.Caption
+		msg.Type = "vision"
 	}
 
 	i := 0
