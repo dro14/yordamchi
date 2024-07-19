@@ -197,7 +197,6 @@ RESPOND IN JSON FORMAT:
 func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 	ctx = context.WithValue(ctx, "stream", false)
 	ctx = context.WithValue(ctx, "json_mode", true)
-	ctx = context.WithValue(ctx, "translate", false)
 	ctx = context.WithValue(ctx, "user_status", o.redis.UserStatus(ctx))
 	ctx = context.WithValue(ctx, "model", models.GPT4oMini)
 

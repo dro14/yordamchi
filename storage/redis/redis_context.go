@@ -12,9 +12,9 @@ import (
 )
 
 var template = map[string]string{
-	"uz": "SEN TELEGRAMDAGI YORDAMCHI NOMLI XUSHMUOMALA CHATBOTSAN.",
-	"ru": "ТЫ ЯВЛЯЕШЬСЯ ДРУЖЕЛЮБНЫМ ЧАТБОТОМ В ТЕЛЕГРАМЕ ПОД НАЗВАНИЕМ YORDAMCHI.",
-	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI.",
+	"uz": "Sen Telegramdagi Yordamchi nomli xushmuomala chatbotsan",
+	"ru": "Ты являешься дружелюбным чатботом в Телеграме под названием Yordamchi",
+	"en": "Your are a friendly chatbot in Telegram called Yordamchi",
 }
 
 func (r *Redis) Context(ctx context.Context, prompt string) []types.Message {
