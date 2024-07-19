@@ -73,5 +73,5 @@ func (p *Processor) msg(ctx context.Context) string {
 }
 
 func (p *Processor) needTranslation(ctx context.Context) bool {
-	return model(ctx) == models.GPT3 && lang(ctx) == "uz"
+	return false
 }

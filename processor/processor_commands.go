@@ -6,7 +6,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/processor/text"
 	"github.com/dro14/yordamchi/storage/redis/status"
 	"github.com/dro14/yordamchi/utils"
@@ -152,9 +151,6 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	}
 
 	system, _ := strings.CutPrefix(message.Text, "/system")
-	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		system = p.apis.Translate("auto", "en", system)
-	}
 	system = strings.TrimSpace(system)
 	p.redis.SetSystem(ctx, system)
 	Text := fmt.Sprintf(text.System[lang(ctx)], system)

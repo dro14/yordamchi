@@ -19,17 +19,13 @@ var template = map[string]string{
 	"en": "YOU ARE A FRIENDLY CHATBOT IN TELEGRAM CALLED YORDAMCHI.",
 }
 
-func (r *Redis) Context(ctx context.Context, prompt *string) []types.Message {
+func (r *Redis) Context(ctx context.Context, prompt string) []types.Message {
 	system := r.System(ctx)
 	system, _ = strings.CutPrefix(system, "USER: ")
 	messages := r.Messages(ctx)
 
-	if translate(ctx) {
-		*prompt = r.apis.Translate("uz", "en", *prompt)
-	}
-
 	messages = append([]types.Message{{Role: "system", Content: system}}, messages...)
-	messages = append(messages, types.Message{Role: "user", Content: *prompt})
+	messages = append(messages, types.Message{Role: "user", Content: prompt})
 
 	for i := range messages {
 		URL, text, found := strings.Cut(messages[i].Content.(string), utils.Delim)

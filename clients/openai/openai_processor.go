@@ -23,7 +23,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbT
 
 	var completion, source string
 	var tools []types.Tool
-	messages := o.redis.Context(ctx, &prompt)
+	messages := o.redis.Context(ctx, prompt)
 	if userStatus(ctx) != status.Free {
 		source = o.service.Memory(ctx)
 		if source == "GOOGLE" {
@@ -226,12 +226,6 @@ func (o *OpenAI) ProcessFollowUps(ctx context.Context) []string {
 	if err != nil {
 		log.Printf("user %s: can't decode response: %v\nbody: %s", id(ctx), err, bts)
 		return text.DefaultQuestions[lang(ctx)]
-	}
-
-	if userStatus(ctx) != status.Premium && lang(ctx) == "uz" {
-		for i, question := range questions["questions"] {
-			questions["questions"][i] = o.apis.Translate("en", "uz", question)
-		}
 	}
 
 	return questions["questions"]

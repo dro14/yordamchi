@@ -5,7 +5,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/dro14/yordamchi/clients/openai/models"
 	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -33,10 +32,6 @@ func (s *Service) Load(ctx context.Context, document *tgbotapi.Document) string 
 }
 
 func (s *Service) FileSearch(ctx context.Context, query string) string {
-	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		query = s.apis.Translate("en", "uz", query)
-	}
-
 	request := map[string]any{
 		"query":   query,
 		"user_id": id(ctx),
@@ -46,11 +41,7 @@ func (s *Service) FileSearch(ctx context.Context, query string) string {
 		return "no results"
 	}
 
-	if model(ctx) == models.GPT3 && lang(ctx) == "uz" {
-		return s.apis.Translate("uz", "en", response["results"].(string))
-	} else {
-		return response["results"].(string)
-	}
+	return response["results"].(string)
 }
 
 func (s *Service) GoogleSearch(ctx context.Context, query string) string {
