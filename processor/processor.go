@@ -6,7 +6,6 @@ import (
 	"sync/atomic"
 
 	"github.com/dro14/yordamchi/clients/openai"
-	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/clients/telegram"
 	"github.com/dro14/yordamchi/payment/click"
@@ -26,7 +25,6 @@ type Processor struct {
 	payme    *payme.Payme
 	click    *click.Click
 	service  *service.Service
-	apis     *other.APIs
 	activity atomic.Int64
 }
 
@@ -39,7 +37,6 @@ func New() *Processor {
 		payme:    payme.New(),
 		click:    click.New(),
 		service:  service.New(),
-		apis:     other.New(),
 	}
 	go processor.notify(context.Background())
 	return processor

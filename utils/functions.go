@@ -2,9 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -232,4 +234,44 @@ func Table(input string) string {
 
 	result.WriteString(input[start:])
 	return result.String()
+}
+
+func Translate(sl, tl, q string) string {
+	qs := Slice(q, 5000)
+
+	for i := range qs {
+		URL := fmt.Sprintf("https://translate.google.com/m?sl=%s&tl=%s&q=%s", sl, tl, url.QueryEscape(qs[i]))
+		resp, err := http.Get(URL)
+		if err != nil {
+			log.Println("can't do request:", err)
+			return strings.Join(qs, "\n")
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			log.Println("response status is not ok:", resp.Status)
+			return strings.Join(qs, "\n")
+		}
+
+		bts, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("can't read body:", err)
+			return strings.Join(qs, "\n")
+		}
+
+		_, after, found := strings.Cut(string(bts), "<div class=\"result-container\">")
+		if !found {
+			log.Println("could not find the start of result-container")
+			return strings.Join(qs, "\n")
+		}
+
+		translation, _, found := strings.Cut(after, "</div>")
+		if !found {
+			log.Println("could not find the end of result-container")
+			return strings.Join(qs, "\n")
+		}
+
+		qs[i] = html.UnescapeString(translation)
+	}
+
+	return strings.Join(qs, "\n")
 }

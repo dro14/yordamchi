@@ -120,11 +120,7 @@ Retry:
 		}
 	}
 
-	if ctx.Value("stream") == true {
-		completion = getCompletion(response)
-	} else {
-		completion += getCompletion(response)
-	}
+	completion = getCompletion(response)
 	msg.Output = completion
 	msg.PromptLength += length(messages)
 	msg.CompletionLength += len([]rune(completion))

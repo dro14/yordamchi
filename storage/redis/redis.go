@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/go-redis/redis/v8"
 )
@@ -13,7 +12,6 @@ var client *redis.Client
 
 type Redis struct {
 	service *service.Service
-	apis    *other.APIs
 }
 
 func New() *Redis {
@@ -36,6 +34,5 @@ func New() *Redis {
 
 	return &Redis{
 		service: service.New(),
-		apis:    other.New(),
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/dro14/yordamchi/clients/other"
 	"github.com/dro14/yordamchi/clients/service"
 	"github.com/dro14/yordamchi/storage/redis"
 )
@@ -15,7 +14,6 @@ type OpenAI struct {
 	index   int
 	redis   *redis.Redis
 	service *service.Service
-	apis    *other.APIs
 }
 
 func New() *OpenAI {
@@ -38,6 +36,5 @@ func New() *OpenAI {
 		index:   0,
 		redis:   redis.New(),
 		service: service.New(),
-		apis:    other.New(),
 	}
 }

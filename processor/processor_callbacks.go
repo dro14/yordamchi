@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/processor/text"
+	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -111,7 +112,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 	defer isTyping.Store(false)
 
 	prompt := p.redis.Generate(ctx)
-	prompt = p.apis.Translate("auto", "en", prompt)
+	prompt = utils.Translate("auto", "en", prompt)
 	path, caption := p.openai.ProcessGenerations(ctx, prompt)
 	if path == "" {
 		log.Println("can't process generations")
@@ -122,7 +123,7 @@ func (p *Processor) generateCallback(ctx context.Context, callbackQuery *tgbotap
 		return
 	}
 
-	caption = p.apis.Translate("en", lang(ctx), caption)
+	caption = utils.Translate("en", lang(ctx), caption)
 	err = p.telegram.SendPhoto(ctx, path, caption, nil)
 	if err != nil {
 		log.Println("can't send photo")
