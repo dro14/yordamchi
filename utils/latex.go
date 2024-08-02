@@ -6,7 +6,7 @@ var (
 	PreRgx    = regexp.MustCompile("(?m)^```\\w*$")
 	HeaderRgx = regexp.MustCompile(`(?m)^(?:\\#)+ (.+?)$`)
 	BoldRgx   = regexp.MustCompile(`[^\\]\*[\s\S]+?[^\\]\*`)
-	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\]\\\((.+?)\\\)`)
+	LinkRgx   = regexp.MustCompile(`\\\[(.+?)\\\]\\\((.+?)\\\)`)
 	CodeRgx   = regexp.MustCompile("[^\\\\]`[\\s\\S]+?[^\\\\]`")
 	LaTeXRgx  = regexp.MustCompile(`\\[(\[]\s*([\s\S]+?)\s*\\[)\]]`)
 	FracRgx   = regexp.MustCompile(`\w+/\w+|\w+/\(.+?\)|\(.+?\)/\w+|\(.+?\)/\(.+?\)`)
