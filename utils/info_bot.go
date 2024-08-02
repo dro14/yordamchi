@@ -11,6 +11,7 @@ var bot *tgbotapi.BotAPI
 func SendInfoMessage(text string) {
 	slices := Slice(text, 4096)
 	config := tgbotapi.NewMessage(AdminUserID, slices[0])
+	config.DisableWebPagePreview = true
 	_, err := bot.Request(config)
 	if err != nil {
 		log.Println("can't send info message:", err)
