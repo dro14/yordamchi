@@ -9,6 +9,7 @@ import (
 )
 
 func (s *Service) GoogleSearch(ctx context.Context, query string) string {
+	utils.SendInfoMessage(query)
 	request := map[string]any{
 		"query": query,
 		"lang":  lang(ctx),
@@ -21,7 +22,9 @@ func (s *Service) GoogleSearch(ctx context.Context, query string) string {
 		log.Printf("user %d: can't search google: %s", id(ctx), response["error"])
 		return "no results"
 	}
-	return response["results"].(string)
+	results := response["results"].(string)
+	utils.SendInfoMessage(results)
+	return results
 }
 
 func (s *Service) Latex2Text(ctx context.Context, str string) string {
