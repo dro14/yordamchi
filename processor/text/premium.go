@@ -5,10 +5,9 @@ var Premium = map[string]string{
 
 Premium obunada:
 • *GPT-4o* ✅
+• Bot *xotirasi* ✅
 • *Rasmni tushunish* ✅
 • *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
-• *Fayllar* bilan ishlash ✅
-• Bot *xotirasi* ✅
 
   10 000 so'm - *Kunlik: 50ta* so'rov
   50 000 so'm - *Haftalik: 250ta* so'rov
@@ -20,10 +19,9 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 В премиум подписке:
 • *GPT-4o* ✅
+• *Память* бота ✅
 • *Понимание изображений* ✅
 • Доступ к новостям и последним данным с *Google* ✅
-• Работа с *файлами* ✅
-• *Память* бота ✅
 
   10 000 сум - *Дневная: 50* запросов
   50 000 сум - *Недельная: 250* запросов
@@ -35,10 +33,9 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 
 In the premium subscription:
 • *GPT-4o* ✅
+• Bot *memory* ✅
 • *Image understanding* ✅
 • Access to news and up-to-date information from *Google* ✅
-• Working with *files* ✅
-• Bot *memory* ✅
 
   10 000 UZS - *Daily: 50* requests
   50 000 UZS - *Weekly: 250* requests

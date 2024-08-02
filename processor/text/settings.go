@@ -5,10 +5,9 @@ var Settings = map[string]string{
 Versiya: *GPT-4o-mini*
 So'rovlar soni: *%s*
 Tugash muddati: *%s*
+Bot xotirasi: *mavjud* ✅
 Rasmni tushunish: *mavjud* ✅
 Googleda qidirish: *mavjud* ✅
-Fayllar bilan ishlash: *mavjud* ✅
-Bot xotirasi: *mavjud* ✅
 
 *Yordamchi*dan *maksimal foyda* olmoqchimisiz? Unda *pullik obunalarga* o'ting!`,
 
@@ -16,10 +15,9 @@ Bot xotirasi: *mavjud* ✅
 Версия: *GPT-4o-mini*
 Количество запросов: *%s*
 Срок истечения: *%s*
+Память бота: *доступно* ✅
 Понимание изображений: *доступно* ✅
 Google поиск: *доступно* ✅
-Работа с файлами: *доступно* ✅
-Память бота: *доступно* ✅
 
 Желаете получить *максимум* от *Yordamchi*? Тогда переходите на *платные подписки*!`,
 
@@ -27,10 +25,9 @@ Google поиск: *доступно* ✅
 Version: *GPT-4o-mini*
 Number of requests: *%s*
 Expiration date: *%s*
+Bot memory: *available* ✅
 Image understanding: *available* ✅
 Google search: *available* ✅
-Working with files: *available* ✅
-Bot memory: *available* ✅
 
 Want to get the *most* out of *Yordamchi*? Then switch to *premium subscriptions*!`,
 }
@@ -40,28 +37,25 @@ var Settings1 = map[string]string{
 Versiya: *GPT-4o-mini*
 So'rovlar soni: *cheklanmagan*
 Tugash muddati: *%s*
+Bot xotirasi: *mavjud* ✅
 Rasmni tushunish: *mavjud* ✅
-Googleda qidirish: *mavjud* ✅
-Fayllar bilan ishlash: *mavjud* ✅
-Bot xotirasi: *mavjud* ✅`,
+Googleda qidirish: *mavjud* ✅`,
 
 	"ru": `Подписка: *безлимитная* ⭐️
 Версия: *GPT-4o-mini*
 Количество запросов: *не ограничено*
 Срок истечения: *%s*
+Память бота: *доступно* ✅
 Понимание изображений: *доступно* ✅
-Google поиск: *доступно* ✅
-Работа с файлами: *доступно* ✅
-Память бота: *доступно* ✅`,
+Google поиск: *доступно* ✅`,
 
 	"en": `Subscription: *unlimited* ⭐️
 Version: *GPT-4o-mini*
 Number of requests: *unlimited*
 Expiration date: *%s*
+Bot memory: *available* ✅
 Image understanding: *available* ✅
-Google search: *available* ✅
-Working with files: *available* ✅
-Bot memory: *available* ✅`,
+Google search: *available* ✅`,
 }
 
 var Settings2 = map[string]string{
@@ -69,26 +63,23 @@ var Settings2 = map[string]string{
 Versiya: *GPT-4o*
 So'rovlar soni: *%s*
 Tugash muddati: *%s*
+Bot xotirasi: *mavjud* ✅
 Rasmni tushunish: *mavjud* ✅
-Googleda qidirish: *mavjud* ✅
-Fayllar bilan ishlash: *mavjud* ✅
-Bot xotirasi: *mavjud* ✅`,
+Googleda qidirish: *mavjud* ✅`,
 
 	"ru": `Подписка: *премиум* 🔥
 Версия: *GPT-4o*
 Количество запросов: *%s*
 Срок истечения: *%s*
+Память бота: *доступно* ✅
 Понимание изображений: *доступно* ✅
-Google поиск: *доступно* ✅
-Работа с файлами: *доступно* ✅
-Память бота: *доступно* ✅`,
+Google поиск: *доступно* ✅`,
 
 	"en": `Subscription: *premium* 🔥
 Version: *GPT-4o*
 Number of requests: *%s*
 Expiration date: *%s*
+Bot memory: *available* ✅
 Image understanding: *available* ✅
-Google search: *available* ✅
-Working with files: *available* ✅
-Bot memory: *available* ✅`,
+Google search: *available* ✅`,
 }

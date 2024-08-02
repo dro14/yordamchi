@@ -20,37 +20,37 @@ func (p *Processor) exhausted(ctx context.Context) {
 }
 
 func (p *Processor) processFile(ctx context.Context, message *tgbotapi.Message) {
-	pieces := strings.Split(message.Document.FileName, ".")
-	switch pieces[len(pieces)-1] {
-	case "png", "jpg", "jpeg":
+	splits := strings.Split(message.Document.FileName, ".")
+	switch splits[len(splits)-1] {
+	case "png", "jpg", "jpeg", "webp":
 		message.Photo = []tgbotapi.PhotoSize{{FileID: message.Document.FileID}}
 		p.process(ctx, message)
 		return
 	}
 
-	messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
-	if err != nil {
-		log.Println("can't send loading message")
-		return
-	}
-
-	isTyping := p.telegram.SetTyping(ctx)
-	defer isTyping.Store(false)
-
-	var Text string
-	errMsg := p.service.Load(ctx, message.Document)
-	if supported, found := strings.CutPrefix(errMsg, "supported file formats:"); found {
-		Text = fmt.Sprintf(text.UnsupportedFormat[lang(ctx)], supported)
-	} else if errMsg != "" {
-		Text = text.FailedRequest[lang(ctx)]
-	} else {
-		Text = fmt.Sprintf(text.FileLoaded[lang(ctx)], message.Document.FileName)
-	}
-
-	err = p.telegram.EditMessage(ctx, Text, messageID, nil)
-	if err != nil {
-		log.Println("can't edit process file message")
-	}
+	//messageID, err := p.telegram.SendMessage(ctx, text.Loading[lang(ctx)], message.MessageID, nil)
+	//if err != nil {
+	//	log.Println("can't send loading message")
+	//	return
+	//}
+	//
+	//isTyping := p.telegram.SetTyping(ctx)
+	//defer isTyping.Store(false)
+	//
+	//var Text string
+	//errMsg := p.service.Load(ctx, message.Document)
+	//if supported, found := strings.CutPrefix(errMsg, "supported file formats:"); found {
+	//	Text = fmt.Sprintf(text.UnsupportedFormat[lang(ctx)], supported)
+	//} else if errMsg != "" {
+	//	Text = text.FailedRequest[lang(ctx)]
+	//} else {
+	//	Text = fmt.Sprintf(text.FileLoaded[lang(ctx)], message.Document.FileName)
+	//}
+	//
+	//err = p.telegram.EditMessage(ctx, Text, messageID, nil)
+	//if err != nil {
+	//	log.Println("can't edit process file message")
+	//}
 }
 
 func (p *Processor) notify(ctx context.Context) {

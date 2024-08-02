@@ -84,6 +84,7 @@ func (p *Processor) message(ctx context.Context, message *tgbotapi.Message) {
 		}
 	case status.Exhausted:
 		p.exhausted(ctx)
+		return
 	default:
 		log.Println("unknown user status:", message.From.ID)
 	}

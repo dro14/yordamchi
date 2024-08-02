@@ -82,7 +82,7 @@ func (p *Processor) memory(ctx context.Context) {
 	} else {
 		Text = text.MemoryEmpty[lang(ctx)]
 	}
-	Text = fmt.Sprintf(text.Memory[lang(ctx)], Text, p.service.Memory(ctx))
+	Text = fmt.Sprintf(text.Memory[lang(ctx)], Text)
 
 	_, err := p.telegram.SendMessage(ctx, Text, 0, p.chatButtons(ctx))
 	if err != nil {
