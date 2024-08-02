@@ -66,7 +66,6 @@ func (r *Redis) SetContext(ctx context.Context, prompt, completion string) {
 func (r *Redis) DeleteContext(ctx context.Context) {
 	client.Del(ctx, "context:"+id(ctx))
 	client.Del(ctx, "system:"+id(ctx))
-	r.service.Delete(ctx)
 }
 
 func (r *Redis) System(ctx context.Context) string {

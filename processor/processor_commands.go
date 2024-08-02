@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/dro14/yordamchi/processor/text"
-	"github.com/dro14/yordamchi/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -35,8 +34,6 @@ func (p *Processor) command(ctx context.Context, message *tgbotapi.Message) {
 		p.generate(ctx, message)
 	case "system":
 		p.system(ctx, message)
-	case "files":
-		p.files(ctx, message)
 	}
 }
 
@@ -141,14 +138,5 @@ func (p *Processor) system(ctx context.Context, message *tgbotapi.Message) {
 	_, err := p.telegram.SendMessage(ctx, Text, 0, nil)
 	if err != nil {
 		log.Println("can't send system command")
-	}
-}
-
-func (p *Processor) files(ctx context.Context, message *tgbotapi.Message) {
-	if message.From.ID == utils.AdminUserID {
-		_, err := p.telegram.SendMessage(ctx, p.service.Files(ctx), 0, nil)
-		if err != nil {
-			log.Println("can't send files command")
-		}
 	}
 }

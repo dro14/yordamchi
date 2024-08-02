@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -21,16 +20,9 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbT
 	defer close(channel)
 	defer utils.RecoverIfPanic()
 
-	var completion, source string
-	var tools []types.Tool
+	var completion string
+	tools := []types.Tool{googleSearch}
 	messages := o.redis.Context(ctx, prompt)
-	source = o.service.Memory(ctx)
-	if source == "GOOGLE" {
-		tools = append(tools, googleSearch)
-	} else {
-		fileSearch.Function.Description = fileSearchDescription + source
-		tools = append(tools, fileSearch)
-	}
 
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
@@ -91,12 +83,7 @@ Retry:
 					return
 				}
 			}
-			var result string
-			if source == "GOOGLE" {
-				result = o.service.GoogleSearch(ctx, query)
-			} else {
-				result = o.service.FileSearch(ctx, query)
-			}
+			result := o.service.GoogleSearch(ctx, query)
 			callResults = append(callResults,
 				types.Message{
 					Role:       "tool",
@@ -109,7 +96,7 @@ Retry:
 		messages = append(messages, response.Choices[0].Message)
 		messages = append(messages, callResults...)
 		completion += getCompletion(response)
-		completion += fmt.Sprintf(text.Search[lang(ctx)], source)
+		completion += text.Search[lang(ctx)]
 
 		if msg.Attempts < utils.RetryAttempts {
 			goto Retry
