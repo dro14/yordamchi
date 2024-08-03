@@ -7,7 +7,7 @@ So'rovlar soni: *%s*
 Tugash muddati: *%s*
 Bot xotirasi: *mavjud* ✅
 Rasmni tushunish: *mavjud* ✅
-Googleda qidirish: *mavjud* ✅
+Googleda qidirish: *mavjud emas* 🚫
 
 *Yordamchi*dan *maksimal foyda* olmoqchimisiz? Unda *pullik obunalarga* o'ting!`,
 
@@ -17,7 +17,7 @@ Googleda qidirish: *mavjud* ✅
 Срок истечения: *%s*
 Память бота: *доступно* ✅
 Понимание изображений: *доступно* ✅
-Google поиск: *доступно* ✅
+Google поиск: *недоступно* 🚫
 
 Желаете получить *максимум* от *Yordamchi*? Тогда переходите на *платные подписки*!`,
 
@@ -27,7 +27,7 @@ Number of requests: *%s*
 Expiration date: *%s*
 Bot memory: *available* ✅
 Image understanding: *available* ✅
-Google search: *available* ✅
+Google search: *unavailable* 🚫
 
 Want to get the *most* out of *Yordamchi*? Then switch to *premium subscriptions*!`,
 }

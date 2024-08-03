@@ -21,14 +21,17 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbT
 	defer utils.RecoverIfPanic()
 
 	var completion string
-	//tools := []types.Tool{googleSearch}
 	messages := o.redis.Context(ctx, prompt)
+	var tools []types.Tool
+	if userStatus(ctx) != status.Free {
+		tools = append(tools, googleSearch)
+	}
 
 	retryDelay := 10 * utils.RetryDelay
 	var errMsg string
 Retry:
 	msg.Attempts++
-	response, err := o.Completions(ctx, messages, nil, completion, channel)
+	response, err := o.Completions(ctx, messages, tools, completion, channel)
 	if err != nil {
 		errMsg = err.Error()
 		is := func(s string) bool {

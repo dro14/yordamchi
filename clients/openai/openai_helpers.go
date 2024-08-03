@@ -165,8 +165,7 @@ func getToolCallID(response *types.Response) string {
 var googleSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
-		Description: googleSearchDescription,
-		Name:        "google_search",
+		Name: "google_search",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
