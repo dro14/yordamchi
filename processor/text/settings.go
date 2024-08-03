@@ -29,7 +29,7 @@ Bot memory: *available* ✅
 Image understanding: *available* ✅
 Google search: *unavailable* 🚫
 
-Want to get the *most* out of *Yordamchi*? Then switch to *premium subscriptions*!`,
+Want to get the *most* out of *Yordamchi*? Then switch to *paid subscriptions*!`,
 }
 
 var Settings1 = map[string]string{
@@ -39,7 +39,7 @@ So'rovlar soni: *cheklanmagan*
 Tugash muddati: *%s*
 Bot xotirasi: *mavjud* ✅
 Rasmni tushunish: *mavjud* ✅
-Googleda qidirish: *mavjud* ✅`,
+Googleda qidirish: *mavjud emas* 🚫`,
 
 	"ru": `Подписка: *безлимитная* ⭐️
 Версия: *GPT-4o-mini*
@@ -47,7 +47,7 @@ Googleda qidirish: *mavjud* ✅`,
 Срок истечения: *%s*
 Память бота: *доступно* ✅
 Понимание изображений: *доступно* ✅
-Google поиск: *доступно* ✅`,
+Google поиск: *недоступно* 🚫`,
 
 	"en": `Subscription: *unlimited* ⭐️
 Version: *GPT-4o-mini*
@@ -55,7 +55,7 @@ Number of requests: *unlimited*
 Expiration date: *%s*
 Bot memory: *available* ✅
 Image understanding: *available* ✅
-Google search: *available* ✅`,
+Google search: *unavailable* 🚫`,
 }
 
 var Settings2 = map[string]string{

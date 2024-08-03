@@ -7,7 +7,6 @@ Cheksiz obunada:
 • *GPT-4o-mini* ✅
 • Bot *xotirasi* ✅
 • *Rasmni tushunish* ✅
-• *Google*dan yangiliklar va so'nggi ma'lumotlarni olish ✅
 
 10 000 so'm - *Haftalik: cheksiz* so'rovlar
 30 000 so'm - *Oylik: cheksiz* so'rovlar
@@ -20,7 +19,6 @@ O'zingizga qulay bo'lgan to'lov tizmini tanlang:`,
 • *GPT-4o-mini* ✅
 • *Память* бота ✅
 • *Понимание изображений* ✅
-• Доступ к новостям и последним данным с *Google* ✅
 
 10 000 сум - *Недельная: безлимитные* запросы
 30 000 сум - *Месячная: безлимитные* запросы
@@ -33,7 +31,6 @@ In the unlimited subscription:
 • *GPT-4o-mini* ✅
 • Bot *memory* ✅
 • *Image understanding* ✅
-• Access to news and up-to-date information from *Google* ✅
 
 10 000 UZS - *Weekly: unlimited* requests
 30 000 UZS - *Monthly: unlimited* requests

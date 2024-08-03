@@ -23,7 +23,7 @@ func (o *OpenAI) ProcessCompletions(ctx context.Context, prompt string, msg *dbT
 	var completion string
 	messages := o.redis.Context(ctx, prompt)
 	var tools []types.Tool
-	if userStatus(ctx) != status.Free {
+	if userStatus(ctx) == status.Premium {
 		tools = append(tools, googleSearch)
 	}
 
