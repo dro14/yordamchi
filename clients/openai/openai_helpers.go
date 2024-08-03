@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	googleSearchDescription = "use ONLY to search for real-time information"
+	googleSearchDescription = "use this function ONLY to search for real-time information"
 	fileSearchDescription   = "Searches for additional information in the file the user provided. File name: "
 )
 
@@ -165,7 +165,8 @@ func getToolCallID(response *types.Response) string {
 var googleSearch = types.Tool{
 	Type: "function",
 	Function: types.Function{
-		Name: "google_search",
+		Description: googleSearchDescription,
+		Name:        "google_search",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
