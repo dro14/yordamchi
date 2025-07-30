@@ -1,0 +1,390 @@
+{
+    "@@locale": "en",
+
+    "updateTitle": "Update available",
+    "@updateTitle": {
+        "description": "Label for the 'Update available' title"
+    },
+    "updateMessagePrefix": "A new version of Yordamchi is available!",
+    "@updateMessagePrefix": {
+        "description": "Label for the 'Update message prefix' message"
+    },
+    "updateMessageSuffix": " To continue, please update the app.",
+    "@updateMessageSuffix": {
+        "description": "Label for the 'Update message suffix' message"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "Label for the 'Update' button"
+    },
+    "notNow": "Not now",
+    "@notNow": {
+        "description": "Label for the 'Not now' button"
+    },
+
+
+    "tagline1": "Your personal assistant in daily life",
+    "@tagline1": {
+        "description": "The first tagline for the welcome screen"
+    },
+    "title2": "Anything",
+    "@title2": {
+        "description": "The second title for the welcome screen"
+    },
+    "tagline2": "Yordamchi answers to your questions on any topic",
+    "@tagline2": {
+        "description": "The second tagline for the welcome screen"
+    },
+    "title3": "Anytime",
+    "@title3": {
+        "description": "The third title for the welcome screen"
+    },
+    "tagline3": "Yordamchi is always ready to help you",
+    "@tagline3": {
+        "description": "The third tagline for the welcome screen"
+    },
+    "title4": "Knowledge",
+    "@title4": {
+        "description": "The fourth title for the welcome screen"
+    },
+    "tagline4": "Learn new things with Yordamchi",
+    "@tagline4": {
+        "description": "The fourth tagline for the welcome screen"
+    },
+    "title5": "Camera",
+    "@title5": {
+        "description": "The fifth title for the welcome screen"
+    },
+    "tagline5": "Yordamchi helps you understand what you see",
+    "@tagline5": {
+        "description": "The fifth tagline for the welcome screen"
+    },
+    "continueButton": "Continue",
+    "@continueButton": {
+        "description": "Label for the 'Continue' button"
+    },
+    "agreeToTermsLeading": "By continuing, you agree to the ",
+    "@agreeToTermsLeading": {
+        "description": "Leading for the 'Agree to terms' message"
+    },
+    "agreeToTermsToS": "terms of service",
+    "@agreeToTermsToS": {
+        "description": "Label for the 'Terms of service' link"
+    },
+    "agreeToTermsMiddle": " and ",
+    "@agreeToTermsMiddle": {
+        "description": "Middle for the 'Agree to terms' message"
+    },
+    "agreeToTermsPrivacyPolicy": "privacy policy",
+    "@agreeToTermsPrivacyPolicy": {
+        "description": "Label for the 'Privacy policy' link"
+    },
+    "agreeToTermsTrailing": ".",
+    "@agreeToTermsTrailing": {
+        "description": "Trailing for the 'Agree to terms' message"
+    },
+
+
+    "howCanIHelpYou": "How can I help you today?",
+    "@howCanIHelpYou": {
+        "description": "Welcoming message in the assistant screen"
+    },
+    "askAnything": "Ask anything...",
+    "@askAnything": {
+        "description": "Placeholder for the assistant input field"
+    },
+    "thinking": "Thinking...",
+    "@thinking": {
+        "description": "Label for the 'Thinking' message"
+    },
+    "webSearchResults": "Web search results",
+    "@webSearchResults": {
+        "description": "Label for the 'Web search results' message"
+    },
+    "errorTooLong": "Request is too long",
+    "@errorTooLong": {
+        "description": "Error message when request is too long"
+    },
+    "camera": "Camera",
+    "@camera": {
+        "description": "Label for the 'Camera' action"
+    },
+    "photos": "Photos",
+    "@photos": {
+        "description": "Label for the 'Photos' action"
+    },
+    "gallery": "Gallery",
+    "@gallery": {
+        "description": "Label for the 'Gallery' action"
+    },
+    "photo": "Photo",
+    "@photo": {
+        "description": "Label for the 'Photo' action"
+    },
+
+
+    "today": "Today",
+    "@today": {
+        "description": "Label for the 'Today' message"
+    },
+    "yesterday": "Yesterday",
+    "@yesterday": {
+        "description": "Label for the 'Yesterday' message"
+    },
+    "copy": "Copy",
+    "@copy": {
+        "description": "Label for the 'Copy' button"
+    },
+    "copied": "Copied",
+    "@copied": {
+        "description": "Label for the 'Copied' message"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Label for the 'Save' button"
+    },
+    "share": "Share",
+    "@share": {
+        "description": "Label for the 'Share' button"
+    },
+    "reply": "Reply",
+    "@reply": {
+        "description": "Label for the 'Reply' button"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Label for the 'Retry' button"
+    },
+    "edit": "Edit",
+    "@edit": {
+        "description": "Label for the 'Edit' button"
+    },
+    "followUps": "Follow-ups",
+    "@followUps": {
+        "description": "Label for the 'Follow-ups' button"
+    },
+    "errorMessage": "An error occurred, please retry the request",
+    "@errorMessage": {
+        "description": "The error message to be shown when an error occurs"
+    },
+    "noInternet": "No connection to the Internet",
+    "@noInternet": {
+        "description": "The error message to be shown when there is no internet connection"
+    },
+    "giveThisChatName": "Give this chat a name",
+    "@giveThisChatName": {
+        "description": "Label for the 'Give this chat a name' message"
+    },
+
+
+    "settings": "Settings",
+    "@settings": {
+        "description": "Title for the settings screen"
+    },
+    "language": "Language",
+    "@language": {
+        "description": "Label for the 'Language' setting"
+    },
+    "brightness": "Brightness",
+    "@brightness": {
+        "description": "Label for the 'Brightness' setting"
+    },
+    "system": "System",
+    "@system": {
+        "description": "Label for the 'System' brightness option"
+    },
+    "light": "Light",
+    "@light": {
+        "description": "Label for the 'Light' brightness option"
+    },
+    "dark": "Dark",
+    "@dark": {
+        "description": "Label for the 'Dark' brightness option"
+    },
+    "appColor": "App color",
+    "@appColor": {
+        "description": "Label for the 'App color' setting"
+    },
+    "termsOfService": "Terms of service",
+    "@termsOfService": {
+        "description": "Label for the 'Terms of service' button"
+    },
+    "privacyPolicy": "Privacy policy",
+    "@privacyPolicy": {
+        "description": "Label for the 'Privacy policy' button"
+    },
+    "contact": "Contact the developer",
+    "@contact": {
+        "description": "Label for the 'Contact the developer' button"
+    },
+    "colorChangeTitle": "App color change",
+    "@colorChangeTitle": {
+        "description": "Label for the 'Color change' title"
+    },
+    "colorChangeMessage": "App may stop to change the color. Restart the app to continue.",
+    "@colorChangeMessage": {
+        "description": "Label for the 'Color change' message"
+    },
+    "noChatsMessage": "You don't have any chats.",
+    "@noChatsMessage": {
+        "description": "Label for the 'No chats' message"
+    },
+
+
+    "history": "History",
+    "@history": {
+        "description": "Title for the 'History' screen"
+    },
+    "noChats": "No chats",
+    "@noChats": {
+        "description": "Label for the 'No chats' message"
+    },
+    "deleteChatTitle": "Delete chat",
+    "@deleteChatTitle": {
+        "description": "Label for the 'Delete chat' title"
+    },
+    "deleteChatMessage": "Do you want to delete this chat?",
+    "@deleteChatMessage": {
+        "description": "Label for the 'Delete chat' message"
+    },
+    "deleteAllChatsTitle": "Delete all chats",
+    "@deleteAllChatsTitle": {
+        "description": "Label for the 'Delete all chats' title"
+    },
+    "deleteAllChatsMessage": "Are you sure you want to delete all chats? This action is irreversible.",
+    "@deleteAllChatsMessage": {
+        "description": "Label for the 'Delete all chats' message"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Label for the 'Delete' button"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Label for the 'Cancel' button"
+    },
+    "rename": "Rename chat",
+    "@rename": {
+        "description": "Label for the 'Rename chat' button"
+    },
+
+
+    "prompt1": "What can you do?",
+    "@prompt1": {
+        "description": "The first default prompt"
+    },
+    "prompt2": "My mood is great!",
+    "@prompt2": {
+        "description": "The second default prompt"
+    },
+    "prompt3": "Tell me something surprising",
+    "@prompt3": {
+        "description": "The third default prompt"
+    },
+    "prompt4": "Translate this text into English...",
+    "@prompt4": {
+        "description": "The fourth default prompt"
+    },
+    "prompt5": "Check this for grammar mistakes...",
+    "@prompt5": {
+        "description": "The fifth default prompt"
+    },
+    "prompt6": "Explain this image to me...",
+    "@prompt6": {
+        "description": "The sixth default prompt"
+    },
+    "prompt7": "Recommend me a movie about adventure",
+    "@prompt7": {
+        "description": "The seventh default prompt"
+    },
+    "prompt8": "Give me the top 10 productivity books",
+    "@prompt8": {
+        "description": "The eighth default prompt"
+    },
+    "prompt9": "Summarize this article...",
+    "@prompt9": {
+        "description": "The ninth default prompt"
+    },
+    "prompt10": "Write an essay about technology",
+    "@prompt10": {
+        "description": "The tenth default prompt"
+    },
+
+
+    "pink": "Pink",
+    "@pink": {
+        "description": "Label for the 'Pink' color"
+    },
+    "red": "Red",
+    "@red": {
+        "description": "Label for the 'Red' color"
+    },
+    "deepOrange": "Deep orange",
+    "@deepOrange": {
+        "description": "Label for the 'Deep orange' color"
+    },
+    "orange": "Orange",
+    "@orange": {
+        "description": "Label for the 'Orange' color"
+    },
+    "amber": "Amber",
+    "@amber": {
+        "description": "Label for the 'Amber' color"
+    },
+    "yellow": "Yellow",
+    "@yellow": {
+        "description": "Label for the 'Yellow' color"
+    },
+    "lime": "Lime",
+    "@lime": {
+        "description": "Label for the 'Lime' color"
+    },
+    "lightGreen": "Light green",
+    "@lightGreen": {
+        "description": "Label for the 'Light green' color"
+    },
+    "green": "Green",
+    "@green": {
+        "description": "Label for the 'Green' color"
+    },
+    "teal": "Teal",
+    "@teal": {
+        "description": "Label for the 'Teal' color"
+    },
+    "cyan": "Cyan", 
+    "@cyan": {
+        "description": "Label for the 'Cyan' color"
+    },
+    "lightBlue": "Light blue",
+    "@lightBlue": {
+        "description": "Label for the 'Light blue' color"
+    },
+    "blue": "Blue",
+    "@blue": {
+        "description": "Label for the 'Blue' color"
+    },
+    "indigo": "Indigo",
+    "@indigo": {
+        "description": "Label for the 'Indigo' color"
+    },
+    "purple": "Purple",
+    "@purple": {
+        "description": "Label for the 'Purple' color"
+    },
+    "deepPurple": "Deep purple",
+    "@deepPurple": {
+        "description": "Label for the 'Deep purple' color"
+    },
+    "blueGrey": "Blue grey",
+    "@blueGrey": {
+        "description": "Label for the 'Blue grey' color"
+    },
+    "brown": "Brown",
+    "@brown": {
+        "description": "Label for the 'Brown' color"
+    },
+    "grey": "Grey",
+    "@grey": {
+        "description": "Label for the 'Grey' color"
+    }
+}

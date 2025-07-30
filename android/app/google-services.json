@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "561132327391",
+    "project_id": "yordamchi-58cb4",
+    "storage_bucket": "yordamchi-58cb4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561132327391:android:92eab46f0d0ef4ba32f46a",
+        "android_client_info": {
+          "package_name": "uz.chuqurtech.yordamchi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfbxBlQXiauKypfYlTFxfc_xcss2pYiXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
