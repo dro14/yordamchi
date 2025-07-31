@@ -107,7 +107,7 @@ class _MessageWidgetState extends State<MessageWidget> {
         ),
       );
     } else if (message != null && message.role == 'model') {
-      if (message.text.isEmpty || message.images.isEmpty) {
+      if (message.text.isEmpty && message.images.isEmpty) {
         child = Padding(
           padding: const EdgeInsets.only(left: 12.0, top: 8.0, right: 12.0),
           child: Text(
